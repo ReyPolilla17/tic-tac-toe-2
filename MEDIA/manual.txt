@@ -1,0 +1,120 @@
+Modos de juego
+END
+
+Al iniciar una partida, se desplegará una ventana de configuración que permitirá seleccionar uno de dos posibles adversarios: Otro jugador o la computadora.
+
+En caso de enfrentarte a otro jugador, ambos deberán colocar sus nombres, que deben ser diferentes uno del otro.
+
+Si se elige jugar contra la computadora, solo será necesario colocar un nombre y adicionalmente podrá seleccionarse el modo dificíl.
+END
+
+Modos de juego:
+Contra Jugador
+END
+
+Te enfrentarás a otro usuario, el primer turno se elige al azar.
+
+Quien logre hacer una línea recta de tres fichas será el ganador.
+END
+
+Modos de juego:
+Contra Computadora
+END
+
+Te enfrentarás a la computadora.
+
+Hercules.raw observará tus jugadas y será capaz de bloquearlas, al igual que elegir sus propios movimientos.
+END
+
+Modos de juego:
+Contra Computadora (dificíl)
+END
+
+La computadora tendrá la oportunidad de tirar dos veces por turno.
+
+Adicionalmente, el destino del universo estará en tus manos.
+END
+
+Tablero
+END
+
+El tablero tiene de su lado izquierdo la imagen del jugador que está jugando actualmente y de su lado derecho la ficha y nombre de ambos jugadores.
+
+Si se selecciona una casilla y no hay una partida en curso, se mostrará la ventana de configuración de juego.
+
+Si la partida ha acabado, no se podrán colocar más fichas.
+END
+
+Historial
+END
+
+Debajo del tablero se encuentran dos botones, uno para regresar y otro para avanzar, estos se activan o desactivan si hay movimientos en el historial en ese sentido.
+
+Al seleccionarlos, la partida se recorrera al punto del historial deseado.
+END
+
+Menu: Archivo
+Guardar
+END
+
+Atajo: <b>Ctl + S</b>
+
+Despliega el navegador de archivos para guardar la partida actual.
+
+Si no hay una partida en curso, una advertencia se desplegará en lugar del navegador.
+END
+
+Menu: Archivo
+Abrir
+END
+
+Atajo: <b>Ctl + O</b>
+
+Despliega el navegador de archivos para cargar una nueva partida.
+
+En caso de que haya una partida en curso, se preguntará si se desea guardar la partida actual.
+
+Tras guardar la partida en caso de desearlo y cargar otra aprtida, la partida cargada continuará desde su último punto en el historial.
+END
+
+Menu: Juego
+Nuevo
+END
+
+Atajo: <b>Ctl + N</b>
+
+Despliega la ventana de selección de modo de juego.
+
+Una vez configurada la partida, esta comenzará con las configuraciones seleccionadas.
+
+De haber una partida en curso, se preguntará si se desea guardar.
+END
+
+Menu: Juego
+Terminar
+END
+
+Atajo: <b>Ctl + F</b>
+
+Finaliza la partida actual preguntando si se desea guardar.
+
+Si no hay una partida en curso, se desplegará una advertencia.
+END
+
+Menu: Mas
+Como jugar
+END
+
+Atajo: <b>Ctl + H</b>
+
+Despliega esta ventana de ayuda.
+END
+
+Menu: Mas
+Acerca de
+END
+
+Atajo: <b>Ctl + A</b>
+
+Despliega esta ventana de créditos.
+END
