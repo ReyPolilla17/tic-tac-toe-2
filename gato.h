@@ -42,7 +42,7 @@ typedef struct def_grafico
   GtkWidget *buttons[3][3];
   GtkWidget *buttonImg[3][3];
   GdkPixbuf *m20[3];
-  GdkPixbuf *m40[3];
+  GdkPixbuf *m60[3];
   GdkPixbuf *hercules;
   GdkPixbuf *logo;
 } GRAFICO;
@@ -110,7 +110,6 @@ void StopTheApp(GtkWidget *widget, gpointer data);
 
 
 // funciones para el menú de ayuda
-
 HelpDialog *help_dialog_new(gchar *title);
 void help_dialog_populate_from_file(HelpDialog *dialog, gchar *file, gchar *separator);
 void help_dialog_add_page(HelpDialog *dialog, gchar *title, gchar *content);

@@ -43,28 +43,28 @@ void loadMainWindow(JUEGO *juego)
   int i = 0;
   int j = 0;
 
-  // creación de imagenes que se utilizan e n diversos puntos de la partida
+  // iniciaización de variables
+  gdk_color_parse("#DCDAD5", &light_grey);  
+  gdk_color_parse("#7a7a7a", &dark_grey);
 
-  // fichas de juego en diferentes resoluciones (40 * 40 y 20 * 20) blank sirve como un placeholder
+  // creación de imagenes que se utilizan en diversos puntos de la partida
+  // fichas de juego en diferentes resoluciones (60 * 60 y 20 * 20) blank sirve como un placeholder
   juego->graficos.m20[0] = gdk_pixbuf_new_from_file_at_scale("./MEDIA/x.png", 20, 20, TRUE, NULL);
   juego->graficos.m20[1] = gdk_pixbuf_new_from_file_at_scale("./MEDIA/o.png", 20, 20, TRUE, NULL);
   juego->graficos.m20[2] = gdk_pixbuf_new_from_file_at_scale("./MEDIA/blank.png", 20, 20, TRUE, NULL);
 
-  juego->graficos.m40[0] = gdk_pixbuf_new_from_file_at_scale("./MEDIA/x.png", 40, 40, TRUE, NULL);
-  juego->graficos.m40[1] = gdk_pixbuf_new_from_file_at_scale("./MEDIA/o.png", 40, 40, TRUE, NULL);
-  juego->graficos.m40[2] = gdk_pixbuf_new_from_file_at_scale("./MEDIA/blank.png", 40, 40, TRUE, NULL);
+  juego->graficos.m60[0] = gdk_pixbuf_new_from_file_at_scale("./MEDIA/x.png", 60, 60, TRUE, NULL);
+  juego->graficos.m60[1] = gdk_pixbuf_new_from_file_at_scale("./MEDIA/o.png", 60, 60, TRUE, NULL);
+  juego->graficos.m60[2] = gdk_pixbuf_new_from_file_at_scale("./MEDIA/blank.png", 60, 60, TRUE, NULL);
 
   // otras imagenes necesarias
   juego->graficos.hercules = gdk_pixbuf_new_from_file_at_scale("./MEDIA/hercules.raw", 200, 200, TRUE, NULL);
   juego->graficos.logo = gdk_pixbuf_new_from_file_at_scale("./MEDIA/logo.png", 200, 200, TRUE, NULL);
 
-  // crea una ventana con el titulo y le asocia la función destruir
-  gdk_color_parse("#DCDAD5", &light_grey);  
-  gdk_color_parse("#7a7a7a", &dark_grey);
 
+  // crea una ventana con el titulo y le asocia la función destruir
   juego->graficos.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_default_size(GTK_WINDOW(juego->graficos.window), 650, 450);
-    // gtk_container_set_border_width(GTK_CONTAINER(juego->graficos.window), 0);
+    gtk_window_set_default_size(GTK_WINDOW(juego->graficos.window), 910, 540);
     gtk_window_set_title(GTK_WINDOW(juego->graficos.window), "Tic-Tac-Toe 2");
     gtk_signal_connect(GTK_OBJECT(juego->graficos.window), "destroy", GTK_SIGNAL_FUNC(StopTheApp), juego);
 
@@ -106,7 +106,7 @@ void loadMainWindow(JUEGO *juego)
     gtk_widget_add_accelerator(subItem, "activate", group, 'O', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     // gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(cargarPartida), juego);
     gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
-    
+
 
   // lo mimso para las otras 2 opciones del menu
   menuItem = gtk_image_menu_item_new();
@@ -201,7 +201,7 @@ void loadMainWindow(JUEGO *juego)
     gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), label, FALSE, TRUE, 10);
 
   // crea una imagen para indicar al jugador actual
-  juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m40[2]);
+  juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[2]);
     gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
 
   // tablero
@@ -248,7 +248,7 @@ void loadMainWindow(JUEGO *juego)
         gtk_box_pack_start(GTK_BOX(hBox), juego->graficos.buttons[i][j], TRUE, TRUE, 0);
 
       // establece una imagen transparente
-      juego->graficos.buttonImg[i][j] = gtk_image_new_from_pixbuf(juego->graficos.m40[2]);
+      juego->graficos.buttonImg[i][j] = gtk_image_new_from_pixbuf(juego->graficos.m60[1]);
         gtk_container_add(GTK_CONTAINER(juego->graficos.buttons[i][j]), juego->graficos.buttonImg[i][j]);
     }
   }
@@ -274,7 +274,6 @@ void loadMainWindow(JUEGO *juego)
   // sección de jugadores (Contiene las flamas del modo dificil)
   flameContainter[1] = gtk_vbox_new(FALSE, 0);
     gtk_box_pack_start(GTK_BOX(hBox1), flameContainter[1], TRUE, TRUE, 0);
-  
   
   hBox = gtk_hbox_new(TRUE, 10);
     gtk_box_pack_start(GTK_BOX(flameContainter[1]), hBox, FALSE, FALSE, 20);
