@@ -28,7 +28,7 @@ typedef struct def_funcional // Parte funcional del juego
     JUGADOR jugadores[2]; // Información de los jugadores
     MOVIMIENTO historial[10]; // Movimientos a lo largo de la partida
     int turno; // Número de turno actual
-    int turnoMax; // Máximo turno del que se tiene historial
+    int turno_max; // Máximo turno del que se tiene historial
 } FUNCIONAL;
 
 // estructura con todos los widgets que se utilizan en la ventana principal
@@ -55,29 +55,10 @@ typedef struct def_juego
     GRAFICO graficos;
 } JUEGO;
 
-int loadGame(JUEGO *juego);
-void playGame(JUEGO *juego);
-
-void printBoard(char tablero[3][3]);
-int validateInput(char frase[]);
-void displayHelp(void);
-
-void playTurn(JUEGO *juego);
-
-void aiTurn(JUEGO *juego);
-void chooseSpace(JUEGO *juego, int *x, int *y);
-
-void setupNewGame(JUEGO *juego);
-void coppyBoard(char dest[3][3], char src[3][3]);
-void logMove(JUEGO *juego, int replayable);
-void lastTurn(JUEGO *juego);
-void nextTurn(JUEGO *juego);
-int checkGame(char tablero[3][3], char played);
-
+void gameStartup(JUEGO *juego);
 void loadMainWindow(JUEGO *juego);
-
 
 // funciones del menú de la ventana principal
 void comoJugar(GtkWidget *widget, gpointer data);
 void acercaDe(GtkWidget *widget, gpointer data);
-void StopTheApp(GtkWidget *widget, gpointer data);
+void stopTheApp(GtkWidget *widget, gpointer data);

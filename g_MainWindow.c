@@ -66,7 +66,7 @@ void loadMainWindow(JUEGO *juego)
   juego->graficos.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_default_size(GTK_WINDOW(juego->graficos.window), 910, 540);
     gtk_window_set_title(GTK_WINDOW(juego->graficos.window), "Tic-Tac-Toe 2");
-    gtk_signal_connect(GTK_OBJECT(juego->graficos.window), "destroy", GTK_SIGNAL_FUNC(StopTheApp), juego);
+    gtk_signal_connect(GTK_OBJECT(juego->graficos.window), "destroy", GTK_SIGNAL_FUNC(stopTheApp), juego);
 
   // crea la caja que va a contener todos los elementos
   mainBox = gtk_vbox_new(FALSE, 0);
@@ -145,7 +145,7 @@ void loadMainWindow(JUEGO *juego)
 
   subItem = gtk_menu_item_new_with_mnemonic("Acerca de");
     gtk_widget_add_accelerator(subItem, "activate", group, 'A', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(acercaDe), juego);
+    // gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(acercaDe), juego);
     gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
 
   /**
