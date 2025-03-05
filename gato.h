@@ -55,10 +55,31 @@ typedef struct def_juego
     GRAFICO graficos;
 } JUEGO;
 
+// inicialización
 void gameStartup(JUEGO *juego);
 void loadMainWindow(JUEGO *juego);
 
 // funciones del menú de la ventana principal
+void guardarPartida(GtkWidget *widget, gpointer data);
+void cargarPartida(GtkWidget *widget, gpointer data);
+void nuevaPartida(GtkWidget *widget, gpointer data);
+void terminarPartida(GtkWidget *widget, gpointer data);
 void comoJugar(GtkWidget *widget, gpointer data);
 void acercaDe(GtkWidget *widget, gpointer data);
+
+// funciones de los botones del tablero
+void board_button_hover(GtkWidget *eventbox, GdkEventButton *event, gpointer data);
+void board_button_leave(GtkWidget *eventbox, GdkEventButton *event, gpointer data);
+void board_button_pressed(GtkWidget *eventbox, GdkEventButton *event, gpointer data);
+
+// funciones de los botones del historial
+void history_past(GtkWidget *widget, gpointer data);
+void history_next(GtkWidget *widget, gpointer data);
+
 void stopTheApp(GtkWidget *widget, gpointer data);
+
+// Utilidades
+int getButton(JUEGO *juego, GtkWidget *button, int coords[2]);
+
+
+// void gtk_entry_set_max_length (GtkEntry *entry, gint max_length);

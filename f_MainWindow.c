@@ -5,9 +5,6 @@ void gameStartup(JUEGO *juego)
     int i = 0;
     int j = 0;
 
-    srand(time(NULL));
-    loadMainWindow(juego);
-
     juego->partida.turno = 0;
     juego->partida.turno_max = 0;
 
@@ -30,4 +27,26 @@ void gameStartup(JUEGO *juego)
     }
 
     return;
+}
+
+int getButton(JUEGO *juego, GtkWidget *button, int coords[2])
+{
+    int i = 0;
+    int j = 0;
+
+    for(i = 0; i < 3; i++)
+    {
+        for(j = 0; j < 3; j++)
+        {
+            if(button == juego->graficos.buttons[i][j])
+            {
+                coords[0] = i;
+                coords[1] = j;
+
+                return 1;
+            }
+        }
+    }
+
+    return 0;
 }

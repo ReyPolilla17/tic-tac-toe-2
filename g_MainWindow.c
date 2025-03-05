@@ -4,7 +4,7 @@
  * @brief Contiene la carga de la ventana principal
  *
  * @author Luis Julián Zamora Treviño
- * @date 13/01/2024
+ * @date 05/Mar/2025
 */
 
 #include "gato.h"
@@ -98,13 +98,13 @@ void loadMainWindow(JUEGO *juego)
   // crea una subopción y le agrega una combinación de teclas
   subItem = gtk_menu_item_new_with_mnemonic("Guardar");
     gtk_widget_add_accelerator(subItem, "activate", group, 'S', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    // gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(guardarPartida), juego);
+    gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(guardarPartida), juego);
     gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
 
   // crea una subopción y le agrega una combinación de teclas
   subItem = gtk_menu_item_new_with_mnemonic("Abrir");
     gtk_widget_add_accelerator(subItem, "activate", group, 'O', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    // gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(cargarPartida), juego);
+    gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(cargarPartida), juego);
     gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
 
 
@@ -120,12 +120,12 @@ void loadMainWindow(JUEGO *juego)
 
   subItem = gtk_menu_item_new_with_mnemonic("Nuevo");
     gtk_widget_add_accelerator(subItem, "activate", group, 'N', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    // gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(nuevaPartida), juego);
+    gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(nuevaPartida), juego);
     gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
 
   subItem = gtk_menu_item_new_with_mnemonic("Terminar");
     gtk_widget_add_accelerator(subItem, "activate", group, 'F', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    // gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(terminarPartida), juego);
+    gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(terminarPartida), juego);
     gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
 
 
@@ -145,7 +145,7 @@ void loadMainWindow(JUEGO *juego)
 
   subItem = gtk_menu_item_new_with_mnemonic("Acerca de");
     gtk_widget_add_accelerator(subItem, "activate", group, 'A', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    // gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(acercaDe), juego);
+    gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(acercaDe), juego);
     gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
 
   /**
@@ -241,9 +241,9 @@ void loadMainWindow(JUEGO *juego)
       juego->graficos.buttons[i][j] = gtk_event_box_new();
         gtk_widget_modify_bg(juego->graficos.buttons[i][j], GTK_STATE_NORMAL, &light_grey);
         gtk_widget_modify_bg(juego->graficos.buttons[i][j], GTK_STATE_INSENSITIVE, &light_grey);
-        // g_signal_connect(G_OBJECT(juego->graficos.buttons[i][j]), "button_press_event", G_CALLBACK(button_pressed), juego);
-        // g_signal_connect(G_OBJECT(juego->graficos.buttons[i][j]), "enter-notify-event", G_CALLBACK(button_hover), juego);
-        // g_signal_connect(G_OBJECT(juego->graficos.buttons[i][j]), "leave-notify-event", G_CALLBACK(button_leave), juego);
+        g_signal_connect(G_OBJECT(juego->graficos.buttons[i][j]), "button_press_event", G_CALLBACK(board_button_pressed), juego);
+        g_signal_connect(G_OBJECT(juego->graficos.buttons[i][j]), "enter-notify-event", G_CALLBACK(board_button_hover), juego);
+        g_signal_connect(G_OBJECT(juego->graficos.buttons[i][j]), "leave-notify-event", G_CALLBACK(board_button_leave), juego);
         gtk_event_box_set_above_child(GTK_EVENT_BOX(juego->graficos.buttons[i][j]), TRUE);
         gtk_box_pack_start(GTK_BOX(hBox), juego->graficos.buttons[i][j], TRUE, TRUE, 0);
 
@@ -261,13 +261,13 @@ void loadMainWindow(JUEGO *juego)
   juego->graficos.moveButtons[0] = gtk_button_new();
     gtk_box_pack_start(GTK_BOX(hBox), juego->graficos.moveButtons[0], FALSE, TRUE, 0);
     gtk_button_set_image(GTK_BUTTON(juego->graficos.moveButtons[0]), gtk_image_new_from_stock(GTK_STOCK_GO_BACK, GTK_ICON_SIZE_BUTTON));
-    // gtk_signal_connect(GTK_OBJECT(juego->graficos.moveButtons[0]), "clicked", G_CALLBACK(lastTurn), juego);
+    gtk_signal_connect(GTK_OBJECT(juego->graficos.moveButtons[0]), "clicked", G_CALLBACK(history_past), juego);
     gtk_widget_set_sensitive(juego->graficos.moveButtons[0], FALSE);
 
   juego->graficos.moveButtons[1] = gtk_button_new();
     gtk_box_pack_start(GTK_BOX(hBox), juego->graficos.moveButtons[1], FALSE, TRUE, 0);
     gtk_button_set_image(GTK_BUTTON(juego->graficos.moveButtons[1]), gtk_image_new_from_stock(GTK_STOCK_GO_FORWARD, GTK_ICON_SIZE_BUTTON));
-    // gtk_signal_connect(GTK_OBJECT(juego->graficos.moveButtons[1]), "clicked", G_CALLBACK(nextTurn), juego);
+    gtk_signal_connect(GTK_OBJECT(juego->graficos.moveButtons[1]), "clicked", G_CALLBACK(history_next), juego);
     gtk_widget_set_sensitive(juego->graficos.moveButtons[1], FALSE);
 
 
