@@ -507,7 +507,7 @@ void help_dialog_on_next(GtkWidget *widget, gpointer data)
  * Al presionar el boton cerrar de un HelpDialog
  * 
  * @param *widget El widget que genera el evento
- * @param data El punteor del HelpDialog
+ * @param data El puntero del HelpDialog
  * 
  * @returns void
  */

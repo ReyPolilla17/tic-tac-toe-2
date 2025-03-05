@@ -4,29 +4,31 @@
 #include <string.h>
 #include <time.h>
 
+#include "mydialogs.h"
+
 #define IA_NAME "hercules.raw"
 #define ICONS "XO"
 
-typedef struct def_movimiento
+typedef struct def_movimiento // Turno jugado (historial)
 {
-    char tablero[3][3];
-    int game_status;
-    int hist_val;
+    char tablero[3][3]; // Tablero en ese movimiento
+    int game_status; // Estado de la partida en ese movimiento (-1 -> terminado, 1 -> en curso, 0 -> no iniciada)
+    int hist_val; // Si es un turno jugable 
 } MOVIMIENTO;
 
-typedef struct def_jugador
+typedef struct def_jugador // Información del jugador
 {
-    char nombre[1000];
-    int hard_mode;
-    int ia;
+    char nombre[1000]; // Nombre del jugador
+    int hard_mode; // Modo dificil activo
+    int ia; // si el jugador es una ia
 } JUGADOR;
 
-typedef struct def_funcional
+typedef struct def_funcional // Parte funcional del juego
 {
-    JUGADOR jugadores[2];
-    MOVIMIENTO historial[10];
-    int turno;
-    int turnoMax;
+    JUGADOR jugadores[2]; // Información de los jugadores
+    MOVIMIENTO historial[10]; // Movimientos a lo largo de la partida
+    int turno; // Número de turno actual
+    int turnoMax; // Máximo turno del que se tiene historial
 } FUNCIONAL;
 
 // estructura con todos los widgets que se utilizan en la ventana principal
@@ -53,35 +55,6 @@ typedef struct def_juego
     GRAFICO graficos;
 } JUEGO;
 
-// estructuras para el menú de ayuda
-typedef struct def_HelpPage
-{
-	gchar *title;
-	gchar *content;
-
-	struct def_HelpPage *ant;
-	struct def_HelpPage *next;
-} HelpPage;
-
-typedef struct def_HelpDialog
-{
-	GtkWidget *dialog_pointer;
-	GtkWidget *iButton;
-	GtkWidget *cButton;
-	GtkWidget *pButton;
-	GtkWidget *nButton;
-	GtkWidget *tLabel;
-	GtkWidget *cLabel;
-	GtkWidget *cBox;
-
-	GtkDialog *dialog;
-	HelpPage *current;
-
-	gint maxTitH;
-	gint maxConH;
-	gint maxDiaW;
-} HelpDialog;
-
 int loadGame(JUEGO *juego);
 void playGame(JUEGO *juego);
 
@@ -106,16 +79,5 @@ void loadMainWindow(JUEGO *juego);
 
 // funciones del menú de la ventana principal
 void comoJugar(GtkWidget *widget, gpointer data);
+void acercaDe(GtkWidget *widget, gpointer data);
 void StopTheApp(GtkWidget *widget, gpointer data);
-
-
-// funciones para el menú de ayuda
-HelpDialog *help_dialog_new(gchar *title);
-void help_dialog_populate_from_file(HelpDialog *dialog, gchar *file, gchar *separator);
-void help_dialog_add_page(HelpDialog *dialog, gchar *title, gchar *content);
-void help_dialog_run(HelpDialog *dialog);
-void help_dialog_destroy(HelpDialog *dialog);
-
-void help_dialog_on_past(GtkWidget *widget, gpointer data);
-void help_dialog_on_next(GtkWidget *widget, gpointer data);
-void help_dialog_on_close(GtkWidget *widget, gpointer data);

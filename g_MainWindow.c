@@ -131,21 +131,21 @@ void loadMainWindow(JUEGO *juego)
 
   menuItem = gtk_image_menu_item_new();
     gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuItem), gtk_image_new_from_stock(GTK_STOCK_INFO, GTK_ICON_SIZE_LARGE_TOOLBAR));
-    gtk_menu_item_set_label(GTK_MENU_ITEM(menuItem), "Mas");
+    gtk_menu_item_set_label(GTK_MENU_ITEM(menuItem), "Más");
     gtk_menu_shell_append(GTK_MENU_SHELL(menuBar), menuItem);
 
   submenu = gtk_menu_new();
     gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuItem), submenu);
     gtk_menu_set_accel_group(GTK_MENU(submenu), group);
 
-  subItem = gtk_menu_item_new_with_mnemonic("Como jugar");
+  subItem = gtk_menu_item_new_with_mnemonic("Cómo jugar");
     gtk_widget_add_accelerator(subItem, "activate", group, 'H', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(comoJugar), juego);
     gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
 
   subItem = gtk_menu_item_new_with_mnemonic("Acerca de");
     gtk_widget_add_accelerator(subItem, "activate", group, 'A', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    // gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(creditos), juego);
+    gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(acercaDe), juego);
     gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
 
   /**
@@ -248,7 +248,7 @@ void loadMainWindow(JUEGO *juego)
         gtk_box_pack_start(GTK_BOX(hBox), juego->graficos.buttons[i][j], TRUE, TRUE, 0);
 
       // establece una imagen transparente
-      juego->graficos.buttonImg[i][j] = gtk_image_new_from_pixbuf(juego->graficos.m60[1]);
+      juego->graficos.buttonImg[i][j] = gtk_image_new_from_pixbuf(juego->graficos.m60[2]);
         gtk_container_add(GTK_CONTAINER(juego->graficos.buttons[i][j]), juego->graficos.buttonImg[i][j]);
     }
   }

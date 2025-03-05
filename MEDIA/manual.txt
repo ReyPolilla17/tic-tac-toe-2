@@ -116,5 +116,5 @@ END
 
 Atajo: <b>Ctl + A</b>
 
-Despliega esta ventana de créditos.
+Despliega la ventana de créditos.
 END
