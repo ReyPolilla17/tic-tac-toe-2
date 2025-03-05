@@ -35,6 +35,9 @@ typedef struct def_funcional // Parte funcional del juego
 typedef struct def_grafico
 {
   GtkWidget *window;
+  GtkWidget *menuMore;
+  GtkWidget *menuSave;
+  GtkWidget *menuEnd;
   GtkWidget *playingImg;
   GtkWidget *playingBox;
   GtkWidget *moveButtons[2];
@@ -66,6 +69,7 @@ void nuevaPartida(GtkWidget *widget, gpointer data);
 void terminarPartida(GtkWidget *widget, gpointer data);
 void comoJugar(GtkWidget *widget, gpointer data);
 void acercaDe(GtkWidget *widget, gpointer data);
+void laVerdad(GtkWidget *widget, gpointer data);
 
 // funciones de los botones del tablero
 void board_button_hover(GtkWidget *eventbox, GdkEventButton *event, gpointer data);

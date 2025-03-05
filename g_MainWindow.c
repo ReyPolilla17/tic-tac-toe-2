@@ -96,10 +96,11 @@ void loadMainWindow(JUEGO *juego)
     gtk_menu_set_accel_group(GTK_MENU(submenu), group);
 
   // crea una subopción y le agrega una combinación de teclas
-  subItem = gtk_menu_item_new_with_mnemonic("Guardar");
-    gtk_widget_add_accelerator(subItem, "activate", group, 'S', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(guardarPartida), juego);
-    gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
+  juego->graficos.menuSave = gtk_menu_item_new_with_mnemonic("Guardar");
+    gtk_widget_add_accelerator(juego->graficos.menuSave, "activate", group, 'S', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_signal_connect(GTK_OBJECT(juego->graficos.menuSave), "activate", G_CALLBACK(guardarPartida), juego);
+    gtk_menu_shell_append(GTK_MENU_SHELL(submenu), juego->graficos.menuSave);
+    gtk_widget_set_sensitive(juego->graficos.menuSave, FALSE);
 
   // crea una subopción y le agrega una combinación de teclas
   subItem = gtk_menu_item_new_with_mnemonic("Abrir");
@@ -123,10 +124,11 @@ void loadMainWindow(JUEGO *juego)
     gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(nuevaPartida), juego);
     gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
 
-  subItem = gtk_menu_item_new_with_mnemonic("Terminar");
-    gtk_widget_add_accelerator(subItem, "activate", group, 'F', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(terminarPartida), juego);
-    gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
+  juego->graficos.menuEnd = gtk_menu_item_new_with_mnemonic("Terminar");
+    gtk_widget_add_accelerator(juego->graficos.menuEnd, "activate", group, 'F', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_signal_connect(GTK_OBJECT(juego->graficos.menuEnd), "activate", G_CALLBACK(terminarPartida), juego);
+    gtk_menu_shell_append(GTK_MENU_SHELL(submenu), juego->graficos.menuEnd);
+    gtk_widget_set_sensitive(juego->graficos.menuEnd, FALSE);
 
 
   menuItem = gtk_image_menu_item_new();
@@ -134,19 +136,25 @@ void loadMainWindow(JUEGO *juego)
     gtk_menu_item_set_label(GTK_MENU_ITEM(menuItem), "Más");
     gtk_menu_shell_append(GTK_MENU_SHELL(menuBar), menuItem);
 
-  submenu = gtk_menu_new();
-    gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuItem), submenu);
-    gtk_menu_set_accel_group(GTK_MENU(submenu), group);
+  juego->graficos.menuMore = gtk_menu_new();
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuItem), juego->graficos.menuMore);
+    gtk_menu_set_accel_group(GTK_MENU(juego->graficos.menuMore), group);
 
   subItem = gtk_menu_item_new_with_mnemonic("Cómo jugar");
     gtk_widget_add_accelerator(subItem, "activate", group, 'H', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(comoJugar), juego);
-    gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
+    gtk_menu_shell_append(GTK_MENU_SHELL(juego->graficos.menuMore), subItem);
 
   subItem = gtk_menu_item_new_with_mnemonic("Acerca de");
     gtk_widget_add_accelerator(subItem, "activate", group, 'A', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(acercaDe), juego);
-    gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
+    gtk_menu_shell_append(GTK_MENU_SHELL(juego->graficos.menuMore), subItem);
+
+  // subItem = gtk_menu_item_new_with_mnemonic("See");
+  //   gtk_widget_add_accelerator(subItem, "activate", group, 'T', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+  //   gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(laVerdad), juego);
+  //   gtk_menu_shell_append(GTK_MENU_SHELL(juego->graficos.menuMore), subItem);
+  //   gtk_widget_set_sensitive(subItem, FALSE);
 
   /**
    * Fin de la seccion del menu

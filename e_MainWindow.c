@@ -49,6 +49,17 @@ void acercaDe(GtkWidget *widget, gpointer data)
 
 }
 
+void laVerdad(GtkWidget *widget, gpointer data)
+{
+	HelpDialog *dialog;
+
+	dialog = help_dialog_new("1fg289h73d.777");
+	help_dialog_populate_from_file(dialog, "./MEDIA/1fg289h73d.777", "--");
+	help_dialog_run(dialog);
+
+	return;
+}
+
 // Botones del tablero
 
 void board_button_hover(GtkWidget *eventbox, GdkEventButton *event, gpointer data)
