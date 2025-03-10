@@ -86,11 +86,11 @@ void help_dialog_on_close(GtkWidget *widget, gpointer data);
 
 // Creación
 // Página de créditos
-AboutDialogPage *about_dialog_page_new(const gchar *name);
-void about_dialog_page_add_line(AboutDialogPage *page, const gchar *line);
+AboutDialogPage *about_dialog_page_new(gchar *name);
+void about_dialog_page_add_line(AboutDialogPage *page, gchar *line);
 
 // Ventana de créditos
-AboutDialog *about_dialog_new(const gchar *title);
+AboutDialog *about_dialog_new(gchar *title);
 void about_dialog_set_title(AboutDialog *dialog, gchar *title);
 void about_dialog_set_version(AboutDialog *dialog, gchar *version);
 void about_dialog_set_comments(AboutDialog *dialog, gchar *comments);
@@ -101,6 +101,6 @@ void about_dialog_run(AboutDialog *dialog);
 void about_dialog_destroy(AboutDialog *dialog);
 
 // Funcionamiento interno
-void about_dialog_on_credits(GtkWidget *widget, gpointer *data);
+void about_dialog_on_credits(GtkWidget *widget, gpointer data);
 void about_dialog_on_close(GtkWidget *widget, gpointer data);
 void about_dialog_credits_on_close(GtkWidget *widget, gpointer data);
