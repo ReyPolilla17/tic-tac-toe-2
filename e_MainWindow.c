@@ -46,7 +46,30 @@ void comoJugar(GtkWidget *widget, gpointer data)
 
 void acercaDe(GtkWidget *widget, gpointer data)
 {
+	AboutDialog *about;
+	AboutDialogPage *page;
+	GError *error = NULL;
 
+	about = about_dialog_new("Acerca De");
+		about_dialog_set_logo(about, gdk_pixbuf_new_from_file_at_size("./MEDIA/logo.png", 150, 150, &error));
+		about_dialog_set_title(about, "Tic-Tac-Toe");
+		about_dialog_set_version(about, "2.0");
+		about_dialog_set_comments(about, "Programación Aplicada y Laboratorio");
+		about_dialog_set_copyright(about, "Profesor Jorge Rodríguez García");
+
+	page = about_dialog_page_new("Programación");
+		about_dialog_page_add_line(page, "Sánchez Zepeda Ricardo (ict23rsz)");
+		about_dialog_add_page(about, page);
+
+	page = about_dialog_page_new("Diseño");
+		about_dialog_page_add_line(page, "Luis Julián Zamora Treviño (ict23jzt)");
+		about_dialog_add_page(about, page);
+
+	page = about_dialog_page_new("Documentación");
+		about_dialog_page_add_line(page, "Malouly Orozco Mariano (msc23mmo)");
+		about_dialog_add_page(about, page);
+
+	about_dialog_run(about);
 }
 
 void laVerdad(GtkWidget *widget, gpointer data)

@@ -1,5 +1,5 @@
-gato.out: gato.o e_MainWindow.o f_MainWindow.o g_MainWindow.o helpDialog.o
-	gcc -g -Wall -o gato.out gato.o e_MainWindow.o f_MainWindow.o g_MainWindow.o helpDialog.o `pkg-config --cflags --libs gtk+-2.0`
+gato.out: gato.o e_MainWindow.o f_MainWindow.o g_MainWindow.o helpDialog.o aboutDialog.o
+	gcc -g -Wall -o gato.out gato.o e_MainWindow.o f_MainWindow.o g_MainWindow.o helpDialog.o aboutDialog.o `pkg-config --cflags --libs gtk+-2.0`
 
 gato.o: gato.c
 	gcc -g -Wall -c gato.c `pkg-config --cflags --libs gtk+-2.0`
@@ -15,6 +15,9 @@ g_MainWindow.o: g_MainWindow.c
 
 helpDialog.o: helpDialog.c
 	gcc -g -Wall -c helpDialog.c `pkg-config --cflags --libs gtk+-2.0`
+
+aboutDialog.o: aboutDialog.c
+	gcc -g -Wall -c aboutDialog.c `pkg-config --cflags --libs gtk+-2.0`
 
 clean:
 	rm *.o

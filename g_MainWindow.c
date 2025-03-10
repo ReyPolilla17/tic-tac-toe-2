@@ -154,7 +154,6 @@ void loadMainWindow(JUEGO *juego)
   //   gtk_widget_add_accelerator(subItem, "activate", group, 'T', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
   //   gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(laVerdad), juego);
   //   gtk_menu_shell_append(GTK_MENU_SHELL(juego->graficos.menuMore), subItem);
-  //   gtk_widget_set_sensitive(subItem, FALSE);
 
   /**
    * Fin de la seccion del menu

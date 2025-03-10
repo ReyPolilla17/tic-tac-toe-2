@@ -35,6 +35,35 @@ typedef struct def_HelpDialog // Ventana de ayuda
 } HelpDialog;
 
 /**
+ * Estructuras de las ventana créditos
+ */
+typedef struct def_AboutDialogPage // Página de créditos
+{
+  gchar *page_name; // Nombre de la sección
+  gchar *page_content; // Contenido de la sección
+} AboutDialogPage;
+
+typedef struct def_AboutDialog // Ventana de créditos
+{
+  GtkWidget *dialog_pointer;
+  GtkWidget *vBox;
+  GtkWidget *mBox;
+  GtkWidget *about_logo;
+  gchar *about_title;
+  gchar *about_version;
+  gchar *about_comments;
+  gchar *about_copyright;
+
+  gint credit_pages_count;
+  AboutDialogPage *pages[3];
+
+  GtkDialog *dialog;
+  GtkWidget *iButton;
+  GtkWidget *crButton;
+  GtkWidget *iclButton;
+} AboutDialog;
+
+/**
  * Funciones para el menú de ayuda
  */
 
@@ -49,3 +78,29 @@ void help_dialog_destroy(HelpDialog *dialog);
 void help_dialog_on_past(GtkWidget *widget, gpointer data);
 void help_dialog_on_next(GtkWidget *widget, gpointer data);
 void help_dialog_on_close(GtkWidget *widget, gpointer data);
+
+
+/**
+ * Funciones de la ventana de créditos
+ */
+
+// Creación
+// Página de créditos
+AboutDialogPage *about_dialog_page_new(const gchar *name);
+void about_dialog_page_add_line(AboutDialogPage *page, const gchar *line);
+
+// Ventana de créditos
+AboutDialog *about_dialog_new(const gchar *title);
+void about_dialog_set_title(AboutDialog *dialog, gchar *title);
+void about_dialog_set_version(AboutDialog *dialog, gchar *version);
+void about_dialog_set_comments(AboutDialog *dialog, gchar *comments);
+void about_dialog_set_copyright(AboutDialog *dialog, gchar *copyright);
+void about_dialog_set_logo(AboutDialog *dialog, GdkPixbuf *logo);
+void about_dialog_add_page(AboutDialog *dialog, AboutDialogPage *page);
+void about_dialog_run(AboutDialog *dialog);
+void about_dialog_destroy(AboutDialog *dialog);
+
+// Funcionamiento interno
+void about_dialog_on_credits(GtkWidget *widget, gpointer *data);
+void about_dialog_on_close(GtkWidget *widget, gpointer data);
+void about_dialog_credits_on_close(GtkWidget *widget, gpointer data);

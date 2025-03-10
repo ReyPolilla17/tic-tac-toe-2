@@ -6,7 +6,7 @@
  * @author Luis Julián Zamora Treviño
  * @date 15/10/2024
  */
-#include "gato.h"
+#include "mydialogs.h"
 
 /**
  * Creación del widget
