@@ -84,6 +84,3 @@ void stopTheApp(GtkWidget *widget, gpointer data);
 
 // Utilidades
 int getButton(JUEGO *juego, GtkWidget *button, int coords[2]);
-
-
-// void gtk_entry_set_max_length (GtkEntry *entry, gint max_length);

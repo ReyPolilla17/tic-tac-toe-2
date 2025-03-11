@@ -90,7 +90,7 @@ HelpDialog *help_dialog_new(gchar *title)
 	// boton cerrar
 	new->cButton = gtk_button_new();
 		gtk_signal_connect(GTK_OBJECT(new->cButton), "clicked", GTK_SIGNAL_FUNC(help_dialog_on_close), new);
-		gtk_button_set_image(GTK_BUTTON(new->cButton), gtk_image_new_from_stock(GTK_STOCK_CANCEL, GTK_ICON_SIZE_BUTTON));
+		gtk_button_set_image(GTK_BUTTON(new->cButton), gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_BUTTON));
 		gtk_button_set_label(GTK_BUTTON(new->cButton), "Cerrar");
 		gtk_widget_set_size_request(new->cButton, 80, 32);
 		gtk_box_pack_start(GTK_BOX(hBox), new->cButton, FALSE, FALSE, 10);
