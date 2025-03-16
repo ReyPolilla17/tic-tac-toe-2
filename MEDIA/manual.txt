@@ -50,7 +50,7 @@ END
 
 Debajo del tablero se encuentran dos botones, uno para regresar y otro para avanzar, estos se activan o desactivan si hay movimientos en el historial en ese sentido.
 
-Al seleccionarlos, la partida se recorrera al punto del historial deseado.
+Al seleccionarlos, la partida se recorrerá al punto del historial deseado.
 END
 
 Menu: Archivo
@@ -61,7 +61,7 @@ Atajo: <b>Ctl + S</b>
 
 Despliega el navegador de archivos para guardar la partida actual.
 
-Si no hay una partida en curso, una advertencia se desplegará en lugar del navegador.
+Si no hay una partida en curso, no se podrá acceder a esta opción.
 END
 
 Menu: Archivo
@@ -74,7 +74,7 @@ Despliega el navegador de archivos para cargar una nueva partida.
 
 En caso de que haya una partida en curso, se preguntará si se desea guardar la partida actual.
 
-Tras guardar la partida en caso de desearlo y cargar otra aprtida, la partida cargada continuará desde su último punto en el historial.
+Tras guardar la partida en caso de desearlo y cargar otra aprtida, la partida cargada continuará desde donde se dejó.
 END
 
 Menu: Juego
@@ -98,7 +98,7 @@ Atajo: <b>Ctl + F</b>
 
 Finaliza la partida actual preguntando si se desea guardar.
 
-Si no hay una partida en curso, se desplegará una advertencia.
+Si no hay una partida en curso, no se podrá acceder a esta opción.
 END
 
 Menu: Mas
@@ -107,7 +107,7 @@ END
 
 Atajo: <b>Ctl + H</b>
 
-Despliega esta ventana de ayuda.
+Despliega ésta ventana de ayuda.
 END
 
 Menu: Mas
