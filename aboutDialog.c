@@ -78,11 +78,11 @@ AboutDialog *about_dialog_new(gchar *title)
 
     // inicializa variables
     new->dialog_pointer = gtk_dialog_new();
-    new->about_comments = NULL;
-    new->about_copyright = NULL;
     new->about_logo = NULL;
     new->about_title = NULL;
     new->about_version = NULL;
+    new->about_comments = NULL;
+    new->about_copyright = NULL;
     new->credit_pages_count = 0;
 
     // establece el título
@@ -98,9 +98,6 @@ AboutDialog *about_dialog_new(gchar *title)
 
     new->mBox = gtk_vbox_new(FALSE, 10);
         gtk_box_pack_start(GTK_BOX(new->vBox), new->mBox, TRUE, TRUE, 0);
-
-    // crea un botón interno
-    new->iButton = gtk_dialog_add_button(new->dialog, "\0", GTK_RESPONSE_CLOSE);
 
     return new;
 }
@@ -276,7 +273,7 @@ void about_dialog_run(AboutDialog *dialog)
     if(size > 1)
     {
         // crea una cadena del tamaño exacto considerando el formato a darle
-        line = malloc(sizeof(gchar) * (size + strlen("<span weight='bold' size='xx-large'></span>")));
+        line = malloc(sizeof(gchar) * (size + strlen("<span weight='bold' size='xx-large'></span>") + 1));
         sprintf(line, "<span weight='bold' size='xx-large'>");
 
         // según los campos presentes, coloca los valores correspondientes
@@ -316,7 +313,7 @@ void about_dialog_run(AboutDialog *dialog)
     // si hay copyright, lo coloca con formato
     if(dialog->about_copyright != NULL)
     {
-        line = malloc(sizeof(gchar) * (strlen(dialog->about_copyright) + strlen("<span size='small'></span>")));
+        line = malloc(sizeof(gchar) * (strlen(dialog->about_copyright) + strlen("<span size='small'></span>") + 1));
         sprintf(line, "<span size='small'>%s</span>", dialog->about_copyright);
             
         label = gtk_label_new(NULL);
@@ -330,7 +327,7 @@ void about_dialog_run(AboutDialog *dialog)
 
     // botón cerrar
     button = gtk_button_new();
-        gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(about_dialog_on_close), dialog);
+        gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(my_dialogs_on_button_clicked), gtk_dialog_add_button(dialog->dialog, "\0", GTK_RESPONSE_CLOSE));
         gtk_button_set_image(GTK_BUTTON(button), gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_BUTTON));
         gtk_button_set_label(GTK_BUTTON(button), "Cerrar");
         gtk_box_pack_end(GTK_BOX(hBox), button, FALSE, TRUE, 0);
@@ -416,7 +413,7 @@ void about_dialog_on_credits(GtkWidget *widget, gpointer data)
 {
     AboutDialog *about = (AboutDialog *) data;
 
-    GtkWidget *dialog, *vBox, *hBox, *button, *iButton;
+    GtkWidget *dialog, *vBox, *hBox, *button;
     GtkWidget *notebook, *label, *child;
     GtkTextBuffer *buffer;
 
@@ -426,9 +423,6 @@ void about_dialog_on_credits(GtkWidget *widget, gpointer data)
     dialog = gtk_dialog_new();
         gtk_window_set_title(GTK_WINDOW(dialog), "Créditos");
         gtk_window_set_default_size(GTK_WINDOW(dialog), 360, 260);
-
-    // Botón interno
-    iButton = gtk_dialog_add_button(GTK_DIALOG(dialog), "\0", GTK_RESPONSE_CLOSE);
 
     // contenedor de las páginas
     vBox = gtk_vbox_new(FALSE, 10);
@@ -462,7 +456,7 @@ void about_dialog_on_credits(GtkWidget *widget, gpointer data)
         gtk_box_pack_start(GTK_BOX(vBox), hBox, FALSE, TRUE, 0);
 
     button = gtk_button_new();
-        gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(about_dialog_credits_on_close), iButton);
+        gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(my_dialogs_on_button_clicked), gtk_dialog_add_button(GTK_DIALOG(dialog), "\0", GTK_RESPONSE_CLOSE));
         gtk_button_set_image(GTK_BUTTON(button), gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_BUTTON));
         gtk_button_set_label(GTK_BUTTON(button), "Cerrar");
         gtk_box_pack_end(GTK_BOX(hBox), button, FALSE, FALSE, 10);
@@ -477,34 +471,4 @@ void about_dialog_on_credits(GtkWidget *widget, gpointer data)
     gtk_widget_destroy(dialog);
 
     return;
-}
-
-/**
- * Al cerrar la ventana de créditos
- * 
- * @param *widget El botón presionado
- * @param data El botón interno para cerrar la ventana
- */
-void about_dialog_credits_on_close(GtkWidget *widget, gpointer data)
-{
-  GtkWidget *button = (GtkWidget *) data;
-
-  gtk_button_clicked(GTK_BUTTON(button));
-
-  return;
-}
-
-/**
- * Al cerrar el AboutDialog
- * 
- * @param *widget El botón presionado
- * @param data El AboutDialog
- */
-void about_dialog_on_close(GtkWidget *widget, gpointer data)
-{
-	AboutDialog *dialog = (AboutDialog *) data;
-
-	gtk_button_clicked(GTK_BUTTON(dialog->iButton));
-
-	return;
 }

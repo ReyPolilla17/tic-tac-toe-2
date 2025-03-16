@@ -18,8 +18,6 @@ typedef struct def_HelpPage // Página de ayuda
 typedef struct def_HelpDialog // Ventana de ayuda
 {
 	GtkWidget *dialog_pointer; // Puntero al widget
-	GtkWidget *iButton; // Botón interno (cerrar)
-	GtkWidget *cButton; // Botón cerrar
 	GtkWidget *pButton; // Botón anterior
 	GtkWidget *nButton; // Botón siguiente
 	GtkWidget *tLabel; // Etiqueta título
@@ -45,23 +43,27 @@ typedef struct def_AboutDialogPage // Página de créditos
 
 typedef struct def_AboutDialog // Ventana de créditos
 {
-  GtkWidget *dialog_pointer;
-  GtkWidget *vBox;
-  GtkWidget *mBox;
-  GtkWidget *about_logo;
-  gchar *about_title;
-  gchar *about_version;
-  gchar *about_comments;
-  gchar *about_copyright;
+  GtkWidget *dialog_pointer; // Puntero al widget
+  GtkDialog *dialog; // Puntero de la ventana
+  GtkWidget *vBox; // Contenedor principal
+  GtkWidget *mBox; // Contenedor de la información
+  
+  GtkWidget *about_logo; // Logo del programa
+  gchar *about_title; // Título del programa
+  gchar *about_version; // Version del programa
+  gchar *about_comments; // Comentario del programa
+  gchar *about_copyright; // Copyright del programa
 
-  gint credit_pages_count;
-  AboutDialogPage *pages[3];
-
-  GtkDialog *dialog;
-  GtkWidget *iButton;
-  GtkWidget *crButton;
-  GtkWidget *iclButton;
+  gint credit_pages_count; // Cuenta de páginas del programa
+  AboutDialogPage *pages[3]; // Páginas del programa
 } AboutDialog;
+
+/**
+ * Funciones genéricas
+ */
+
+void my_dialogs_on_button_clicked(GtkWidget *widget, gpointer data);
+
 
 /**
  * Funciones para el menú de ayuda
@@ -77,7 +79,6 @@ void help_dialog_destroy(HelpDialog *dialog);
 // Funcionamiento interno
 void help_dialog_on_past(GtkWidget *widget, gpointer data);
 void help_dialog_on_next(GtkWidget *widget, gpointer data);
-void help_dialog_on_close(GtkWidget *widget, gpointer data);
 
 
 /**
@@ -102,5 +103,11 @@ void about_dialog_destroy(AboutDialog *dialog);
 
 // Funcionamiento interno
 void about_dialog_on_credits(GtkWidget *widget, gpointer data);
-void about_dialog_on_close(GtkWidget *widget, gpointer data);
-void about_dialog_credits_on_close(GtkWidget *widget, gpointer data);
+
+
+/**
+ * Funciones ventana de confirmación
+ */
+
+// Creación
+gint confirmation_dialog(gchar *title, gchar *message);

@@ -59,7 +59,6 @@ void loadMainWindow(JUEGO *juego)
 
   // otras imagenes necesarias
   juego->graficos.hercules = gdk_pixbuf_new_from_file_at_scale("./MEDIA/hercules.raw", 200, 200, TRUE, NULL);
-  juego->graficos.logo = gdk_pixbuf_new_from_file_at_scale("./MEDIA/logo.png", 200, 200, TRUE, NULL);
 
 
   // crea una ventana con el titulo y le asocia la función destruir

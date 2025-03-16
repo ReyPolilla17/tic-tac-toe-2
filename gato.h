@@ -9,6 +9,11 @@
 #define IA_NAME "hercules.raw"
 #define ICONS "XO"
 
+// Estados del juego (Para facilitar la lectura del código)
+#define GAME_ENDED -1
+#define GAME_STARTED 1
+#define GAME_NOT_STARTED 0
+
 typedef struct def_movimiento // Turno jugado (historial)
 {
     char tablero[3][3]; // Tablero en ese movimiento
@@ -49,7 +54,6 @@ typedef struct def_grafico
   GdkPixbuf *m20[3];
   GdkPixbuf *m60[3];
   GdkPixbuf *hercules;
-  GdkPixbuf *logo;
 } GRAFICO;
 
 typedef struct def_juego
@@ -61,6 +65,8 @@ typedef struct def_juego
 // inicialización
 void gameStartup(JUEGO *juego);
 void loadMainWindow(JUEGO *juego);
+
+void stopTheApp(GtkWidget *widget, gpointer data);
 
 // funciones del menú de la ventana principal
 void guardarPartida(GtkWidget *widget, gpointer data);
@@ -79,8 +85,6 @@ void board_button_pressed(GtkWidget *eventbox, GdkEventButton *event, gpointer d
 // funciones de los botones del historial
 void history_past(GtkWidget *widget, gpointer data);
 void history_next(GtkWidget *widget, gpointer data);
-
-void stopTheApp(GtkWidget *widget, gpointer data);
 
 // Utilidades
 int getButton(JUEGO *juego, GtkWidget *button, int coords[2]);

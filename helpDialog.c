@@ -18,7 +18,7 @@
 HelpDialog *help_dialog_new(gchar *title)
 {
 	HelpDialog *new; // el puntero a regresar
-	GtkWidget *mhBox, *mBox, *hBox, *vBox, *eBox; // widgets auxiliares
+	GtkWidget *mhBox, *mBox, *hBox, *vBox, *eBox, *button; // widgets auxiliares
 	GdkColor color;
 
 	// obtiene el color del fondo (en versiones futuras podría hacer esto customizable)
@@ -88,12 +88,12 @@ HelpDialog *help_dialog_new(gchar *title)
 		gtk_box_pack_start(GTK_BOX(new->dialog->vbox), hBox, FALSE, TRUE, 0);
 
 	// boton cerrar
-	new->cButton = gtk_button_new();
-		gtk_signal_connect(GTK_OBJECT(new->cButton), "clicked", GTK_SIGNAL_FUNC(help_dialog_on_close), new);
-		gtk_button_set_image(GTK_BUTTON(new->cButton), gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_BUTTON));
-		gtk_button_set_label(GTK_BUTTON(new->cButton), "Cerrar");
-		gtk_widget_set_size_request(new->cButton, 80, 32);
-		gtk_box_pack_start(GTK_BOX(hBox), new->cButton, FALSE, FALSE, 10);
+	button = gtk_button_new();
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(my_dialogs_on_button_clicked), gtk_dialog_add_button(new->dialog, "\0", GTK_RESPONSE_CLOSE));
+		gtk_button_set_image(GTK_BUTTON(button), gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_BUTTON));
+		gtk_button_set_label(GTK_BUTTON(button), "Cerrar");
+		gtk_widget_set_size_request(button, 80, 32);
+		gtk_box_pack_start(GTK_BOX(hBox), button, FALSE, FALSE, 10);
 
 	// boton siguiente
 	new->nButton = gtk_button_new();
@@ -110,9 +110,6 @@ HelpDialog *help_dialog_new(gchar *title)
 		gtk_widget_set_size_request(new->pButton, 80, 32);
 		gtk_widget_set_sensitive(new->pButton, FALSE);
 		gtk_box_pack_end(GTK_BOX(hBox), new->pButton, FALSE, FALSE, 0);
-	
-	// botón interno
-	new->iButton = gtk_dialog_add_button(new->dialog, "\0", GTK_RESPONSE_CLOSE);
 
 	gtk_widget_show_all(new->dialog_pointer);
 	gtk_widget_hide(new->dialog->action_area); // esconde el botón interno
@@ -499,25 +496,6 @@ void help_dialog_on_next(GtkWidget *widget, gpointer data)
 		// desactiva el botón siguiente (just in case)
 		gtk_widget_set_sensitive(dialog->nButton, FALSE);
 	}
-
-	return;
-}
-
-/**
- * Al presionar el boton cerrar de un HelpDialog
- * 
- * @param *widget El widget que genera el evento
- * @param data El puntero del HelpDialog
- * 
- * @returns void
- */
-void help_dialog_on_close(GtkWidget *widget, gpointer data)
-{
-	// hace un cast para poder trabajar con el HelpDialog
-	HelpDialog *dialog = (HelpDialog *) data;
-
-	// cierra la ventana
-	gtk_button_clicked(GTK_BUTTON(dialog->iButton));
 
 	return;
 }
