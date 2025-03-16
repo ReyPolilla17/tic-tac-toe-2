@@ -1,5 +1,5 @@
-gato.out: gato.o e_MainWindow.o f_MainWindow.o g_MainWindow.o myDialogs.o helpDialog.o aboutDialog.o confirmationDialog.o
-	gcc -g -Wall -o gato.out gato.o e_MainWindow.o f_MainWindow.o g_MainWindow.o myDialogs.o helpDialog.o aboutDialog.o confirmationDialog.o `pkg-config --cflags --libs gtk+-2.0`
+gato.out: gato.o e_MainWindow.o f_MainWindow.o g_MainWindow.o myDialogs.o helpDialog.o aboutDialog.o newGameDialog.o commonDialogs.o
+	gcc -g -Wall -o gato.out gato.o e_MainWindow.o f_MainWindow.o g_MainWindow.o myDialogs.o helpDialog.o aboutDialog.o newGameDialog.o commonDialogs.o `pkg-config --cflags --libs gtk+-2.0`
 
 gato.o: gato.c
 	gcc -g -Wall -c gato.c `pkg-config --cflags --libs gtk+-2.0`
@@ -22,8 +22,11 @@ helpDialog.o: helpDialog.c
 aboutDialog.o: aboutDialog.c
 	gcc -g -Wall -c aboutDialog.c `pkg-config --cflags --libs gtk+-2.0`
 
-confirmationDialog.o: confirmationDialog.c
-	gcc -g -Wall -c confirmationDialog.c `pkg-config --cflags --libs gtk+-2.0`
+newGameDialog.o: newGameDialog.c
+	gcc -g -Wall -c newGameDialog.c `pkg-config --cflags --libs gtk+-2.0`
+
+commonDialogs.o: commonDialogs.c
+	gcc -g -Wall -c commonDialogs.c `pkg-config --cflags --libs gtk+-2.0`
 
 clean:
 	rm *.o

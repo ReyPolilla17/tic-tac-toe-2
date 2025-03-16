@@ -10,20 +10,20 @@
 #define ICONS "XO"
 
 // Estados del juego (Para facilitar la lectura del código)
-#define GAME_ENDED -1
-#define GAME_STARTED 1
-#define GAME_NOT_STARTED 0
+#define GAME_ENDED -1 // El juego ha temrinado (hay un ganador o un empate)
+#define GAME_STARTED 1 // El juego está en curso
+#define GAME_NOT_STARTED 0 // No hay una partida en curso
 
 typedef struct def_movimiento // Turno jugado (historial)
 {
     char tablero[3][3]; // Tablero en ese movimiento
-    int game_status; // Estado de la partida en ese movimiento (-1 -> terminado, 1 -> en curso, 0 -> no iniciada)
+    int game_status; // Estado de la partida en ese movimiento (constantes GAME_...)
     int hist_val; // Si es un turno jugable 
 } MOVIMIENTO;
 
 typedef struct def_jugador // Información del jugador
 {
-    char nombre[1000]; // Nombre del jugador
+    char nombre[21]; // Nombre del jugador
     int hard_mode; // Modo dificil activo
     int ia; // si el jugador es una ia
 } JUGADOR;
@@ -41,6 +41,7 @@ typedef struct def_grafico
 {
   GtkWidget *window;
   GtkWidget *menuMore;
+  GtkWidget *menuTruth;
   GtkWidget *menuSave;
   GtkWidget *menuEnd;
   GtkWidget *playingImg;

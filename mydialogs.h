@@ -58,6 +58,19 @@ typedef struct def_AboutDialog // Ventana de créditos
   AboutDialogPage *pages[3]; // Páginas del programa
 } AboutDialog;
 
+typedef struct def_newGameNewGameModal
+{
+    GtkWidget *dialog;
+    GtkWidget *radio;
+    GtkWidget *check;
+    GtkWidget *entry_names[2];
+    GtkWidget *warning;
+
+    const gchar *names[2];
+    gint vs_ia;
+    gint hard_mode;
+} NewGameModal;
+
 /**
  * Funciones genéricas
  */
@@ -106,8 +119,22 @@ void about_dialog_on_credits(GtkWidget *widget, gpointer data);
 
 
 /**
- * Funciones ventana de confirmación
+ * Funciones de la ventana de juego nuevo
+ */
+
+// Creación y recuperación de datos
+void new_game_modal_new(NewGameModal *info);
+gint new_game_modal_get_info(NewGameModal *info);
+
+// Funciones internas
+void new_game_modal_radio_changed(GtkWidget *widget, gpointer data);
+void new_game_modal_updated(GtkWidget *widget, gpointer data);
+
+
+/**
+ * Funciones ventanas comunes
  */
 
 // Creación
 gint confirmation_dialog(gchar *title, gchar *message);
+void warning_dialog(gchar *title, gchar *message);

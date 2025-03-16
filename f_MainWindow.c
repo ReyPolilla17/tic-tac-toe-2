@@ -8,7 +8,7 @@ void gameStartup(JUEGO *juego)
     juego->partida.turno = 0;
     juego->partida.turno_max = 0;
 
-    juego->partida.historial[0].game_status = 0;
+    juego->partida.historial[0].game_status = GAME_NOT_STARTED;
     juego->partida.historial[0].hist_val = 0;
 
     for(i = 0; i < 2; i++)

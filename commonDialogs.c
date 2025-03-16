@@ -1,8 +1,8 @@
 /**
- * @file confirmationDialog.c
+ * @file commonDialogs.c
  * 
  * @brief Contiene las funciones necesarias para la creación de una ventana de confirmación de fácil ejecución
- * con las repsuestas si y no
+ * con las repsuestas si y no y una ventana que muestre un mensaje de advertencia
  * 
  * @author Luis Julián Zamora Treviño
  * @date 15/03/2025
@@ -76,4 +76,51 @@ gint confirmation_dialog(gchar *title, gchar *message)
     free(span);
 
     return res; // regresa el resultado
+}
+
+/**
+ * Función de creación de la ventana de advertencia
+ * 
+ * @param *title El título de la ventana
+ * @param *message La pregunta de la ventana
+ * 
+ * @returns void
+ */
+void warning_dialog(gchar *title, gchar *message)
+{
+    GtkWidget *dialog, *vBox, *hBox, *label; // widgets de la ventana
+
+    // Aloca una cadena para la pregunta de la ventana con formato
+    gchar *span = malloc(sizeof(gchar) * (strlen(message) + strlen("<span size='large'></span>") + 1));
+        sprintf(span, "<span size='large'>%s</span>", message);
+
+    // genera la ventana
+    dialog = gtk_dialog_new();
+        gtk_window_set_title(GTK_WINDOW(dialog), title);
+        gtk_dialog_add_button(GTK_DIALOG(dialog), "Cerrar", GTK_RESPONSE_CLOSE);
+        
+    vBox = gtk_vbox_new(FALSE, 10);
+        gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), vBox, TRUE, TRUE, 10);
+        
+    hBox = gtk_hbox_new(TRUE, 10);
+        gtk_box_pack_start(GTK_BOX(vBox), hBox, FALSE, TRUE, 10);
+
+    // genera la advertencia
+    label = gtk_label_new(NULL);
+        gtk_label_set_markup(GTK_LABEL(label), span);
+        gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+        gtk_box_pack_start(GTK_BOX(hBox), label, FALSE, TRUE, 10);
+
+    hBox = gtk_hbox_new(TRUE, 10);
+        gtk_box_pack_end(GTK_BOX(vBox), hBox, FALSE, TRUE, 0);
+    
+    // muestra la ventana
+    gtk_widget_show_all(dialog);    
+    gtk_dialog_run(GTK_DIALOG(dialog));
+
+    // libera la memoria necesaria
+    gtk_widget_destroy(dialog);
+    free(span);
+
+    return;
 }
