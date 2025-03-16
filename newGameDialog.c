@@ -160,7 +160,7 @@ gint new_game_modal_get_info(NewGameModal *info)
             for(i = 0; (i < 2 - info->vs_ia) && v; i++)
             {
                 // obtiene el valor ingresado
-                info->names[i] = gtk_entry_get_text(GTK_ENTRY(info->entry_names[i]));
+                strcpy(info->names[i], gtk_entry_get_text(GTK_ENTRY(info->entry_names[i])));
 
                 // si no hay info, muestra un mnesaje de error y la entrada no es válida
                 if(!strlen(info->names[i]))

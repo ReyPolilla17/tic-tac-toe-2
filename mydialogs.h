@@ -66,7 +66,7 @@ typedef struct def_newGameNewGameModal
     GtkWidget *entry_names[2];
     GtkWidget *warning;
 
-    const gchar *names[2];
+    gchar names[2][21];
     gint vs_ia;
     gint hard_mode;
 } NewGameModal;

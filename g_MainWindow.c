@@ -44,7 +44,7 @@ void loadMainWindow(JUEGO *juego)
   int j = 0;
 
   // iniciaización de variables
-  gdk_color_parse("#DCDAD5", &light_grey);  
+  gdk_color_parse("#DCDAD5", &light_grey);
   gdk_color_parse("#7a7a7a", &dark_grey);
 
   // creación de imagenes que se utilizan en diversos puntos de la partida
@@ -135,24 +135,24 @@ void loadMainWindow(JUEGO *juego)
     gtk_menu_item_set_label(GTK_MENU_ITEM(menuItem), "Más");
     gtk_menu_shell_append(GTK_MENU_SHELL(menuBar), menuItem);
 
-  juego->graficos.menuMore = gtk_menu_new();
-    gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuItem), juego->graficos.menuMore);
-    gtk_menu_set_accel_group(GTK_MENU(juego->graficos.menuMore), group);
+  submenu = gtk_menu_new();
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuItem), submenu);
+    gtk_menu_set_accel_group(GTK_MENU(submenu), group);
 
   subItem = gtk_menu_item_new_with_mnemonic("Cómo jugar");
     gtk_widget_add_accelerator(subItem, "activate", group, 'H', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(comoJugar), juego);
-    gtk_menu_shell_append(GTK_MENU_SHELL(juego->graficos.menuMore), subItem);
+    gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
 
   subItem = gtk_menu_item_new_with_mnemonic("Acerca de");
     gtk_widget_add_accelerator(subItem, "activate", group, 'A', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(acercaDe), juego);
-    gtk_menu_shell_append(GTK_MENU_SHELL(juego->graficos.menuMore), subItem);
+    gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
 
-  // subItem = gtk_menu_item_new_with_mnemonic("See");
-  //   gtk_widget_add_accelerator(subItem, "activate", group, 'T', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-  //   gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(laVerdad), juego);
-  //   gtk_menu_shell_append(GTK_MENU_SHELL(juego->graficos.menuMore), subItem);
+  juego->graficos.menuTruth = gtk_menu_item_new_with_mnemonic("Truth");
+    gtk_widget_add_accelerator(juego->graficos.menuTruth, "activate", group, 'T', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_signal_connect(GTK_OBJECT(juego->graficos.menuTruth), "activate", G_CALLBACK(laVerdad), juego);
+    gtk_menu_shell_append(GTK_MENU_SHELL(submenu), juego->graficos.menuTruth);
 
   /**
    * Fin de la seccion del menu
@@ -303,7 +303,7 @@ void loadMainWindow(JUEGO *juego)
   for(i = 0; i < 2; i++)
   {
     hBox = gtk_hbox_new(FALSE, 0);
-      gtk_box_pack_end(GTK_BOX(vBox), hBox, FALSE, TRUE, 10);
+      gtk_box_pack_start(GTK_BOX(vBox), hBox, FALSE, TRUE, 10);
 
     juego->graficos.playerImg[i] = gtk_image_new_from_pixbuf(juego->graficos.m20[i]);
       gtk_box_pack_start(GTK_BOX(hBox), juego->graficos.playerImg[i], FALSE, TRUE, 10);
@@ -327,6 +327,8 @@ void loadMainWindow(JUEGO *juego)
       gtk_widget_set_size_request(juego->graficos.flames[i], 10, 200);
       gtk_box_pack_end(GTK_BOX(flameContainter[i]), juego->graficos.flames[i], FALSE, TRUE, 0);
   }
+
+  gtk_widget_hide(juego->graficos.menuTruth);
   
   return;
 }

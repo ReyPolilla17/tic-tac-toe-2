@@ -40,7 +40,6 @@ typedef struct def_funcional // Parte funcional del juego
 typedef struct def_grafico
 {
   GtkWidget *window;
-  GtkWidget *menuMore;
   GtkWidget *menuTruth;
   GtkWidget *menuSave;
   GtkWidget *menuEnd;
@@ -89,3 +88,26 @@ void history_next(GtkWidget *widget, gpointer data);
 
 // Utilidades
 int getButton(JUEGO *juego, GtkWidget *button, int coords[2]);
+void cleanScreen(JUEGO *juego);
+void displayHardMode(JUEGO *juego);
+
+void newGame(JUEGO *juego);
+gint saveGame(JUEGO *juego);
+void loadGame(JUEGO *juego);
+
+/**
+ * Al cambiar la imagen de turno actual
+ * 
+ *  gtk_widget_destroy(juego->graficos.playingImg);
+ *  juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[n]);
+ *      gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
+ *      gtk_widget_show(juego->graficos.playingImg);
+ * 
+ * 
+ * Al cambiar la imagen de un espacio del tablero
+ * 
+ *  gtk_widget_destroy(juego->graficos.buttonImg[i][j]);
+ *  juego->graficos.buttonImg[i][j] = gtk_image_new_from_pixbuf(juego->graficos.m60[n]);
+ *      gtk_container_add(GTK_CONTAINER(juego->graficos.buttons[i][j]), juego->graficos.buttonImg[i][j]);
+ *      gtk_widget_show(juego->graficos.buttonImg[i][j]);
+ */
