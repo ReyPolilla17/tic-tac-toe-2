@@ -43,17 +43,20 @@ void terminarPartida(GtkWidget *widget, gpointer data)
 		v = 1;
 		res = confirmation_dialog("Terminar Partida", "¿Deseas guardar la partida antes de terminarla?");
 
-		if((res == GTK_RESPONSE_YES && saveGame(juego) == GTK_RESPONSE_ACCEPT) || res == GTK_RESPONSE_NO)
+		if((res == GTK_RESPONSE_YES && saveGame(juego) == GTK_RESPONSE_ACCEPT) || res == GTK_RESPONSE_NO || res == GTK_RESPONSE_DELETE_EVENT)
 		{
 			v = 0;
 		}
 	} while(v);
 
-	gtk_widget_set_sensitive(juego->graficos.menuEnd, FALSE);
-	gtk_widget_set_sensitive(juego->graficos.menuSave, FALSE);
-
-	gameStartup(juego);
-	cleanScreen(juego);
+	if(res != GTK_RESPONSE_DELETE_EVENT)
+	{
+		gtk_widget_set_sensitive(juego->graficos.menuEnd, FALSE);
+		gtk_widget_set_sensitive(juego->graficos.menuSave, FALSE);
+	
+		gameStartup(juego);
+		cleanScreen(juego);
+	}
 	
 	return;
 }
@@ -179,7 +182,7 @@ void board_button_pressed(GtkWidget *eventbox, GdkEventButton *event, gpointer d
 
 	if(getButton(juego, eventbox, coords) && juego->partida.historial[juego->partida.turno].tablero[coords[0]][coords[1]] == ' ' && juego->partida.historial[juego->partida.turno].game_status == GAME_STARTED)
 	{
-		g_print("%d, %d\n", coords[0], coords[1]);
+		turnPlayed(juego, coords[0], coords[1]);
 	}
 	else if(juego->partida.historial[juego->partida.turno].game_status == GAME_NOT_STARTED)
 	{

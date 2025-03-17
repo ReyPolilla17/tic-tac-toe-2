@@ -91,9 +91,22 @@ int getButton(JUEGO *juego, GtkWidget *button, int coords[2]);
 void cleanScreen(JUEGO *juego);
 void displayHardMode(JUEGO *juego);
 
+void turnPlayed(JUEGO *juego, int x, int y);
+void aiTurn(JUEGO *juego);
+void chooseSpace(JUEGO *juego, int *x, int *y);
+void logMove(JUEGO *juego, int replayable);
+int checkGame(char tablero[3][3], char played);
+void printBoard(char tablero[3][3]);
+void coppyBoard(char dest[3][3], char src[3][3]);
+void coppyBoardIntoGraphic(JUEGO *juego);
+
 void newGame(JUEGO *juego);
 gint saveGame(JUEGO *juego);
 void loadGame(JUEGO *juego);
+
+void tie_dialog(JUEGO *juego);
+void victory_dialog(JUEGO *juego);
+
 
 /**
  * Al cambiar la imagen de turno actual

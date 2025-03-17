@@ -1,5 +1,5 @@
-gato.out: gato.o e_MainWindow.o f_MainWindow.o g_MainWindow.o myDialogs.o helpDialog.o aboutDialog.o newGameDialog.o commonDialogs.o
-	gcc -g -Wall -o gato.out gato.o e_MainWindow.o f_MainWindow.o g_MainWindow.o myDialogs.o helpDialog.o aboutDialog.o newGameDialog.o commonDialogs.o `pkg-config --cflags --libs gtk+-2.0`
+gato.out: gato.o e_MainWindow.o f_MainWindow.o g_MainWindow.o helpDialog.o aboutDialog.o newGameDialog.o endDialogs.o commonDialogs.o
+	gcc -g -Wall -o gato.out gato.o e_MainWindow.o f_MainWindow.o g_MainWindow.o helpDialog.o aboutDialog.o newGameDialog.o endDialogs.o commonDialogs.o `pkg-config --cflags --libs gtk+-2.0`
 
 gato.o: gato.c
 	gcc -g -Wall -c gato.c `pkg-config --cflags --libs gtk+-2.0`
@@ -13,9 +13,6 @@ f_MainWindow.o: f_MainWindow.c
 g_MainWindow.o: g_MainWindow.c
 	gcc -g -Wall -c g_MainWindow.c `pkg-config --cflags --libs gtk+-2.0`
 
-myDialogs.o: myDialogs.c
-	gcc -g -Wall -c myDialogs.c `pkg-config --cflags --libs gtk+-2.0`
-
 helpDialog.o: helpDialog.c
 	gcc -g -Wall -c helpDialog.c `pkg-config --cflags --libs gtk+-2.0`
 
@@ -24,6 +21,9 @@ aboutDialog.o: aboutDialog.c
 
 newGameDialog.o: newGameDialog.c
 	gcc -g -Wall -c newGameDialog.c `pkg-config --cflags --libs gtk+-2.0`
+
+endDialogs.o: endDialogs.c
+	gcc -g -Wall -c endDialogs.c `pkg-config --cflags --libs gtk+-2.0`
 
 commonDialogs.o: commonDialogs.c
 	gcc -g -Wall -c commonDialogs.c `pkg-config --cflags --libs gtk+-2.0`

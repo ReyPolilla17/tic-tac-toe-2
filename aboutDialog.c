@@ -307,6 +307,7 @@ void about_dialog_run(AboutDialog *dialog)
     if(dialog->about_comments != NULL)
     {
         label = gtk_label_new(dialog->about_comments);
+            gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
             gtk_box_pack_start(GTK_BOX(dialog->mBox), label, FALSE, FALSE, 0);
     }
 
