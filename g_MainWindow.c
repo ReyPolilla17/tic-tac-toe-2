@@ -328,6 +328,7 @@ void loadMainWindow(JUEGO *juego)
       gtk_box_pack_end(GTK_BOX(flameContainter[i]), juego->graficos.flames[i], FALSE, TRUE, 0);
   }
 
+  // oculta la verdad
   gtk_widget_hide(juego->graficos.menuTruth);
   
   return;

@@ -1,24 +1,48 @@
+/**
+ * @file e_MainWindow.c
+ * 
+ * @brief Contiene todas las funciones de eventos que suceden en la ventana principal
+ * 
+ * @author Luis Julián Zamora Treviño
+ * @date 16/03/2025
+ */
 #include "gato.h"
 
+/**
+ * Al cerrar la ventana principal
+ * 
+ * @param *widget La ventana principal
+ * @param data Información del juego como gpointer
+ */
 void stopTheApp(GtkWidget *widget, gpointer data)
 {
 	JUEGO *juego = (JUEGO *)data;
 
+	// en caso de que haya música sonando
 	if(juego->partida.jugadores[0].hard_mode || juego->partida.jugadores[1].hard_mode)
 	{
 		system("killall aplay");
 	}
 
+	// detiene el loop
 	gtk_main_quit();
 
 	return;
 }
 
 // Menú Archivo
+
+/**
+ * Opción guardar partida
+ * 
+ * @param *widget La opción seleccionada
+ * @param data Información del juego como gpointer
+ */
 void guardarPartida(GtkWidget *widget, gpointer data)
 {
 	JUEGO *juego = (JUEGO *)data; 
 
+	// en caso de guardar sin partida en curso (no debería pasar)
 	if(juego->partida.historial[juego->partida.turno].game_status == GAME_NOT_STARTED)
 	{
 		warning_dialog("Sin Partida en Curso", "No hay una partida en curso para guardar.");
@@ -26,12 +50,18 @@ void guardarPartida(GtkWidget *widget, gpointer data)
 	}
 	else
 	{
-		saveGame(juego);
+		saveGame(juego); // guarda partida
 	}
 
 	return;
 }
 
+/**
+ * Opción cargar partida
+ * 
+ * @param *widget La opción seleccionada
+ * @param data Información del juego como gpointer
+ */
 void cargarPartida(GtkWidget *widget, gpointer data)
 {
 	JUEGO *juego = (JUEGO *)data;
@@ -39,8 +69,10 @@ void cargarPartida(GtkWidget *widget, gpointer data)
 	gint res = 0;
 	gint v = 0;
 	
+	// si hay una partida en curso
 	if(juego->partida.historial[juego->partida.turno].game_status != GAME_NOT_STARTED)
 	{
+		// consulta si se desea guardar partida y en caso de aceptar guarda
 		do
 		{
 			v = 1;
@@ -54,6 +86,7 @@ void cargarPartida(GtkWidget *widget, gpointer data)
 
 	}
 
+	// si no se ha cancelado la acción, carga la partida
 	if(res != GTK_RESPONSE_DELETE_EVENT)
 	{
 		loadGame(juego);
@@ -63,15 +96,28 @@ void cargarPartida(GtkWidget *widget, gpointer data)
 }
 
 // Menú Juego
+
+/**
+ * Opcion nueva partida
+ * 
+ * @param *widget La opción seleccionada
+ * @param data Información del juego como gpointer
+ */
 void nuevaPartida(GtkWidget *widget, gpointer data)
 {
 	JUEGO *juego = (JUEGO *)data; 
 
-	newGame(juego);
+	newGame(juego); // inicia una nueva partida
 
 	return;
 }
 
+/**
+ * Opción terminar partida
+ *
+ * @param *widget La opción seleccionada
+ * @param data Información del juego como gpointer
+ */
 void terminarPartida(GtkWidget *widget, gpointer data)
 {
 	JUEGO *juego = (JUEGO *)data;
@@ -80,6 +126,7 @@ void terminarPartida(GtkWidget *widget, gpointer data)
 
 	int v = 0;
 
+	// si no hay una partida en curso (no debería pasar)
 	if(juego->partida.historial[juego->partida.turno].game_status == GAME_NOT_STARTED)
 	{
 		warning_dialog("Sin Partida en Curso", "No hay una partida en curso para terminar.");
@@ -88,6 +135,7 @@ void terminarPartida(GtkWidget *widget, gpointer data)
 		return;
 	}
 
+	// Consulta si se desa guardar y guarda en caso de que si
 	do
 	{
 		v = 1;
@@ -99,6 +147,7 @@ void terminarPartida(GtkWidget *widget, gpointer data)
 		}
 	} while(v);
 
+	// si no se ha cancelado la acción, limpia la ventana
 	if(res != GTK_RESPONSE_DELETE_EVENT)
 	{
 		gtk_widget_set_sensitive(juego->graficos.menuEnd, FALSE);
@@ -195,11 +244,19 @@ void laVerdad(GtkWidget *widget, gpointer data)
 
 // Botones del tablero
 
+/**
+ * Al pasar el cursor sobre un botón del tablero
+ * 
+ * @param *eventbox El botón seleccionado
+ * @param *event Evento ocurrido
+ * @param data Información del juego como gpointer
+ */
 void board_button_hover(GtkWidget *eventbox, GdkEventButton *event, gpointer data)
 {
 	JUEGO *juego = (JUEGO *)data;
 	GdkColor color;
 
+	// Si la partida no se ha terminado, cambia el color del fondo
 	if(juego->partida.historial[juego->partida.turno].game_status != GAME_ENDED)
 	{
 		gdk_color_parse("#A3A3A3", &color);
@@ -209,6 +266,13 @@ void board_button_hover(GtkWidget *eventbox, GdkEventButton *event, gpointer dat
 	return;
 }
 
+/**
+ * Al sacar el cursor de un botón del tablero
+ * 
+ * @param *eventbox El botón seleccionado
+ * @param *event Evento ocurrido
+ * @param data Información del juego como gpointer
+ */
 void board_button_leave(GtkWidget *eventbox, GdkEventButton *event, gpointer data)
 {
 	JUEGO *juego = (JUEGO *)data;
@@ -216,6 +280,7 @@ void board_button_leave(GtkWidget *eventbox, GdkEventButton *event, gpointer dat
 
 	int coords[2];
 
+	// Si el botón no ha sido clickeado y no se ha terminado la partida, reinicia el color de fondo
 	if(getButton(juego, eventbox, coords) && juego->partida.historial[juego->partida.turno].tablero[coords[0]][coords[1]] == ' ' && juego->partida.historial[juego->partida.turno].game_status != GAME_ENDED)
 	{
 		gdk_color_parse("#DCDAD5", &color);
@@ -225,38 +290,59 @@ void board_button_leave(GtkWidget *eventbox, GdkEventButton *event, gpointer dat
 	return;
 }
 
+/**
+ * Al presionar un botón del tablero
+ * 
+ * @param *eventbox El botón seleccionado
+ * @param *event Evento ocurrido
+ * @param data Información del juego como gpointer
+ */
 void board_button_pressed(GtkWidget *eventbox, GdkEventButton *event, gpointer data)
 {
 	JUEGO *juego = (JUEGO *)data;
 	int coords[2];
 
+	// si es capaz de recuperar el botón, no ha sido presionado y el juego no ha terminado
 	if(getButton(juego, eventbox, coords) && juego->partida.historial[juego->partida.turno].tablero[coords[0]][coords[1]] == ' ' && juego->partida.historial[juego->partida.turno].game_status == GAME_STARTED)
 	{
-		turnPlayed(juego, coords[0], coords[1]);
+		turnPlayed(juego, coords[0], coords[1]); // juega un turno
 	}
-	else if(juego->partida.historial[juego->partida.turno].game_status == GAME_NOT_STARTED)
+	else if(juego->partida.historial[juego->partida.turno].game_status == GAME_NOT_STARTED) // si no se ha iniciado la partida
 	{
-		newGame(juego);
+		newGame(juego); // establece una nueva partida
 	}
 
 	return;
 }
 
 // botones de historial
+
+/**
+ * Turno pasado
+ * 
+ * @param *widget El botón seleccionado
+ * @param data Información del juego como gpointer
+ */
 void history_past(GtkWidget *widget, gpointer data)
 {
 	JUEGO *juego = (JUEGO *)data;
 
-	lastTurn(juego);
+	lastTurn(juego); // intenta regresar al turno pasado
 
 	return;
 }
 
+/**
+ * Siguiente turno
+ * 
+ * @param *widget El botón seleccionado
+ * @param data Infomración del juego ocmo gpointer
+ */
 void history_next(GtkWidget *widget, gpointer data)
 {
 	JUEGO *juego = (JUEGO *)data;
 	
-	nextTurn(juego);
+	nextTurn(juego); // intenta ir al siguiente turno
 
 	return;
 }

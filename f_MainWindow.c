@@ -1,16 +1,65 @@
+/**
+ * @file f_MainWindow.c
+ * 
+ * @brief Contiene todas las funciones que requiere la ventana principal para funcionar correctamente
+ * 
+ * @author Luis Julián Zamora Treviño
+ * @date 16/03/2025
+ */
 #include "gato.h"
 
+/**
+ * Obtiene las coordenadas del botón del tablero que fue presionado
+ * 
+ * @param *juego Información de la partida
+ * @param *button El botón que fue presionado
+ * @param coords[2] Las coordenadas del botón seleccionado
+ * 
+ * @returns int (0 si no encuentra el botón, 1 si encuentra el botón)
+ */
+int getButton(JUEGO *juego, GtkWidget *button, int coords[2])
+{
+    int i = 0;
+    int j = 0;
+
+    // busca en todos los botones el botón seleccionado
+    for(i = 0; i < 3; i++)
+    {
+        for(j = 0; j < 3; j++)
+        {
+            if(button == juego->graficos.buttons[i][j]) // al encontrar el botón
+            {
+                // guarda las coordenadas
+                coords[0] = i;
+                coords[1] = j;
+
+                // sale de la función
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+/**
+ * Inicializa la partida internamente
+ * 
+ * @param *juego información de la partida
+ */
 void gameStartup(JUEGO *juego)
 {
     int i = 0;
     int j = 0;
 
+    // reinicia el historial
     juego->partida.turno = 0;
     juego->partida.turno_max = 0;
 
     juego->partida.historial[0].game_status = GAME_NOT_STARTED;
     juego->partida.historial[0].hist_val = 0;
 
+    // reinicia la infroamcaión de los jugadores
     for(i = 0; i < 2; i++)
     {
         juego->partida.jugadores[i].hard_mode = 0;
@@ -18,6 +67,7 @@ void gameStartup(JUEGO *juego)
         juego->partida.jugadores[i].nombre[0] = 0;
     }
 
+    // reinicia el tablero
     for(i = 0; i < 3; i++)
     {
         for(j = 0; j < 3; j++)
@@ -29,6 +79,11 @@ void gameStartup(JUEGO *juego)
     return;
 }
 
+/**
+ * Inicializa la partida de forma general (grafica e internamente)
+ * 
+ * @param *juego Información de la partida
+ */
 void newGame(JUEGO *juego)
 {
     NewGameModal info;
@@ -42,6 +97,7 @@ void newGame(JUEGO *juego)
 	// Si hay una partida en curso
 	if(juego->partida.historial[juego->partida.turno].game_status != GAME_NOT_STARTED)
 	{
+        // consulta y guarda en caso de ser necesario
         do
         {
             v = 1;
@@ -54,56 +110,68 @@ void newGame(JUEGO *juego)
         } while(v);
 	}
 
+    // Si no se ha cancelado la acción
     if(res != GTK_RESPONSE_DELETE_EVENT)
     {
-        new_game_modal_new(&info);
+        new_game_modal_new(&info); // ventana de nueva partida
 
+        // extrae los datos de la nueva partida
         if(new_game_modal_get_info(&info))
         {
-            rn = rand() % 2;
+            rn = rand() % 2; // orden al azar de los jugadores
             
+            // limpia la ventana e inicializa internamente
             cleanScreen(juego);
             gameStartup(juego);
 
+            // muestra el modo dificil si se desea
             if(info.hard_mode)
             {
                 displayHardMode(juego);
             }
 
+            // habilita opciones exclusivas de partida en curso
             gtk_widget_set_sensitive(juego->graficos.menuEnd, TRUE);
             gtk_widget_set_sensitive(juego->graficos.menuSave, TRUE);
 
-            gtk_widget_show(juego->graficos.playerImg[0]);
-            gtk_widget_show(juego->graficos.playerImg[1]);
-
+            // Si el adversario va a ser la computadora
             juego->partida.jugadores[rn].hard_mode = info.hard_mode;
             juego->partida.jugadores[rn].ia = info.vs_ia;
 
+            // si se enfrenta a la computadora, copia el nombre de la ia
             if(info.vs_ia)
             {
                 strcpy(juego->partida.jugadores[rn].nombre, IA_NAME);
             }
-            else
+            else // de lo contrario, copia el nombre del segundo jugador
             {
                 strcpy(juego->partida.jugadores[rn].nombre, info.names[1]);
             }
             
+            // El otro jugador siempre será el primer usuario introducido
             juego->partida.jugadores[(rn + 1) % 2].hard_mode = 0;
             juego->partida.jugadores[(rn + 1) % 2].ia = 0;
             
             strcpy(juego->partida.jugadores[(rn + 1) % 2].nombre, info.names[0]);
 
+            // Muestra los nombres de los jugadores y sus fichas
             gtk_label_set_label(GTK_LABEL(juego->graficos.playerName[0]), juego->partida.jugadores[0].nombre);
+            gtk_widget_show(juego->graficos.playerImg[0]);
+
             gtk_label_set_label(GTK_LABEL(juego->graficos.playerName[1]), juego->partida.jugadores[1].nombre);
+            gtk_widget_show(juego->graficos.playerImg[1]);
             
+            // Establece el status como listo para jugar
             juego->partida.historial[0].game_status = GAME_STARTED;
 
+            // si el primer jugador es la computadora, juega su turno
             if(juego->partida.jugadores[0].ia)
             {
                 np = 1;
                 aiTurn(juego);
             }
 
+            // muesta el jugador del turno actual
             gtk_widget_destroy(juego->graficos.playingImg);
             juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[np]);
                 gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
@@ -114,6 +182,13 @@ void newGame(JUEGO *juego)
     return;
 }
 
+/**
+ * Guarda la partida en curso
+ * 
+ * @param *juego Información del juego
+ * 
+ * @return gint (El resultado de la ventana de guardado)
+ */
 gint saveGame(JUEGO *juego)
 {
     FILE *fp;
@@ -150,6 +225,11 @@ gint saveGame(JUEGO *juego)
     return res;
 }
 
+/**
+ * Carga una partida
+ * 
+ * @param *juego Información de la partida
+ */
 void loadGame(JUEGO *juego)
 {
     FILE *fp;
@@ -165,11 +245,12 @@ void loadGame(JUEGO *juego)
     // muestra la ventana de guardado
     dialog = gtk_file_chooser_dialog_new("Cargar Partida", NULL, GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 
+    // mientras no se haya cargado exitosamente un archivo o no se cancele la acción de cargar
     do
     {
         v = 1;
 
-        res = gtk_dialog_run(GTK_DIALOG(dialog));
+        res = gtk_dialog_run(GTK_DIALOG(dialog)); // muestra la ventana
 
         // si se da click en guardar
         if(res == GTK_RESPONSE_ACCEPT)
@@ -191,7 +272,7 @@ void loadGame(JUEGO *juego)
                 // si pudo leer la información
                 if(success)
                 {
-                    coppyIntoGraphic(juego);
+                    coppyIntoGraphic(juego); // carga gráficamente la información recuperada
                 }
                 // de lo contrario
                 else
@@ -217,6 +298,11 @@ void loadGame(JUEGO *juego)
     return;
 }
 
+/**
+ * Limpia la ventana principal
+ * 
+ * @param *juego Información de la partida
+ */
 void cleanScreen(JUEGO *juego)
 {
     int i = 0;
@@ -226,16 +312,20 @@ void cleanScreen(JUEGO *juego)
 
     gdk_color_parse("#DCDAD5", &color);
 
+    // cambia el fondo de la ventana principal
     gtk_widget_modify_bg(juego->graficos.window, GTK_STATE_NORMAL, &color);
     gtk_widget_modify_bg(juego->graficos.window, GTK_STATE_INSENSITIVE, &color);
 
+    // esconde secretos
     gtk_widget_hide(juego->graficos.menuTruth);
 
+    // oculta el jugador actuañ
     gtk_widget_destroy(juego->graficos.playingImg);
     juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[2]);
         gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
         gtk_widget_show(juego->graficos.playingImg);
-        
+     
+    // reinicia los botones del tablero
     for(i = 0; i < 3; i++)
     {
         for(j = 0; j < 3; j++)
@@ -260,6 +350,7 @@ void cleanScreen(JUEGO *juego)
         gtk_widget_set_sensitive(juego->graficos.moveButtons[i], FALSE);
     }
 
+    // detiene la música
     if(juego->partida.jugadores[0].hard_mode || juego->partida.jugadores[1].hard_mode)
     {
         system("killall aplay");
@@ -268,6 +359,11 @@ void cleanScreen(JUEGO *juego)
     return;
 }
 
+/**
+ * Muestra la ventana principal con el modo difícil
+ * 
+ * @param *juego Información de la partida
+ */
 void displayHardMode(JUEGO *juego)
 {
     int i = 0;
@@ -276,9 +372,11 @@ void displayHardMode(JUEGO *juego)
 
     gdk_color_parse("#790000", &color);
 
+    // cambia el color de fondo de la ventana
     gtk_widget_modify_bg(juego->graficos.window, GTK_STATE_NORMAL, &color);
     gtk_widget_modify_bg(juego->graficos.window, GTK_STATE_INSENSITIVE, &color);
 
+    // muestra secretos
     gtk_widget_show(juego->graficos.menuTruth);
 
     // muestra las llamas
@@ -287,81 +385,8 @@ void displayHardMode(JUEGO *juego)
         gtk_widget_show(juego->graficos.flames[i]);
     }
 
+    // reproduce la música
     system("aplay ./MEDIA/hercules.wav &");
-
-    return;
-}
-
-int getButton(JUEGO *juego, GtkWidget *button, int coords[2])
-{
-    int i = 0;
-    int j = 0;
-
-    for(i = 0; i < 3; i++)
-    {
-        for(j = 0; j < 3; j++)
-        {
-            if(button == juego->graficos.buttons[i][j])
-            {
-                coords[0] = i;
-                coords[1] = j;
-
-                return 1;
-            }
-        }
-    }
-
-    return 0;
-}
-
-void turnPlayed(JUEGO *juego, int x, int y)
-{
-    int gameStatus = 0;
-
-    // genera una nueva instancia para el historial a la que se puede regresar
-    logMove(juego, 1);
-
-    // coloca la ficha correspondiente
-    juego->partida.historial[juego->partida.turno].tablero[x][y] = ICONS[(juego->partida.turno + 1) % 2];
-
-    gtk_widget_destroy(juego->graficos.buttonImg[x][y]);
-    juego->graficos.buttonImg[x][y] = gtk_image_new_from_pixbuf(juego->graficos.m60[(juego->partida.turno + 1) % 2]);
-        gtk_container_add(GTK_CONTAINER(juego->graficos.buttons[x][y]), juego->graficos.buttonImg[x][y]);
-        gtk_widget_show(juego->graficos.buttonImg[x][y]);
-    
-    gtk_widget_set_sensitive(juego->graficos.moveButtons[0], TRUE);
-    gtk_widget_set_sensitive(juego->graficos.moveButtons[1], FALSE);
-    
-    if(juego->partida.jugadores[juego->partida.turno % 2].ia && !checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[(juego->partida.turno + 1) % 2]))
-    {
-        aiTurn(juego);
-    }
-    
-    gtk_widget_destroy(juego->graficos.playingImg);
-    juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[juego->partida.turno % 2]);
-        gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
-        gtk_widget_show(juego->graficos.playingImg);
-
-    gameStatus = checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[(juego->partida.turno + 1) % 2]);
-
-    if(gameStatus)
-    {
-        juego->partida.historial[juego->partida.turno].game_status = GAME_ENDED;
-
-        gtk_widget_destroy(juego->graficos.playingImg);
-        juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[2]);
-            gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
-            gtk_widget_show(juego->graficos.playingImg);
-
-        if(gameStatus < 0)
-        {
-            tie_dialog(juego);
-        }
-        else
-        {
-            victory_dialog(juego);
-        }
-    }
 
     return;
 }
@@ -413,6 +438,74 @@ void coppyBoard(char dest[3][3], char src[3][3])
 }
 
 /**
+ * Al jugar un turno de usuario
+ * 
+ * @param *juego Información de la partida
+ * @param x Coordenada x del botón presionado
+ * @param y Coordenada y del botón presionado
+ */
+void turnPlayed(JUEGO *juego, int x, int y)
+{
+    int gameStatus = 0;
+
+    // genera una nueva instancia para el historial a la que se puede regresar
+    logMove(juego, 1);
+
+    // coloca la ficha correspondiente
+    juego->partida.historial[juego->partida.turno].tablero[x][y] = ICONS[(juego->partida.turno + 1) % 2];
+
+    // Cambia la imagén del botón presionado
+    gtk_widget_destroy(juego->graficos.buttonImg[x][y]);
+    juego->graficos.buttonImg[x][y] = gtk_image_new_from_pixbuf(juego->graficos.m60[(juego->partida.turno + 1) % 2]);
+        gtk_container_add(GTK_CONTAINER(juego->graficos.buttons[x][y]), juego->graficos.buttonImg[x][y]);
+        gtk_widget_show(juego->graficos.buttonImg[x][y]);
+    
+    // modifica el estado de los botones del historial
+    gtk_widget_set_sensitive(juego->graficos.moveButtons[0], TRUE);
+    gtk_widget_set_sensitive(juego->graficos.moveButtons[1], FALSE);
+    
+    // si el siguiente turno es de la computadora, lo juega
+    if(juego->partida.jugadores[juego->partida.turno % 2].ia && !checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[(juego->partida.turno + 1) % 2]))
+    {
+        aiTurn(juego);
+    }
+    
+    // muestra al jugador actual
+    gtk_widget_destroy(juego->graficos.playingImg);
+    juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[juego->partida.turno % 2]);
+        gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
+        gtk_widget_show(juego->graficos.playingImg);
+
+    // revisa el estado del tablero
+    gameStatus = checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[(juego->partida.turno + 1) % 2]);
+
+    // en caso de que la partida haya terminado
+    if(gameStatus)
+    {
+        // cambia el estado de la partida
+        juego->partida.historial[juego->partida.turno].game_status = GAME_ENDED;
+
+        // oculta el jugador actual
+        gtk_widget_destroy(juego->graficos.playingImg);
+        juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[2]);
+            gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
+            gtk_widget_show(juego->graficos.playingImg);
+
+        // muestra la ventana de victoria o empate dependiendo del resultado de la partida
+        if(gameStatus < 0)
+        {
+            tie_dialog(juego);
+        }
+        else
+        {
+            victory_dialog(juego);
+        }
+    }
+
+    return;
+}
+
+/**
  * Juego de un turno de la ia
  * 
  * @param *juego La partida en curso
@@ -445,6 +538,7 @@ void aiTurn(JUEGO *juego)
         juego->partida.historial[juego->partida.turno].tablero[x][y] = ICONS[(juego->partida.turno + 1) % 2];
     }
 
+    // plasma la elección de forma gráfica
     coppyBoardIntoGraphic(juego);
 
     return;
@@ -674,6 +768,11 @@ int checkGame(char tablero[3][3], char played)
     return 0;
 }
 
+/**
+ * Copia el último tablero jugado en la ventana de juego
+ * 
+ * @param *juego Información de la partida
+ */
 void coppyBoardIntoGraphic(JUEGO *juego)
 {
     int i = 0;
@@ -681,13 +780,17 @@ void coppyBoardIntoGraphic(JUEGO *juego)
 
     GdkColor color;
 
+    // para todos los botones del tablero
     for(i = 0; i < 3; i++)
     {
         for(j = 0; j < 3; j++)
         {
             gdk_color_parse("#A3A3A3", &color);
+
+            // elimina la imagen actual
             gtk_widget_destroy(juego->graficos.buttonImg[i][j]);
     
+            // segun la ficha colocada internamente carga la imagen y el color necesarios
             switch(juego->partida.historial[juego->partida.turno].tablero[i][j])
             {
                 case 'X':
@@ -703,6 +806,7 @@ void coppyBoardIntoGraphic(JUEGO *juego)
                     break;
             }
     
+            // plasma los cambios en la celda
             gtk_container_add(GTK_CONTAINER(juego->graficos.buttons[i][j]), juego->graficos.buttonImg[i][j]);
             gtk_widget_modify_bg(juego->graficos.buttons[i][j], GTK_STATE_NORMAL, &color);
             gtk_widget_show(juego->graficos.buttonImg[i][j]);
@@ -712,23 +816,31 @@ void coppyBoardIntoGraphic(JUEGO *juego)
     return;
 }
 
+/**
+ * Copia toda la información interna de la partida en la ventana de juego
+ * 
+ * @param *juego Información de la partida
+ */
 void coppyIntoGraphic(JUEGO *juego)
 {
     int i = 0;
 
-    cleanScreen(juego);
+    cleanScreen(juego); // limpia la pantalla
 
-    coppyBoardIntoGraphic(juego);
+    coppyBoardIntoGraphic(juego); // copia el estado del tablero
 
+    // habilita las opciones exclusivas de partida en curso
     gtk_widget_set_sensitive(juego->graficos.menuEnd, TRUE);
     gtk_widget_set_sensitive(juego->graficos.menuSave, TRUE);
 
+    // muestra los jugadores y sus fichas
     for(i = 0; i < 2; i++)
     {
         gtk_widget_show(juego->graficos.playerImg[i]);
         gtk_label_set_label(GTK_LABEL(juego->graficos.playerName[i]), juego->partida.jugadores[i].nombre);
     }
 
+    // si el juego ya terminó, muestra vaío el cuadro de jugador actual
     if(juego->partida.historial[juego->partida.turno].game_status != GAME_ENDED)
     {
         gtk_widget_destroy(juego->graficos.playingImg);
@@ -736,7 +848,7 @@ void coppyIntoGraphic(JUEGO *juego)
             gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
             gtk_widget_show(juego->graficos.playingImg);
     }
-    else
+    else // de lo contrario, muestra el jugador actual
     {
         gtk_widget_destroy(juego->graficos.playingImg);
         juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[2]);
@@ -744,16 +856,19 @@ void coppyIntoGraphic(JUEGO *juego)
             gtk_widget_show(juego->graficos.playingImg);
     }
 
+    // si hay movimientos hacia atrás en el historial, habilita el botón correspondiente
     if(moreTurnsBackwards(juego))
     {
         gtk_widget_set_sensitive(juego->graficos.moveButtons[0], TRUE);
     }
 
+    // si hay movimientos hacia adelante en el historial, habilita el botón correspondiente
     if(moreTurnsForwards(juego))
     {
         gtk_widget_set_sensitive(juego->graficos.moveButtons[1], TRUE);
     }
 
+    // si se juega en modo difícil
     if(juego->partida.jugadores[0].hard_mode || juego->partida.jugadores[1].hard_mode)
     {
         displayHardMode(juego);
@@ -786,6 +901,7 @@ void lastTurn(JUEGO *juego)
         // regresa a ese turno
         juego->partida.turno --;
 
+        // muestra en la ventana el resultado del movimiento
         coppyBoardIntoGraphic(juego);
 
         gtk_widget_destroy(juego->graficos.playingImg);
@@ -793,6 +909,7 @@ void lastTurn(JUEGO *juego)
             gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
             gtk_widget_show(juego->graficos.playingImg);
 
+        // si ya no hay más movimientos hacia atrás, desactiva el botón correspondiente
         if(!moreTurnsBackwards(juego))
         {
             gtk_widget_set_sensitive(juego->graficos.moveButtons[0], FALSE);
@@ -817,6 +934,7 @@ void lastTurn(JUEGO *juego)
             // regresa a ese turno
             juego->partida.turno = i;
 
+            // muestra en la ventana el resultado del movimiento
             coppyBoardIntoGraphic(juego);
 
             gtk_widget_destroy(juego->graficos.playingImg);
@@ -824,6 +942,7 @@ void lastTurn(JUEGO *juego)
                 gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
                 gtk_widget_show(juego->graficos.playingImg);
 
+            // si ya no hay más movimientos hacia atrás, desactiva el botón correspondiente
             if(!moreTurnsBackwards(juego))
             {
                 gtk_widget_set_sensitive(juego->graficos.moveButtons[0], FALSE);
@@ -832,6 +951,29 @@ void lastTurn(JUEGO *juego)
     }
 
     return;
+}
+
+/**
+ * Determina si hay mas turnos jugables hacia atrás en el historial
+ * 
+ * @param *juego Información de la partida
+ * 
+ * @returns int (0 en caso de no haber más turnos, 1 de lo contrario)
+ */
+int moreTurnsBackwards(JUEGO *juego)
+{
+    int i = 0;
+
+    // revisa todos los moviientos anteriores
+    for(i = 0; i <= juego->partida.turno; i++)
+    {
+        if(juego->partida.historial[i].hist_val) // si algun turno anterior puede ser jugado, regresa 1
+        {
+            return 1;
+        }
+    }
+
+    return 0;
 }
 
 /**
@@ -874,8 +1016,10 @@ void nextTurn(JUEGO *juego)
 
             juego->partida.turno = i;
 
+            // plasma el resultado del movimiento en la ventana
             coppyBoardIntoGraphic(juego);
 
+            // si la partida no ha terminado, muestra al jugador actual
             if(juego->partida.historial[i].game_status != GAME_ENDED)
             {
                 gtk_widget_destroy(juego->graficos.playingImg);
@@ -883,7 +1027,7 @@ void nextTurn(JUEGO *juego)
                     gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
                     gtk_widget_show(juego->graficos.playingImg);
             }
-            else
+            else // si la partida ya terminó, no muestra al jugador actual
             {                    
                 gtk_widget_destroy(juego->graficos.playingImg);
                 juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[2]);
@@ -891,7 +1035,7 @@ void nextTurn(JUEGO *juego)
                     gtk_widget_show(juego->graficos.playingImg);
             }
 
-
+            // si ya no hay más movimientos hacia adelante, desactiva el botón correspondiente
             if(!moreTurnsForwards(juego))
             {
                 gtk_widget_set_sensitive(juego->graficos.moveButtons[1], FALSE);
@@ -902,23 +1046,16 @@ void nextTurn(JUEGO *juego)
     return;
 }
 
-int moreTurnsBackwards(JUEGO *juego)
-{
-    int i = 0;
-
-    for(i = 0; i <= juego->partida.turno; i++)
-    {
-        if(juego->partida.historial[i].hist_val)
-        {
-            return 1;
-        }
-    }
-
-    return 0;
-}
-
+/**
+ * Determina si hay más movimientos hacia adelante en el historial de la partida
+ * 
+ * @param *juego Información de la partida
+ * 
+ * @returns int (0 si no hay más movimientos hacia adelante, 1 de lo contrario)
+ */
 int moreTurnsForwards(JUEGO *juego)
 {
+    // si se está en el último turno posible, regresa 0
     if(juego->partida.turno == juego->partida.turno_max)
     {
         return 0;
