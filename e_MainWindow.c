@@ -2,6 +2,13 @@
 
 void stopTheApp(GtkWidget *widget, gpointer data)
 {
+	JUEGO *juego = (JUEGO *)data;
+
+	if(juego->partida.jugadores[0].hard_mode || juego->partida.jugadores[1].hard_mode)
+	{
+		system("killall aplay");
+	}
+
 	gtk_main_quit();
 
 	return;
@@ -12,12 +19,47 @@ void guardarPartida(GtkWidget *widget, gpointer data)
 {
 	JUEGO *juego = (JUEGO *)data; 
 
-	saveGame(juego);
+	if(juego->partida.historial[juego->partida.turno].game_status == GAME_NOT_STARTED)
+	{
+		warning_dialog("Sin Partida en Curso", "No hay una partida en curso para guardar.");
+		gtk_widget_set_sensitive(juego->graficos.menuSave, FALSE);
+	}
+	else
+	{
+		saveGame(juego);
+	}
+
+	return;
 }
 
 void cargarPartida(GtkWidget *widget, gpointer data)
 {
-	g_print("Missing function...\n");
+	JUEGO *juego = (JUEGO *)data;
+
+	gint res = 0;
+	gint v = 0;
+	
+	if(juego->partida.historial[juego->partida.turno].game_status != GAME_NOT_STARTED)
+	{
+		do
+		{
+			v = 1;
+			res = confirmation_dialog("Cargar Partida", "¿Desea guardar la partida en curso?");
+
+			if((res == GTK_RESPONSE_YES && saveGame(juego) == GTK_RESPONSE_ACCEPT) || res == GTK_RESPONSE_NO || res == GTK_RESPONSE_DELETE_EVENT)
+			{
+				v = 0;
+			}
+		} while(v);
+
+	}
+
+	if(res != GTK_RESPONSE_DELETE_EVENT)
+	{
+		loadGame(juego);
+	}
+
+	return;
 }
 
 // Menú Juego
@@ -38,6 +80,14 @@ void terminarPartida(GtkWidget *widget, gpointer data)
 
 	int v = 0;
 
+	if(juego->partida.historial[juego->partida.turno].game_status == GAME_NOT_STARTED)
+	{
+		warning_dialog("Sin Partida en Curso", "No hay una partida en curso para terminar.");
+		gtk_widget_set_sensitive(juego->graficos.menuEnd, FALSE);
+
+		return;
+	}
+
 	do
 	{
 		v = 1;
@@ -54,8 +104,8 @@ void terminarPartida(GtkWidget *widget, gpointer data)
 		gtk_widget_set_sensitive(juego->graficos.menuEnd, FALSE);
 		gtk_widget_set_sensitive(juego->graficos.menuSave, FALSE);
 	
-		gameStartup(juego);
 		cleanScreen(juego);
+		gameStartup(juego);
 	}
 	
 	return;
@@ -195,10 +245,18 @@ void board_button_pressed(GtkWidget *eventbox, GdkEventButton *event, gpointer d
 // botones de historial
 void history_past(GtkWidget *widget, gpointer data)
 {
+	JUEGO *juego = (JUEGO *)data;
 
+	lastTurn(juego);
+
+	return;
 }
 
 void history_next(GtkWidget *widget, gpointer data)
 {
+	JUEGO *juego = (JUEGO *)data;
+	
+	nextTurn(juego);
 
+	return;
 }

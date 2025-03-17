@@ -152,7 +152,67 @@ gint saveGame(JUEGO *juego)
 
 void loadGame(JUEGO *juego)
 {
-    g_print("Función pendiente...\n");
+    FILE *fp;
+
+    GtkWidget *dialog;
+
+    int success = 0;
+    int v = 0;
+
+    gint res = 0;
+    gchar *file;
+
+    // muestra la ventana de guardado
+    dialog = gtk_file_chooser_dialog_new("Cargar Partida", NULL, GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+
+    do
+    {
+        v = 1;
+
+        res = gtk_dialog_run(GTK_DIALOG(dialog));
+
+        // si se da click en guardar
+        if(res == GTK_RESPONSE_ACCEPT)
+        {
+            // obtiene la ruta
+            file = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+            
+            // carga la partida del archivo
+            fp = fopen(file, "rb");
+
+            // si pudo abrir el archivo
+            if(fp != NULL)
+            {
+                // intenta leer toda la información de la partida de golpe
+                success = fread(&juego->partida, sizeof(FUNCIONAL), 1, fp);
+
+                fclose(fp);
+                
+                // si pudo leer la información
+                if(success)
+                {
+                    coppyIntoGraphic(juego);
+                }
+                // de lo contrario
+                else
+                {
+                    warning_dialog("Cargar Partida", "Archivo corrupro o incompatible...");
+                    v = 0;
+                }
+            }
+            // de lo contrario
+            else
+            {
+                warning_dialog("Cargar Partida", "No se puede acceder al archivo...");
+                v = 0;
+            }
+
+            // libera memoria
+            g_free(file);
+        }
+    } while(!success && !v);
+
+    gtk_widget_destroy(dialog);
 
     return;
 }
@@ -200,6 +260,11 @@ void cleanScreen(JUEGO *juego)
         gtk_widget_set_sensitive(juego->graficos.moveButtons[i], FALSE);
     }
 
+    if(juego->partida.jugadores[0].hard_mode || juego->partida.jugadores[1].hard_mode)
+    {
+        system("killall aplay");
+    }
+
     return;
 }
 
@@ -221,6 +286,8 @@ void displayHardMode(JUEGO *juego)
     {
         gtk_widget_show(juego->graficos.flames[i]);
     }
+
+    system("aplay ./MEDIA/hercules.wav &");
 
     return;
 }
@@ -249,6 +316,8 @@ int getButton(JUEGO *juego, GtkWidget *button, int coords[2])
 
 void turnPlayed(JUEGO *juego, int x, int y)
 {
+    int gameStatus = 0;
+
     // genera una nueva instancia para el historial a la que se puede regresar
     logMove(juego, 1);
 
@@ -260,6 +329,8 @@ void turnPlayed(JUEGO *juego, int x, int y)
         gtk_container_add(GTK_CONTAINER(juego->graficos.buttons[x][y]), juego->graficos.buttonImg[x][y]);
         gtk_widget_show(juego->graficos.buttonImg[x][y]);
     
+    gtk_widget_set_sensitive(juego->graficos.moveButtons[0], TRUE);
+    gtk_widget_set_sensitive(juego->graficos.moveButtons[1], FALSE);
     
     if(juego->partida.jugadores[juego->partida.turno % 2].ia && !checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[(juego->partida.turno + 1) % 2]))
     {
@@ -271,19 +342,25 @@ void turnPlayed(JUEGO *juego, int x, int y)
         gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
         gtk_widget_show(juego->graficos.playingImg);
 
+    gameStatus = checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[(juego->partida.turno + 1) % 2]);
 
-    switch(checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[(juego->partida.turno + 1) % 2]))
+    if(gameStatus)
     {
-        case -1:
-            juego->partida.historial[juego->partida.turno].game_status = GAME_ENDED;
+        juego->partida.historial[juego->partida.turno].game_status = GAME_ENDED;
 
+        gtk_widget_destroy(juego->graficos.playingImg);
+        juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[2]);
+            gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
+            gtk_widget_show(juego->graficos.playingImg);
+
+        if(gameStatus < 0)
+        {
             tie_dialog(juego);
-            break;
-        case 1:
-            juego->partida.historial[juego->partida.turno].game_status = GAME_ENDED;
-
+        }
+        else
+        {
             victory_dialog(juego);
-        break;
+        }
     }
 
     return;
@@ -331,51 +408,6 @@ void coppyBoard(char dest[3][3], char src[3][3])
             dest[i][j] = src[i][j];
         }
     }
-
-    return;
-}
-
-
-/**
- * Imprime el tablero
- * 
- * @param tablero[3][3] El tablero a imprimir
- * 
- * @returns void
- */
-void printBoard(char tablero[3][3])
-{
-    int i = 0;
-    int j = 0;
-    
-    // para cada fila
-    for(i = 0; i < 3; i++)
-    {
-        // si no es la primera fila, imprime un separador
-        if(i)
-        {
-            printf("---+---+---\n");
-        }
-
-        // para cada columna
-        for(j = 0; j < 3; j++)
-        {
-            // si no es la primera columna, imprime un separador
-            if(j)
-            {
-                printf("|");
-            }
-
-            // imprime el caracter correspondiente
-            printf(" %c ", tablero[i][j]);
-        }
-
-        // fin de la fila
-        printf("\n");
-    }
-
-    // fin del tablero
-    printf("\n");
 
     return;
 }
@@ -678,4 +710,219 @@ void coppyBoardIntoGraphic(JUEGO *juego)
     }
 
     return;
+}
+
+void coppyIntoGraphic(JUEGO *juego)
+{
+    int i = 0;
+
+    cleanScreen(juego);
+
+    coppyBoardIntoGraphic(juego);
+
+    gtk_widget_set_sensitive(juego->graficos.menuEnd, TRUE);
+    gtk_widget_set_sensitive(juego->graficos.menuSave, TRUE);
+
+    for(i = 0; i < 2; i++)
+    {
+        gtk_widget_show(juego->graficos.playerImg[i]);
+        gtk_label_set_label(GTK_LABEL(juego->graficos.playerName[i]), juego->partida.jugadores[i].nombre);
+    }
+
+    if(juego->partida.historial[juego->partida.turno].game_status != GAME_ENDED)
+    {
+        gtk_widget_destroy(juego->graficos.playingImg);
+        juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[juego->partida.turno % 2]);
+            gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
+            gtk_widget_show(juego->graficos.playingImg);
+    }
+    else
+    {
+        gtk_widget_destroy(juego->graficos.playingImg);
+        juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[2]);
+            gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
+            gtk_widget_show(juego->graficos.playingImg);
+    }
+
+    if(moreTurnsBackwards(juego))
+    {
+        gtk_widget_set_sensitive(juego->graficos.moveButtons[0], TRUE);
+    }
+
+    if(moreTurnsForwards(juego))
+    {
+        gtk_widget_set_sensitive(juego->graficos.moveButtons[1], TRUE);
+    }
+
+    if(juego->partida.jugadores[0].hard_mode || juego->partida.jugadores[1].hard_mode)
+    {
+        displayHardMode(juego);
+    }
+
+    return;
+}
+
+/**
+ * Regresa al turno jugable anterior
+ * 
+ * @param *juego La partida en curso
+ * 
+ * @returns void
+ */
+void lastTurn(JUEGO *juego)
+{
+    int i = juego->partida.turno;
+
+    // si es el primer turno
+    if(!juego->partida.turno)
+    {
+        gtk_widget_set_sensitive(juego->graficos.moveButtons[0], FALSE);
+    }
+    // si el turno anterior es un turno jugable
+    else if(juego->partida.historial[i].hist_val)
+    {
+        gtk_widget_set_sensitive(juego->graficos.moveButtons[1], TRUE);
+
+        // regresa a ese turno
+        juego->partida.turno --;
+
+        coppyBoardIntoGraphic(juego);
+
+        gtk_widget_destroy(juego->graficos.playingImg);
+        juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[juego->partida.turno % 2]);
+            gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
+            gtk_widget_show(juego->graficos.playingImg);
+
+        if(!moreTurnsBackwards(juego))
+        {
+            gtk_widget_set_sensitive(juego->graficos.moveButtons[0], FALSE);
+        }
+    }
+    // de lo contrario
+    else
+    {
+        // revisa 2 turnos antes del actual
+        i -= 2;
+
+        // si no hay turnos disponibles
+        if(i < 0)
+        {
+            gtk_widget_set_sensitive(juego->graficos.moveButtons[0], FALSE);
+        }
+        // de lo contrario
+        else
+        {
+            gtk_widget_set_sensitive(juego->graficos.moveButtons[1], TRUE);
+
+            // regresa a ese turno
+            juego->partida.turno = i;
+
+            coppyBoardIntoGraphic(juego);
+
+            gtk_widget_destroy(juego->graficos.playingImg);
+            juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[juego->partida.turno % 2]);
+                gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
+                gtk_widget_show(juego->graficos.playingImg);
+
+            if(!moreTurnsBackwards(juego))
+            {
+                gtk_widget_set_sensitive(juego->graficos.moveButtons[0], FALSE);
+            }
+        }
+    }
+
+    return;
+}
+
+/**
+ * Avanza al siguiente turno jugable
+ * 
+ * @param *juego La partida en curso
+ * 
+ * @returns void
+ */
+void nextTurn(JUEGO *juego)
+{
+    int i = juego->partida.turno;
+
+    // si es el último turno disponible
+    if(juego->partida.turno >= juego->partida.turno_max)
+    {
+        gtk_widget_set_sensitive(juego->graficos.moveButtons[1], FALSE);
+    }
+    // de lo contrario
+    else
+    {
+        // si alguno de los jugadores es una ia, avanza un turno
+        if((juego->partida.jugadores[0].ia || juego->partida.jugadores[1].ia) && juego->partida.historial[i + 1].game_status != GAME_ENDED)
+        {
+            i++;
+        }
+        
+        // avanza un turno
+        i++;
+
+        // si el turno al que se desea ir está fuera de límites
+        if(i > juego->partida.turno_max)
+        {
+            gtk_widget_set_sensitive(juego->graficos.moveButtons[1], FALSE);
+        }
+        // de lo contrario, se recorre a ese turno
+        else
+        {
+            gtk_widget_set_sensitive(juego->graficos.moveButtons[0], TRUE);
+
+            juego->partida.turno = i;
+
+            coppyBoardIntoGraphic(juego);
+
+            if(juego->partida.historial[i].game_status != GAME_ENDED)
+            {
+                gtk_widget_destroy(juego->graficos.playingImg);
+                juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[juego->partida.turno % 2]);
+                    gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
+                    gtk_widget_show(juego->graficos.playingImg);
+            }
+            else
+            {                    
+                gtk_widget_destroy(juego->graficos.playingImg);
+                juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[2]);
+                    gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
+                    gtk_widget_show(juego->graficos.playingImg);
+            }
+
+
+            if(!moreTurnsForwards(juego))
+            {
+                gtk_widget_set_sensitive(juego->graficos.moveButtons[1], FALSE);
+            }
+        }
+    }
+
+    return;
+}
+
+int moreTurnsBackwards(JUEGO *juego)
+{
+    int i = 0;
+
+    for(i = 0; i <= juego->partida.turno; i++)
+    {
+        if(juego->partida.historial[i].hist_val)
+        {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int moreTurnsForwards(JUEGO *juego)
+{
+    if(juego->partida.turno == juego->partida.turno_max)
+    {
+        return 0;
+    }
+
+    return 1;
 }

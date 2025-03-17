@@ -88,17 +88,25 @@ void history_next(GtkWidget *widget, gpointer data);
 
 // Utilidades
 int getButton(JUEGO *juego, GtkWidget *button, int coords[2]);
-void cleanScreen(JUEGO *juego);
-void displayHardMode(JUEGO *juego);
 
+void coppyBoard(char dest[3][3], char src[3][3]);
+void logMove(JUEGO *juego, int replayable);
 void turnPlayed(JUEGO *juego, int x, int y);
+int checkGame(char tablero[3][3], char played);
+
 void aiTurn(JUEGO *juego);
 void chooseSpace(JUEGO *juego, int *x, int *y);
-void logMove(JUEGO *juego, int replayable);
-int checkGame(char tablero[3][3], char played);
-void printBoard(char tablero[3][3]);
-void coppyBoard(char dest[3][3], char src[3][3]);
+
+void cleanScreen(JUEGO *juego);
+void displayHardMode(JUEGO *juego);
 void coppyBoardIntoGraphic(JUEGO *juego);
+void coppyIntoGraphic(JUEGO *juego);
+
+int moreTurnsBackwards(JUEGO *juego);
+void lastTurn(JUEGO *juego);
+
+int moreTurnsForwards(JUEGO *juego);
+void nextTurn(JUEGO *juego);
 
 void newGame(JUEGO *juego);
 gint saveGame(JUEGO *juego);
@@ -115,12 +123,4 @@ void victory_dialog(JUEGO *juego);
  *  juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[n]);
  *      gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
  *      gtk_widget_show(juego->graficos.playingImg);
- * 
- * 
- * Al cambiar la imagen de un espacio del tablero
- * 
- *  gtk_widget_destroy(juego->graficos.buttonImg[i][j]);
- *  juego->graficos.buttonImg[i][j] = gtk_image_new_from_pixbuf(juego->graficos.m60[n]);
- *      gtk_container_add(GTK_CONTAINER(juego->graficos.buttons[i][j]), juego->graficos.buttonImg[i][j]);
- *      gtk_widget_show(juego->graficos.buttonImg[i][j]);
  */
