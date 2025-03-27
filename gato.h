@@ -114,13 +114,3 @@ void loadGame(JUEGO *juego);
 
 void tie_dialog(JUEGO *juego);
 void victory_dialog(JUEGO *juego);
-
-
-/**
- * Al cambiar la imagen de turno actual
- * 
- *  gtk_widget_destroy(juego->graficos.playingImg);
- *  juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[n]);
- *      gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
- *      gtk_widget_show(juego->graficos.playingImg);
- */
