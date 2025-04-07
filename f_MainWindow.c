@@ -796,10 +796,10 @@ void coppyBoardIntoGraphic(JUEGO *juego)
             // segun la ficha colocada internamente carga la imagen y el color necesarios
             switch(juego->partida.historial[juego->partida.turno].tablero[i][j])
             {
-                case 'X':
+                case ICONS[0]:
                     juego->graficos.buttonImg[i][j] = gtk_image_new_from_pixbuf(juego->graficos.m60[0]);
                     break;
-                case 'O':
+                case ICONS[1]:
                     juego->graficos.buttonImg[i][j] = gtk_image_new_from_pixbuf(juego->graficos.m60[1]);
                     break;
                 default:
