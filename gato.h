@@ -111,6 +111,7 @@ void nextTurn(JUEGO *juego);
 void newGame(JUEGO *juego);
 gint saveGame(JUEGO *juego);
 void loadGame(JUEGO *juego);
+int correctFileFormat(FUNCIONAL gameData);
 
 void tie_dialog(JUEGO *juego);
 void victory_dialog(JUEGO *juego);

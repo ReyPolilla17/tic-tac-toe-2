@@ -67,7 +67,7 @@ void cargarPartida(GtkWidget *widget, gpointer data)
 	JUEGO *juego = (JUEGO *)data;
 
 	gint res = 0;
-	gint v = 0;
+	gint v = 1;
 	
 	// si hay una partida en curso
 	if(juego->partida.historial[juego->partida.turno].game_status != GAME_NOT_STARTED)
@@ -75,7 +75,6 @@ void cargarPartida(GtkWidget *widget, gpointer data)
 		// consulta si se desea guardar partida y en caso de aceptar guarda
 		do
 		{
-			v = 1;
 			res = confirmation_dialog("Cargar Partida", "¿Desea guardar la partida en curso?");
 
 			if((res == GTK_RESPONSE_YES && saveGame(juego) == GTK_RESPONSE_ACCEPT) || res == GTK_RESPONSE_NO || res == GTK_RESPONSE_DELETE_EVENT)
@@ -83,7 +82,6 @@ void cargarPartida(GtkWidget *widget, gpointer data)
 				v = 0;
 			}
 		} while(v);
-
 	}
 
 	// si no se ha cancelado la acción, carga la partida

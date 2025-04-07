@@ -234,6 +234,8 @@ void loadGame(JUEGO *juego)
 {
     FILE *fp;
 
+    FUNCIONAL new;
+    
     GtkWidget *dialog;
 
     int success = 0;
@@ -264,14 +266,15 @@ void loadGame(JUEGO *juego)
             // si pudo abrir el archivo
             if(fp != NULL)
             {
-                // intenta leer toda la información de la partida de golpe
-                success = fread(&juego->partida, sizeof(FUNCIONAL), 1, fp);
+                // intenta leer toda la información de la partida en una variable de paso
+                success = fread(&new, sizeof(FUNCIONAL), 1, fp);
 
                 fclose(fp);
                 
-                // si pudo leer la información
-                if(success)
+                // si pudo leer la información y es correcta
+                if(success && correctFileFormat(new))
                 {
+                    juego->partida = new; // asigna la información a la partida
                     coppyIntoGraphic(juego); // carga gráficamente la información recuperada
                 }
                 // de lo contrario
@@ -291,8 +294,8 @@ void loadGame(JUEGO *juego)
             // libera memoria
             g_free(file);
         }
-    } while(!success && !v);
-
+    } while(!v);
+        
     gtk_widget_destroy(dialog);
 
     return;
@@ -1059,6 +1062,63 @@ int moreTurnsForwards(JUEGO *juego)
     if(juego->partida.turno == juego->partida.turno_max)
     {
         return 0;
+    }
+
+    return 1;
+}
+
+/**
+ * Valida que el archivo cargado tenga información lógica de partida
+ * 
+ * @param gameData La información de partida extraida de un archivo
+ * 
+ * @returns int (1 si la información es correcta, 0 de lo contrario)
+ */
+int correctFileFormat(FUNCIONAL gameData)
+{
+    long int name_len = 0;
+
+    int i = 0;
+    int j = 0;
+    int k = 0;
+
+    // valida la cantidad de turnos jugados (entre 0 y 9)
+    if(gameData.turno_max > 9 || gameData.turno_max < 0 || gameData.turno > 9 || gameData.turno < 0)
+    {
+        return 0;
+    }
+
+    // valida todos los turnos del historial
+    for(k = 0; k < gameData.turno_max; k++)
+    {
+        // verifica valores de historial y estado de partida;
+        if((gameData.historial[k].hist_val != 0 && gameData.historial[k].hist_val != 1) || (gameData.historial[k].game_status != GAME_ENDED && gameData.historial[k].game_status != GAME_NOT_STARTED && gameData.historial[k].game_status != GAME_STARTED))
+        {
+            return 0;
+        }
+        
+        // verifica que el tablero tenga valores correctos
+        for(i = 0; i < 3; i++)
+        {
+            for(j = 0; j < 3; j++)
+            {
+                if((gameData.historial[k].tablero[i][j] != ' ' && gameData.historial[k].tablero[i][j] != ICONS[0] && gameData.historial[k].tablero[i][j] != ICONS[1]))
+                {
+                    return 0;
+                }
+            }
+        }
+    }
+
+    // verifica que los jugadores tengan valores lógicos
+    for(i = 0; i < 2; i++)
+    {
+        name_len = strlen(gameData.jugadores[i].nombre);
+
+        if((gameData.jugadores[i].hard_mode != 0 && gameData.jugadores[i].hard_mode != 1) || (gameData.jugadores[i].ia != 0 && gameData.jugadores[i].ia != 1) || (gameData.jugadores[i].hard_mode == 1 && !gameData.jugadores[i].ia) || name_len > 20 || !name_len)
+        {
+            return 0;
+        }
     }
 
     return 1;
