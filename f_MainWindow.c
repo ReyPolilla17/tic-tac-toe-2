@@ -944,7 +944,7 @@ void coppyIntoGraphic(JUEGO *juego)
             gtk_widget_show(juego->graficos.playingImg);
 
         checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[juego->partida.turno % 2], juego->partida.winboard);
-            g_timeout_add(400, (GSourceFunc)winningPulse, juego);
+        g_timeout_add(400, (GSourceFunc)winningPulse, juego);
     }
 
     // si hay movimientos hacia atrás en el historial, habilita el botón correspondiente
