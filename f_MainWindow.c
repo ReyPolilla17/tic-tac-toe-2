@@ -510,6 +510,13 @@ void turnPlayed(JUEGO *juego, int x, int y)
     return;
 }
 
+/**
+ * Muestra los espacios que generaron una victoria
+ * 
+ * @param data Información del juego como gpointer
+ * 
+ * @returns Si se debe generar otro parpadeo
+ */
 gboolean winningPulse(gpointer data)
 {
     JUEGO *juego = (JUEGO *)data;
@@ -517,14 +524,18 @@ gboolean winningPulse(gpointer data)
     int i = 0;
     int j = 0;
 
+    // Si ya terminó la partida
     if(juego->partida.historial[juego->partida.turno].game_status == GAME_ENDED)
     {
+        // para todos los espacios del tablero
         for(i = 0; i < 3; i++)
         {
             for(j = 0; j < 3; j++)
             {
+                // si el epsacio del tablero genró una victoria
                 if(juego->partida.winboard[i][j] != ' ')
                 {
+                    // Muestra la ficha o la oculta según la vuelta en la que va
                     if(juego->partida.winshow)
                     {
                         gtk_widget_show(juego->graficos.buttonImg[i][j]);
@@ -538,9 +549,11 @@ gboolean winningPulse(gpointer data)
         }
     }
 
+    // cambia la vuelta en la que va
     juego->partida.winshow += 1;
     juego->partida.winshow %= 2;
 
+    // Si el juego ha terminado o no ha terminado y están ocultas las fichas
     return (juego->partida.historial[juego->partida.turno].game_status == GAME_ENDED || (juego->partida.historial[juego->partida.turno].game_status != GAME_ENDED && juego->partida.winshow));
 }
 
@@ -723,7 +736,7 @@ void chooseSpace(JUEGO *juego, int *x, int *y)
 }
 
 /**
- * Revisa el estaso de un tablero
+ * Revisa el estado de un tablero y regresa los espacios en los que ocurrió la victoria si es que ocurrió una
  * 
  * @param tablero[3][3] El tablero a revisar
  * @param played El último jugador que tiró
