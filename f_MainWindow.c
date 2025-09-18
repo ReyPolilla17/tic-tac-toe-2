@@ -58,6 +58,7 @@ void gameStartup(JUEGO *juego)
 
     juego->partida.historial[0].game_status = GAME_NOT_STARTED;
     juego->partida.historial[0].hist_val = 0;
+    juego->partida.winshow = 0;
 
     // reinicia la infroamcaión de los jugadores
     for(i = 0; i < 2; i++)
@@ -468,7 +469,7 @@ void turnPlayed(JUEGO *juego, int x, int y)
     gtk_widget_set_sensitive(juego->graficos.moveButtons[1], FALSE);
     
     // si el siguiente turno es de la computadora, lo juega
-    if(juego->partida.jugadores[juego->partida.turno % 2].ia && !checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[(juego->partida.turno + 1) % 2]))
+    if(juego->partida.jugadores[juego->partida.turno % 2].ia && !checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[(juego->partida.turno + 1) % 2], juego->partida.winboard))
     {
         aiTurn(juego);
     }
@@ -480,7 +481,7 @@ void turnPlayed(JUEGO *juego, int x, int y)
         gtk_widget_show(juego->graficos.playingImg);
 
     // revisa el estado del tablero
-    gameStatus = checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[(juego->partida.turno + 1) % 2]);
+    gameStatus = checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[(juego->partida.turno + 1) % 2], juego->partida.winboard);
 
     // en caso de que la partida haya terminado
     if(gameStatus)
@@ -501,11 +502,46 @@ void turnPlayed(JUEGO *juego, int x, int y)
         }
         else
         {
+            g_timeout_add(400, (GSourceFunc)winningPulse, juego);
             victory_dialog(juego);
         }
     }
 
     return;
+}
+
+gboolean winningPulse(gpointer data)
+{
+    JUEGO *juego = (JUEGO *)data;
+
+    int i = 0;
+    int j = 0;
+
+    if(juego->partida.historial[juego->partida.turno].game_status == GAME_ENDED)
+    {
+        for(i = 0; i < 3; i++)
+        {
+            for(j = 0; j < 3; j++)
+            {
+                if(juego->partida.winboard[i][j] != ' ')
+                {
+                    if(juego->partida.winshow)
+                    {
+                        gtk_widget_show(juego->graficos.buttonImg[i][j]);
+                    }
+                    else
+                    {
+                        gtk_widget_hide(juego->graficos.buttonImg[i][j]);
+                    }
+                }
+            }
+        }
+    }
+
+    juego->partida.winshow += 1;
+    juego->partida.winshow %= 2;
+
+    return (juego->partida.historial[juego->partida.turno].game_status == GAME_ENDED || (juego->partida.historial[juego->partida.turno].game_status != GAME_ENDED && juego->partida.winshow));
 }
 
 /**
@@ -595,7 +631,7 @@ void chooseSpace(JUEGO *juego, int *x, int *y)
                 copy[i][j] = ICONS[(juego->partida.turno + 1) % 2];
 
                 // si la ia gana al colocar esa ficha
-                if(checkGame(copy, ICONS[(juego->partida.turno + 1) % 2]) == 1)
+                if(checkGame(copy, ICONS[(juego->partida.turno + 1) % 2], NULL) == 1)
                 {
                     // juega en esa posición
                     *x = i;
@@ -618,7 +654,7 @@ void chooseSpace(JUEGO *juego, int *x, int *y)
                                 copy[i2][j2] = ICONS[(juego->partida.turno + 1) % 2];
 
                                 // si la ia gana al colocar esa ficha
-                                if(checkGame(copy, ICONS[(juego->partida.turno + 1) % 2]) == 1)
+                                if(checkGame(copy, ICONS[(juego->partida.turno + 1) % 2], NULL) == 1)
                                 {
                                     // guarda la posición que le dará una victoria a futuro
                                     f_wins[wins][0] = i2;
@@ -652,7 +688,7 @@ void chooseSpace(JUEGO *juego, int *x, int *y)
                 copy[i][j] = ICONS[juego->partida.turno % 2];
 
                 // si el contrincante gana
-                if(checkGame(copy, ICONS[juego->partida.turno % 2]) == 1)
+                if(checkGame(copy, ICONS[juego->partida.turno % 2], NULL) == 1)
                 {
                     // bloquea esa posición
                     *x = i;
@@ -694,7 +730,7 @@ void chooseSpace(JUEGO *juego, int *x, int *y)
  * 
  * @returns int (-1 si el tablero está lleno y sin victorias, 0 si no hay victorias, 1 si hay victorias)
  */
-int checkGame(char tablero[3][3], char played)
+int checkGame(char tablero[3][3], char played, char winBoard[3][3])
 {
     int row = 0;
     int column = 0;
@@ -754,6 +790,55 @@ int checkGame(char tablero[3][3], char played)
         if(tablero[i][2 - i] != played)
         {
             iDiagonal = 0;
+        }
+    }
+    
+    // en caso de que se trate de un turno de un jugador, guarda los lugares en los que hubo una victoria
+    if(winBoard != NULL)
+    {
+        for(i = 0; i < 3; i++)
+        {
+            for(j = 0; j < 3; j++)
+            {
+                winBoard[i][j] = ' ';
+            }
+        }
+
+        // identifica horizontal y verticalmente el lugar en el que hubo una victoria
+        for(i = 0; i < 3; i++)
+        {
+            if(tablero[i][0] == tablero[i][1] && tablero[i][1] == tablero[i][2] && tablero[i][2] != ' ')
+            {
+                for(j = 0; j < 3; j++)
+                {
+                    winBoard[i][j] = tablero[i][j];
+                }
+            }
+            
+            if(tablero[0][i] == tablero[1][i] && tablero[1][i] == tablero[2][i] && tablero[2][i] != ' ')
+            {
+                for(j = 0; j < 3; j++)
+                {
+                    winBoard[j][i] = tablero[j][i];
+                }
+            }
+        }
+    
+        // en caso de victorias en diagonal, también lo guarda
+        if(diagonal)
+        {
+            for(i = 0; i < 3; i++)
+            {
+                winBoard[i][i] = tablero[i][i];
+            }
+        }
+    
+        if(iDiagonal)
+        {
+            for(i = 0; i < 3; i++)
+            {
+                winBoard[i][2 - i] = tablero[i][2 - i];
+            }
         }
     }
 
@@ -857,6 +942,9 @@ void coppyIntoGraphic(JUEGO *juego)
         juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[2]);
             gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
             gtk_widget_show(juego->graficos.playingImg);
+
+        checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[juego->partida.turno % 2], juego->partida.winboard);
+            g_timeout_add(400, (GSourceFunc)winningPulse, juego);
     }
 
     // si hay movimientos hacia atrás en el historial, habilita el botón correspondiente
@@ -1031,11 +1119,14 @@ void nextTurn(JUEGO *juego)
                     gtk_widget_show(juego->graficos.playingImg);
             }
             else // si la partida ya terminó, no muestra al jugador actual
-            {                    
+            {
                 gtk_widget_destroy(juego->graficos.playingImg);
                 juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[2]);
                     gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
                     gtk_widget_show(juego->graficos.playingImg);
+                
+                checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[juego->partida.turno % 2], juego->partida.winboard);
+                g_timeout_add(400, (GSourceFunc)winningPulse, juego);
             }
 
             // si ya no hay más movimientos hacia adelante, desactiva el botón correspondiente

@@ -32,8 +32,11 @@ typedef struct def_funcional // Parte funcional del juego
 {
     JUGADOR jugadores[2]; // Información de los jugadores
     MOVIMIENTO historial[10]; // Movimientos a lo largo de la partida
+    char winboard[3][3]; // Tablero con indicación de espacios de victoria
+    int winshow;
     int turno; // Número de turno actual
     int turno_max; // Máximo turno del que se tiene historial
+    gboolean winpulse; // Si hacer parpadear los espacios que hicieron victoria
 } FUNCIONAL;
 
 // estructura con todos los widgets que se utilizan en la ventana principal
@@ -92,7 +95,8 @@ int getButton(JUEGO *juego, GtkWidget *button, int coords[2]);
 void coppyBoard(char dest[3][3], char src[3][3]);
 void logMove(JUEGO *juego, int replayable);
 void turnPlayed(JUEGO *juego, int x, int y);
-int checkGame(char tablero[3][3], char played);
+int checkGame(char tablero[3][3], char played, char winBoard[3][3]);
+gboolean winningPulse(gpointer data);
 
 void aiTurn(JUEGO *juego);
 void chooseSpace(JUEGO *juego, int *x, int *y);
