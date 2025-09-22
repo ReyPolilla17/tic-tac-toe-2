@@ -1,10 +1,17 @@
 #include <gtk-2.0/gtk/gtk.h>
+#include <mysql/mysql.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
 #include "mydialogs.h"
+
+
+#define server "localhost"
+#define user "ict23jzt"
+#define passwd "234126"
+#define db "ict23jzt"
 
 #define IA_NAME "hercules.raw"
 #define ICONS "XO"
@@ -27,6 +34,14 @@ typedef struct def_jugador // Información del jugador
     int hard_mode; // Modo dificil activo
     int ia; // si el jugador es una ia
 } JUGADOR;
+
+typedef struct def_Online
+{
+    MYSQL mysql;
+    char name[21];
+    long int u_id[2];
+    long int g_id;
+} Online;
 
 typedef struct def_funcional // Parte funcional del juego
 {
@@ -96,7 +111,6 @@ void coppyBoard(char dest[3][3], char src[3][3]);
 void logMove(JUEGO *juego, int replayable);
 void turnPlayed(JUEGO *juego, int x, int y);
 int checkGame(char tablero[3][3], char played, char winBoard[3][3]);
-gboolean winningPulse(gpointer data);
 
 void aiTurn(JUEGO *juego);
 void chooseSpace(JUEGO *juego, int *x, int *y);
@@ -105,6 +119,7 @@ void cleanScreen(JUEGO *juego);
 void displayHardMode(JUEGO *juego);
 void coppyBoardIntoGraphic(JUEGO *juego);
 void coppyIntoGraphic(JUEGO *juego);
+gboolean winningPulse(gpointer data);
 
 int moreTurnsBackwards(JUEGO *juego);
 void lastTurn(JUEGO *juego);

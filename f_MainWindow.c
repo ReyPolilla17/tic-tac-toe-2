@@ -511,53 +511,6 @@ void turnPlayed(JUEGO *juego, int x, int y)
 }
 
 /**
- * Muestra los espacios que generaron una victoria
- * 
- * @param data Información del juego como gpointer
- * 
- * @returns Si se debe generar otro parpadeo
- */
-gboolean winningPulse(gpointer data)
-{
-    JUEGO *juego = (JUEGO *)data;
-
-    int i = 0;
-    int j = 0;
-
-    // Si ya terminó la partida
-    if(juego->partida.historial[juego->partida.turno].game_status == GAME_ENDED)
-    {
-        // para todos los espacios del tablero
-        for(i = 0; i < 3; i++)
-        {
-            for(j = 0; j < 3; j++)
-            {
-                // si el epsacio del tablero genró una victoria
-                if(juego->partida.winboard[i][j] != ' ')
-                {
-                    // Muestra la ficha o la oculta según la vuelta en la que va
-                    if(juego->partida.winshow)
-                    {
-                        gtk_widget_show(juego->graficos.buttonImg[i][j]);
-                    }
-                    else
-                    {
-                        gtk_widget_hide(juego->graficos.buttonImg[i][j]);
-                    }
-                }
-            }
-        }
-    }
-
-    // cambia la vuelta en la que va
-    juego->partida.winshow += 1;
-    juego->partida.winshow %= 2;
-
-    // Si el juego ha terminado o no ha terminado y están ocultas las fichas
-    return (juego->partida.historial[juego->partida.turno].game_status == GAME_ENDED || (juego->partida.historial[juego->partida.turno].game_status != GAME_ENDED && juego->partida.winshow));
-}
-
-/**
  * Juego de un turno de la ia
  * 
  * @param *juego La partida en curso
@@ -979,6 +932,53 @@ void coppyIntoGraphic(JUEGO *juego)
     }
 
     return;
+}
+
+/**
+ * Muestra los espacios que generaron una victoria
+ * 
+ * @param data Información del juego como gpointer
+ * 
+ * @returns Si se debe generar otro parpadeo
+ */
+gboolean winningPulse(gpointer data)
+{
+    JUEGO *juego = (JUEGO *)data;
+
+    int i = 0;
+    int j = 0;
+
+    // Si ya terminó la partida
+    if(juego->partida.historial[juego->partida.turno].game_status == GAME_ENDED)
+    {
+        // para todos los espacios del tablero
+        for(i = 0; i < 3; i++)
+        {
+            for(j = 0; j < 3; j++)
+            {
+                // si el epsacio del tablero genró una victoria
+                if(juego->partida.winboard[i][j] != ' ')
+                {
+                    // Muestra la ficha o la oculta según la vuelta en la que va
+                    if(juego->partida.winshow)
+                    {
+                        gtk_widget_show(juego->graficos.buttonImg[i][j]);
+                    }
+                    else
+                    {
+                        gtk_widget_hide(juego->graficos.buttonImg[i][j]);
+                    }
+                }
+            }
+        }
+    }
+
+    // cambia la vuelta en la que va
+    juego->partida.winshow += 1;
+    juego->partida.winshow %= 2;
+
+    // Si el juego ha terminado o no ha terminado y están ocultas las fichas
+    return (juego->partida.historial[juego->partida.turno].game_status == GAME_ENDED || (juego->partida.historial[juego->partida.turno].game_status != GAME_ENDED && juego->partida.winshow));
 }
 
 /**
