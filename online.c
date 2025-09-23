@@ -484,7 +484,7 @@ void playTurn(Data *data, char adv[21], char board[3][4], int lp)
         if(!r)
         {
             board[c / 3][c % 3] = ICONS[lp];
-            sprintf(buffer, "UPDATE ttt_Partida SET fila_%d = '%s', last_player = %d, p_status = %d WHERE id_partida = %ld", (c / 3) + 1, board[c/3], (lp + 1) % 2, checkGame(board, ICONS[lp]), data->g_id);
+            // sprintf(buffer, "UPDATE ttt_Partida SET fila_%d = '%s', last_player = %d, p_status = %d WHERE id_partida = %ld", (c / 3) + 1, board[c/3], (lp + 1) % 2, checkGame(board, ICONS[lp]), data->g_id);
             query(&data->mysql, buffer, NULL);
         }
     } while(r);
