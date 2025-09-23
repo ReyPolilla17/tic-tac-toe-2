@@ -159,6 +159,8 @@ gboolean seekMatchLoop(gpointer data)
         mysql_free_result(res);
     }
 
+    printf("Fin");
+
     return FALSE;
 }
 

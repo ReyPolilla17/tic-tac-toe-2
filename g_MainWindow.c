@@ -156,7 +156,7 @@ void loadMainWindow(JUEGO *juego)
 
 
   juego->graficos.menuOnline = gtk_image_menu_item_new();
-    gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(juego->graficos.menuOnline), gtk_image_new_from_stock(GTK_STOCK_CONNECT, GTK_ICON_SIZE_LARGE_TOOLBAR));
+    gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(juego->graficos.menuOnline), gtk_image_new_from_stock(GTK_STOCK_NETWORK, GTK_ICON_SIZE_LARGE_TOOLBAR));
     gtk_menu_item_set_label(GTK_MENU_ITEM(juego->graficos.menuOnline), "Online");
     gtk_menu_shell_append(GTK_MENU_SHELL(menuBar), juego->graficos.menuOnline);
 
