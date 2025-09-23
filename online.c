@@ -23,6 +23,16 @@ void connectToDatabase(JUEGO *juego)
     return;
 }
 
+void seekMatch(JUEGO *juego)
+{
+    return;
+}
+
+void forfeit(JUEGO *juego)
+{
+    return;
+}
+
 void registerUser(JUEGO *juego)
 {
     OnlineRegisterModal info;
