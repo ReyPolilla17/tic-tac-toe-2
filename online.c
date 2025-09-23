@@ -30,14 +30,12 @@ typedef struct def_Data
 } Data;
 
 void menu(Data *data);
-void buscarPartida(Data *data);
 void query(MYSQL *mysql, char query[], MYSQL_RES **res);
 void juegaGato(Data *data);
 void printBoard(char board[3][4], char p1[21], char p2[21]);
-int checkGame(char tablero[3][4], char played);
 void playTurn(Data *data, char adv[21], char board[3][4], int lp);
 
-int main(int argc, char *argv[])
+int _a_main(int argc, char *argv[])
 {
     Data data;
 
