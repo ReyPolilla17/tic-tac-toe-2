@@ -108,55 +108,55 @@ gboolean seekMatchLoop(gpointer data)
 
     if(!row && row2)
     {
-        if(!m)
+        return TRUE;
+    }
+
+    if(!m)
+    {
+        sscanf(row[0], "%ld", &juego->online.u_id[1]);
+    
+        u_ids[r] = juego->online.u_id[0];
+        u_ids[(r + 1) % 2] = juego->online.u_id[1];
+    
+        for(i = 0; i < 2; i++)
         {
-            sscanf(row[0], "%ld", &juego->online.u_id[1]);
-        
-            u_ids[r] = juego->online.u_id[0];
-            u_ids[(r + 1) % 2] = juego->online.u_id[1];
-        
-            for(i = 0; i < 2; i++)
-            {
-                sprintf(buffer, "DELETE FROM ttt_Buscando WHERE id_usuario = %ld", u_ids[i]);
-                query(&juego->online.mysql, buffer, NULL);
-            }
-        
-            sprintf(buffer, "INSERT INTO ttt_Partida (p_status, last_player, id_usuario_1, id_usuario_2) VALUES (%d, %d, %ld, %ld)", GAME_STARTED, 1, u_ids[0], u_ids[1]);
+            sprintf(buffer, "DELETE FROM ttt_Buscando WHERE id_usuario = %ld", u_ids[i]);
             query(&juego->online.mysql, buffer, NULL);
-            
-            mysql_free_result(res);
         }
     
-        /**
-         * Elimina registros repetidos
-         */
-        sprintf(buffer, "SELECT COUNT(*) FROM ttt_Partida WHERE id_usuario_1 = %ld OR id_usuario_2 = %ld", juego->online.u_id[0], juego->online.u_id[0]);
-        query(&juego->online.mysql, buffer, &res);
-    
-        row = mysql_fetch_row(res);
-        sscanf(row[0], "%d", &c);
-        mysql_free_result(res);
-    
-        sprintf(buffer, "DELETE FROM ttt_Partida WHERE id_usuario_1 = %ld OR id_usuario_2 = %ld LIMIT %d", juego->online.u_id[0], juego->online.u_id[0], c - 1);
+        sprintf(buffer, "INSERT INTO ttt_Partida (p_status, last_player, id_usuario_1, id_usuario_2) VALUES (%d, %d, %ld, %ld)", GAME_STARTED, 1, u_ids[0], u_ids[1]);
         query(&juego->online.mysql, buffer, NULL);
-    
-        if(m)
+        
+        mysql_free_result(res);
+    }
+
+    /**
+     * Elimina registros repetidos
+     */
+    sprintf(buffer, "SELECT COUNT(*) FROM ttt_Partida WHERE id_usuario_1 = %ld OR id_usuario_2 = %ld", juego->online.u_id[0], juego->online.u_id[0]);
+    query(&juego->online.mysql, buffer, &res);
+
+    row = mysql_fetch_row(res);
+    sscanf(row[0], "%d", &c);
+    mysql_free_result(res);
+
+    sprintf(buffer, "DELETE FROM ttt_Partida WHERE id_usuario_1 = %ld OR id_usuario_2 = %ld LIMIT %d", juego->online.u_id[0], juego->online.u_id[0], c - 1);
+    query(&juego->online.mysql, buffer, NULL);
+
+    if(m)
+    {
+        sprintf(buffer, "SELECT id_usuario_1, id_usuario_2 FROM ttt_Partida WHERE id_usuario_1 = %ld OR id_usuario_2 = %ld", juego->online.u_id[0], juego->online.u_id[0]);
+        query(&juego->online.mysql, buffer, &res);
+
+        row = mysql_fetch_row(res);
+        sscanf(row[0], "%ld", &juego->online.u_id[1]);
+        
+        if(juego->online.u_id[0] == juego->online.u_id[1])
         {
-            sprintf(buffer, "SELECT id_usuario_1, id_usuario_2 FROM ttt_Partida WHERE id_usuario_1 = %ld OR id_usuario_2 = %ld", juego->online.u_id[0], juego->online.u_id[0]);
-            query(&juego->online.mysql, buffer, &res);
-    
-            row = mysql_fetch_row(res);
-            sscanf(row[0], "%ld", &juego->online.u_id[1]);
-            
-            if(juego->online.u_id[0] == juego->online.u_id[1])
-            {
-                sscanf(row[1], "%ld", &juego->online.u_id[1]);
-            }
-    
-            mysql_free_result(res);
+            sscanf(row[1], "%ld", &juego->online.u_id[1]);
         }
 
-        return TRUE;
+        mysql_free_result(res);
     }
 
     return FALSE;
