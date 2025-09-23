@@ -94,7 +94,7 @@ void new_game_modal_new(NewGameModal *info)
         gtk_box_pack_start(GTK_BOX(hBox), label, FALSE, FALSE, 0);
 
     info->entry_names[0] = gtk_entry_new_with_max_length(20);
-        gtk_signal_connect(GTK_OBJECT(info->entry_names[0]), "changed", GTK_SIGNAL_FUNC(new_game_modal_updated), info);
+        gtk_signal_connect(GTK_OBJECT(info->entry_names[0]), "changed", GTK_SIGNAL_FUNC(on_modal_updated), info);
         gtk_box_pack_start(GTK_BOX(hBox), info->entry_names[0], TRUE, TRUE, 0);
     
     // Segundo jugdor
@@ -229,7 +229,7 @@ void new_game_modal_radio_changed(GtkWidget *widget, gpointer data)
     }
 
     // Oculta el mensaje de advertencia
-    new_game_modal_updated(widget, data);
+    on_modal_updated(widget, data);
 
     return;
 }
