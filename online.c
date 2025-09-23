@@ -31,7 +31,7 @@ typedef struct def_Data
 
 void menu(Data *data);
 void buscarPartida(Data *data);
-void query(MYSQL *mysql, char query[]);
+void query(MYSQL *mysql, char query[], MYSQL_RES **res);
 void juegaGato(Data *data);
 void printBoard(char board[3][4], char p1[21], char p2[21]);
 int checkGame(char tablero[3][4], char played);
@@ -50,12 +50,9 @@ int main(int argc, char *argv[])
     data.u_id[0] = -1;
     data.u_id[1] = -1;
 
-    printf("A");
     srand(time(NULL));
     mysql_init(&data.mysql); // Prepara la conexion al servidor de bases de datos
 
-    printf("A");
-    
     // Se conecta al servidor de base de datos y verifica que no haya error
     if(!mysql_real_connect(&data.mysql, server, user, passwd, db, 0, NULL, 0))
     {
@@ -63,7 +60,6 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    printf("B");
     // Se conecta a la base de datos deseada
     if(mysql_select_db(&data.mysql, db))
     {
@@ -71,23 +67,19 @@ int main(int argc, char *argv[])
         exit(1);
     }
     
-    printf("C");
     printf("Nombre: ");
     scanf("%[^\n]", data.name);
     getchar();
 
-    sprintf(buffer, "INSERT INTO ttt_Usuarios (nombre) VALUES (\"%s\")", data.name);
-    query(&data.mysql, buffer);
+    // sprintf(buffer, "INSERT INTO ttt_Usuarios (nombre) VALUES (\"%s\")", data.name);
+    // query(&data.mysql, buffer, NULL);
 
-    sprintf(buffer, "SELECT id_usuario FROM ttt_Usuarios WHERE nombre = \"%s\" ORDER BY id_usuario DESC LIMIT 1", data.name);
-    query(&data.mysql, buffer);
+    // sprintf(buffer, "SELECT id_usuario FROM ttt_Usuarios WHERE nombre = \"%s\" ORDER BY id_usuario DESC LIMIT 1", data.name);
+    // query(&data.mysql, buffer, &res);
 
-    // Obtiene el query
-    if(!(res = mysql_store_result(&data.mysql)))
-    {
-        printf("Error storing results Error: %s\n", mysql_error(&data.mysql));
-        exit(1);
-    }
+    sprintf(buffer, "CALL ttt_AddUsuario(\"%s\")", data.name);
+    query(&data.mysql, buffer, &res);
+    printf("todo en orden hasta aquí\n");
 
     // Despliega el resultado del query
     row = mysql_fetch_row(res);
@@ -98,10 +90,12 @@ int main(int argc, char *argv[])
 
     mysql_free_result(res);
 
+    printf("%s %ld\n", data.name, data.u_id[0]);
+
     menu(&data);
 
     sprintf(buffer, "DELETE FROM ttt_Usuarios WHERE id_usuario = %ld", data.u_id[0]);
-    query(&data.mysql, buffer);
+    query(&data.mysql, buffer, NULL);
 
     // cierra la conexion con al servidor
     mysql_close(&data.mysql);
@@ -141,11 +135,17 @@ void menu(Data *data)
     return;
 }
 
-void query(MYSQL *mysql, char query[])
+void query(MYSQL *mysql, char query[], MYSQL_RES **res)
 {
     if(mysql_query(mysql, query))
     {
         printf("Error processing query \"%s\" Error: %s\n", query, mysql_error(mysql));
+        exit(1);
+    }
+
+    if(res != NULL && !(*res = mysql_store_result(mysql)))
+    {
+        printf("Error storing results Error: %s\n", mysql_error(mysql));
         exit(1);
     }
 
@@ -173,7 +173,7 @@ void buscarPartida(Data *data)
     dots[0] = 0;
 
     sprintf(buffer, "INSERT INTO ttt_Buscando VALUES (%ld)", data->u_id[0]);
-    query(&data->mysql, buffer);
+    query(&data->mysql, buffer, NULL);
 
     sprintf(buffer, "SELECT * FROM ttt_Buscando WHERE id_usuario != %ld LIMIT 1", data->u_id[0]);
     sprintf(buffer2, "SELECT * FROM ttt_Buscando WHERE id_usuario = %ld LIMIT 1", data->u_id[0]);
@@ -194,14 +194,7 @@ void buscarPartida(Data *data)
         }
 
         // Busca un usuario en la lista de espera que no sea el usuario actual
-        query(&data->mysql, buffer);
-
-        // Intenta obtener los resultados del query
-        if(!(res = mysql_store_result(&data->mysql)))
-        {
-            printf("Error storing results Error: %s\n", mysql_error(&data->mysql));
-            exit(1);
-        }
+        query(&data->mysql, buffer, &res);
 
         // Si no encuentra ningun usuario
         if(!(row = mysql_fetch_row(res)))
@@ -210,14 +203,7 @@ void buscarPartida(Data *data)
             mysql_free_result(res);
 
             // revisa que el usuario siga en la lista de espera
-            query(&data->mysql, buffer2);
-
-            // intenta obtener los resultados del query
-            if(!(res2 = mysql_store_result(&data->mysql)))
-            {
-                printf("Error storing results Error: %s\n", mysql_error(&data->mysql));
-                exit(1);
-            }
+            query(&data->mysql, buffer2, &res2);
 
             // obtiene una fila del segundo resultado
             if(!(row2 = mysql_fetch_row(res2)))
@@ -246,11 +232,11 @@ void buscarPartida(Data *data)
         for(i = 0; i < 2; i++)
         {
             sprintf(buffer, "DELETE FROM ttt_Buscando WHERE id_usuario = %ld", u_ids[i]);
-            query(&data->mysql, buffer);
+            query(&data->mysql, buffer, NULL);
         }
     
         sprintf(buffer, "INSERT INTO ttt_Partida (p_status, last_player, id_usuario_1, id_usuario_2) VALUES (%d, %d, %ld, %ld)", GAME_STARTED, 1, u_ids[0], u_ids[1]);
-        query(&data->mysql, buffer);
+        query(&data->mysql, buffer, NULL);
         
         mysql_free_result(res);
     }
@@ -259,33 +245,19 @@ void buscarPartida(Data *data)
      * Elimina registros repetidos
      */
     sprintf(buffer, "SELECT COUNT(*) FROM ttt_Partida WHERE id_usuario_1 = %ld OR id_usuario_2 = %ld", data->u_id[0], data->u_id[0]);
-    query(&data->mysql, buffer);
-
-    // Intenta obtener los resultados del query
-    if(!(res = mysql_store_result(&data->mysql)))
-    {
-        printf("Error storing results Error: %s\n", mysql_error(&data->mysql));
-        exit(1);
-    }
+    query(&data->mysql, buffer, &res);
 
     row = mysql_fetch_row(res);
     sscanf(row[0], "%d", &c);
     mysql_free_result(res);
 
     sprintf(buffer, "DELETE FROM ttt_Partida WHERE id_usuario_1 = %ld OR id_usuario_2 = %ld LIMIT %d", data->u_id[0], data->u_id[0], c - 1);
-    query(&data->mysql, buffer);
+    query(&data->mysql, buffer, NULL);
 
     if(m)
     {
         sprintf(buffer, "SELECT id_usuario_1, id_usuario_2 FROM ttt_Partida WHERE id_usuario_1 = %ld OR id_usuario_2 = %ld", data->u_id[0], data->u_id[0]);
-        query(&data->mysql, buffer);
-
-        // Intenta obtener los resultados del query
-        if(!(res = mysql_store_result(&data->mysql)))
-        {
-            printf("Error storing results Error: %s\n", mysql_error(&data->mysql));
-            exit(1);
-        }
+        query(&data->mysql, buffer, &res);
 
         row = mysql_fetch_row(res);
         sscanf(row[0], "%ld", &data->u_id[1]);
@@ -324,28 +296,14 @@ void juegaGato(Data *data)
     dots[0] = 0;
 
     sprintf(buffer, "SELECT id_partida FROM ttt_Partida WHERE id_usuario_1 = %ld OR id_usuario_2 = %ld LIMIT 1", data->u_id[0], data->u_id[0]);
-    query(&data->mysql, buffer);
-
-    // Intenta obtener los resultados del query
-    if(!(res = mysql_store_result(&data->mysql)))
-    {
-        printf("Error storing results Error: %s\n", mysql_error(&data->mysql));
-        exit(1);
-    }
+    query(&data->mysql, buffer, &res);
 
     row = mysql_fetch_row(res);
     sscanf(row[0], "%ld", &data->g_id);
     mysql_free_result(res);
 
     sprintf(buffer, "SELECT nombre FROM ttt_Usuarios WHERE id_usuario = %ld LIMIT 1", data->u_id[1]);
-    query(&data->mysql, buffer);
-    
-    // Intenta obtener los resultados del query
-    if(!(res = mysql_store_result(&data->mysql)))
-    {
-        printf("Error storing results Error: %s\n", mysql_error(&data->mysql));
-        exit(1);
-    }
+    query(&data->mysql, buffer, &res);
     
     row = mysql_fetch_row(res);
 
@@ -364,13 +322,7 @@ void juegaGato(Data *data)
     {
         system("clear");
 
-        query(&data->mysql, buffer);
-
-        if(!(res = mysql_store_result(&data->mysql)))
-        {
-            printf("Error storing results Error: %s\n", mysql_error(&data->mysql));
-            exit(1);
-        }
+        query(&data->mysql, buffer, &res);
 
         row = mysql_fetch_row(res);
 
@@ -493,7 +445,7 @@ void playTurn(Data *data, char adv[21], char board[3][4], int lp)
         {
             board[c / 3][c % 3] = ICONS[lp];
             sprintf(buffer, "UPDATE ttt_Partida SET fila_%d = '%s', last_player = %d, p_status = %d WHERE id_partida = %ld", (c / 3) + 1, board[c/3], (lp + 1) % 2, checkGame(board, ICONS[lp]), data->g_id);
-            query(&data->mysql, buffer);
+            query(&data->mysql, buffer, NULL);
         }
     } while(r);
 }
