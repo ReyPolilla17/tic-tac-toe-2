@@ -159,7 +159,7 @@ gboolean seekMatchLoop(gpointer data)
         mysql_free_result(res);
     }
 
-    printf("Fin");
+    printf("Fin\n");
 
     return FALSE;
 }
