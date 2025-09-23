@@ -6,7 +6,7 @@
  * genéricas para ventanas customizadas
  * 
  * @author Luis Julián Zamora Treviño
- * @date 15/03/2025
+ * @date 23/09/2025
  */
 #include "mydialogs.h"
 
@@ -24,6 +24,22 @@ void my_dialogs_on_button_clicked(GtkWidget *widget, gpointer data)
 
     gtk_button_clicked(GTK_BUTTON(button));
     
+    return;
+}
+
+/**
+ * Al actualizar algun campo de un formulario
+ * 
+ * @param *widget El campo modificado
+ * @param data La información de la ventana
+ */
+void on_modal_updated(GtkWidget *widget, gpointer data)
+{
+    NewGameModal *info = (NewGameModal *)data;
+
+    // Oculta el mensaje de advertencia
+    gtk_label_set_markup(GTK_LABEL(info->warning), "\0");
+
     return;
 }
 

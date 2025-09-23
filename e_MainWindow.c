@@ -4,7 +4,7 @@
  * @brief Contiene todas las funciones de eventos que suceden en la ventana principal
  * 
  * @author Luis Julián Zamora Treviño
- * @date 16/03/2025
+ * @date 23/09/2025
  */
 #include "gato.h"
 
@@ -236,6 +236,57 @@ void laVerdad(GtkWidget *widget, gpointer data)
 	dialog = help_dialog_new("1fg289h73d.777");
 		help_dialog_populate_from_file(dialog, "./MEDIA/1fg289h73d.777", "--");
 		help_dialog_run(dialog);
+
+	return;
+}
+
+/**
+ * Registra al usuario para el online
+ * 
+ * @param *widget La opción del menu seleccionada
+ * @param data Puntero a NULL
+ * 
+ * @returns void
+ */
+void registrarUsuario(GtkWidget *widget, gpointer data)
+{
+	JUEGO *juego = (JUEGO *)data;
+
+	registerUser(juego);
+
+	return;
+}
+
+/**
+ * Busca una partida online
+ * 
+ * @param *widget La opción del menu seleccionada
+ * @param data Puntero a NULL
+ * 
+ * @returns void
+ */
+void buscarPartida(GtkWidget *widget, gpointer data)
+{
+	JUEGO *juego = (JUEGO *)data;
+
+	seekMatch(juego);
+
+	return;
+}
+
+/**
+ * Se rinde en el online
+ * 
+ * @param *widget La opción del menu seleccionada
+ * @param data Puntero a NULL
+ * 
+ * @returns void
+ */
+void rendirse(GtkWidget *widget, gpointer data)
+{
+	JUEGO *juego = (JUEGO *)data;
+
+	forfeit(juego);
 
 	return;
 }

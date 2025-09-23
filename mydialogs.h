@@ -58,24 +58,34 @@ typedef struct def_AboutDialog // Ventana de créditos
   AboutDialogPage *pages[3]; // Páginas del programa
 } AboutDialog;
 
-typedef struct def_newGameNewGameModal
+typedef struct def_NewGameModal // Ventana de juego nuevo
 {
-    GtkWidget *dialog;
-    GtkWidget *radio;
-    GtkWidget *check;
-    GtkWidget *entry_names[2];
-    GtkWidget *warning;
+    GtkWidget *dialog; // Puntero al widget
+    GtkWidget *radio; // Input adversario seleccionado
+    GtkWidget *check; // Input modo difícil
+    GtkWidget *entry_names[2]; // Inputs nombres de los jugadores
+    GtkWidget *warning; // Advertencia
 
-    gchar names[2][21];
-    gint vs_ia;
-    gint hard_mode;
+    gchar names[2][21]; // Nombres de los jugadores
+    gint vs_ia; // Contra la computadora
+    gint hard_mode; // Modo difícil
 } NewGameModal;
+
+typedef struct def_OnlineRegisterModal // Ventana de registro para el modo multijugador
+{
+    GtkWidget *dialog; // Puntero al widget
+    GtkWidget *entry_name; // Input nombre del jugador
+    GtkWidget *warning; // Advertencia
+
+    gchar name[21]; // Nombre del jugador
+} OnlineRegisterModal;
 
 /**
  * Funciones genéricas
  */
 
 void my_dialogs_on_button_clicked(GtkWidget *widget, gpointer data);
+void on_modal_updated(GtkWidget *widget, gpointer data);
 
 
 /**
@@ -128,7 +138,14 @@ gint new_game_modal_get_info(NewGameModal *info);
 
 // Funciones internas
 void new_game_modal_radio_changed(GtkWidget *widget, gpointer data);
-void new_game_modal_updated(GtkWidget *widget, gpointer data);
+
+/**
+ * Funciones de la ventana de registro para multijugador
+ */
+
+// Creación y recuperación de datos
+void online_register_modal_new(OnlineRegisterModal *info);
+gint online_register_modal_get_info(OnlineRegisterModal *info);
 
 
 /**

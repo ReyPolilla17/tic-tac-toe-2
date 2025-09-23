@@ -4,7 +4,7 @@
  * @brief Contiene todas las funciones para mostrar una ventana de juego nuevo y recuperar los datos ingresados
  * 
  * @author Luis Julián Zamora Treviño
- * @date 16/03/2025
+ * @date 23/09/2025
  */
 #include "gato.h"
 
@@ -105,7 +105,7 @@ void new_game_modal_new(NewGameModal *info)
         gtk_box_pack_start(GTK_BOX(hBox), label, FALSE, FALSE, 0);
         
     info->entry_names[1] = gtk_entry_new_with_max_length(20);
-        gtk_signal_connect(GTK_OBJECT(info->entry_names[0]), "changed", GTK_SIGNAL_FUNC(new_game_modal_updated), info);
+        gtk_signal_connect(GTK_OBJECT(info->entry_names[0]), "changed", GTK_SIGNAL_FUNC(on_modal_updated), info);
         gtk_box_pack_start(GTK_BOX(hBox), info->entry_names[1], TRUE, TRUE, 0);
     
     // Mensaje de error
@@ -230,22 +230,6 @@ void new_game_modal_radio_changed(GtkWidget *widget, gpointer data)
 
     // Oculta el mensaje de advertencia
     new_game_modal_updated(widget, data);
-
-    return;
-}
-
-/**
- * Al actualizar algun campo de la ventana
- * 
- * @param *widget El campo modificado
- * @param data La información de la ventana
- */
-void new_game_modal_updated(GtkWidget *widget, gpointer data)
-{
-    NewGameModal *info = (NewGameModal *)data;
-
-    // Oculta el mensaje de advertencia
-    gtk_label_set_markup(GTK_LABEL(info->warning), "\0");
 
     return;
 }

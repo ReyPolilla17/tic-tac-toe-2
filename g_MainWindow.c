@@ -108,7 +108,7 @@ void loadMainWindow(JUEGO *juego)
     gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
 
 
-  // lo mimso para las otras 2 opciones del menu
+  // lo mimso para las otras 3 opciones del menu
   menuItem = gtk_image_menu_item_new();
     gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuItem), gtk_image_new_from_stock(GTK_STOCK_MEDIA_PLAY, GTK_ICON_SIZE_LARGE_TOOLBAR));
     gtk_menu_item_set_label(GTK_MENU_ITEM(menuItem), "Juego");
@@ -153,6 +153,33 @@ void loadMainWindow(JUEGO *juego)
     gtk_widget_add_accelerator(juego->graficos.menuTruth, "activate", group, 'T', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect(GTK_OBJECT(juego->graficos.menuTruth), "activate", G_CALLBACK(laVerdad), juego);
     gtk_menu_shell_append(GTK_MENU_SHELL(submenu), juego->graficos.menuTruth);
+
+
+  menuItem = gtk_image_menu_item_new();
+    gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuItem), gtk_image_new_from_stock(GTK_STOCK_INFO, GTK_ICON_SIZE_LARGE_TOOLBAR));
+    gtk_menu_item_set_label(GTK_MENU_ITEM(menuItem), "Online");
+    gtk_menu_shell_append(GTK_MENU_SHELL(menuBar), menuItem);
+
+  submenu = gtk_menu_new();
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuItem), submenu);
+    gtk_menu_set_accel_group(GTK_MENU(submenu), group);
+
+  juego->graficos.menuName = gtk_menu_item_new_with_mnemonic("Establecer Nombre");
+    gtk_widget_add_accelerator(subItem, "activate", group, 'U', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(registrarUsuario), juego);
+    gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
+
+  juego->graficos.menuSeek = gtk_menu_item_new_with_mnemonic("Buscar Partida");
+    gtk_widget_add_accelerator(subItem, "activate", group, 'P', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_signal_connect(GTK_OBJECT(subItem), "activate", G_CALLBACK(buscarPartida), juego);
+    gtk_menu_shell_append(GTK_MENU_SHELL(submenu), subItem);
+    gtk_widget_set_sensitive(juego->graficos.menuSeek, FALSE);
+
+  juego->graficos.menuForfeit = gtk_menu_item_new_with_mnemonic("Rendirse");
+    gtk_widget_add_accelerator(juego->graficos.menuTruth, "activate", group, 'F', GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_signal_connect(GTK_OBJECT(juego->graficos.menuTruth), "activate", G_CALLBACK(rendirse), juego);
+    gtk_menu_shell_append(GTK_MENU_SHELL(submenu), juego->graficos.menuTruth);
+    gtk_widget_set_sensitive(juego->graficos.menuForfeit, FALSE);
 
   /**
    * Fin de la seccion del menu

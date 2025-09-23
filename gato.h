@@ -7,12 +7,6 @@
 
 #include "mydialogs.h"
 
-
-#define server "localhost"
-#define user "ict23jzt"
-#define passwd "234126"
-#define db "ict23jzt"
-
 #define IA_NAME "hercules.raw"
 #define ICONS "XO"
 
@@ -35,13 +29,13 @@ typedef struct def_jugador // Información del jugador
     int ia; // si el jugador es una ia
 } JUGADOR;
 
-typedef struct def_Online
+typedef struct def_Online // Parte en línea del juego
 {
-    MYSQL mysql;
-    char name[21];
-    long int u_id[2];
-    long int g_id;
-} Online;
+    MYSQL mysql; // Conexión a la base de datos
+    char name[21]; // Nombre del jugador
+    long int u_id[2]; // IDs de los jugadores de la partida
+    long int g_id; // ID del juego
+} ONLINE;
 
 typedef struct def_funcional // Parte funcional del juego
 {
@@ -61,6 +55,10 @@ typedef struct def_grafico
   GtkWidget *menuTruth;
   GtkWidget *menuSave;
   GtkWidget *menuEnd;
+  GtkWidget *menuOnline;
+  GtkWidget *menuName;
+  GtkWidget *menuSeek;
+  GtkWidget *menuForfeit;
   GtkWidget *playingImg;
   GtkWidget *playingBox;
   GtkWidget *moveButtons[2];
@@ -78,6 +76,7 @@ typedef struct def_juego
 {
     FUNCIONAL partida;
     GRAFICO graficos;
+    ONLINE online;
 } JUEGO;
 
 // inicialización
@@ -85,6 +84,10 @@ void gameStartup(JUEGO *juego);
 void loadMainWindow(JUEGO *juego);
 
 void stopTheApp(GtkWidget *widget, gpointer data);
+
+// Online
+void connectToDatabase(JUEGO *juego);
+void registerUser(JUEGO *juego);
 
 // funciones del menú de la ventana principal
 void guardarPartida(GtkWidget *widget, gpointer data);
@@ -94,6 +97,9 @@ void terminarPartida(GtkWidget *widget, gpointer data);
 void comoJugar(GtkWidget *widget, gpointer data);
 void acercaDe(GtkWidget *widget, gpointer data);
 void laVerdad(GtkWidget *widget, gpointer data);
+void registrarUsuario(GtkWidget *widget, gpointer data);
+void buscarPartida(GtkWidget *widget, gpointer data);
+void rendirse(GtkWidget *widget, gpointer data);
 
 // funciones de los botones del tablero
 void board_button_hover(GtkWidget *eventbox, GdkEventButton *event, gpointer data);
