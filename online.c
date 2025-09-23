@@ -12,13 +12,11 @@ void connectToDatabase(JUEGO *juego)
     // Se conecta al servidor de base de datos y verifica que no haya error
     if(!mysql_real_connect(&juego->online.mysql, "localhost", "ict23jzt", "234126", "ict23jzt", 0, NULL, 0))
     {
-        printf("Failed to connect to database: Error: %s\n", mysql_error(&juego->online.mysql));
         gtk_widget_hide(juego->graficos.menuOnline);
         juego->online.connected = FALSE;
     }
     else if(mysql_select_db(&juego->online.mysql, "ict23jzt"))
     {
-        printf("Error selecting database: Error: %s\n", mysql_error(&juego->online.mysql));
         gtk_widget_hide(juego->graficos.menuOnline);
         juego->online.connected = FALSE;
     }
