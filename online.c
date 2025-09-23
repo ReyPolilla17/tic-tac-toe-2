@@ -45,11 +45,6 @@ void seekMatch(JUEGO *juego)
 {
     char buffer[1000];
 
-    MYSQL_RES *res;
-    MYSQL_RES *res2;
-    MYSQL_ROW row;
-    MYSQL_ROW row2;
-
     sprintf(buffer, "INSERT INTO ttt_Buscando VALUES (%ld)", juego->online.u_id[0]);
     query(&juego->online.mysql, buffer, NULL);
 
@@ -73,9 +68,6 @@ gboolean seekMatchLoop(gpointer data)
     char buffer2[1000];
 
     long int u_ids[2];
-
-    char buffer2[1000];
-    char dots[4];
 
     int r = rand() % 2;
     int i = 0;

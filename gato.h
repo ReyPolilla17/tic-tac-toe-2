@@ -92,6 +92,7 @@ void closeConnectionToDatabase(JUEGO *juego);
 void registerUser(JUEGO *juego);
 void query(MYSQL *mysql, char query[], MYSQL_RES **res);
 void seekMatch(JUEGO *juego);
+gboolean seekMatchLoop(gpointer data);
 void forfeit(JUEGO *juego);
 
 // funciones del menú de la ventana principal
