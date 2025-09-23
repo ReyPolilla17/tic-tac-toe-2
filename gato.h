@@ -88,6 +88,7 @@ void stopTheApp(GtkWidget *widget, gpointer data);
 // Online
 void connectToDatabase(JUEGO *juego);
 void registerUser(JUEGO *juego);
+void query(MYSQL *mysql, char query[], MYSQL_RES **res);
 
 // funciones del menú de la ventana principal
 void guardarPartida(GtkWidget *widget, gpointer data);

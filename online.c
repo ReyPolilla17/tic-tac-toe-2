@@ -29,8 +29,6 @@ typedef struct def_Data
     long int g_id;
 } Data;
 
-void menu(Data *data);
-void query(MYSQL *mysql, char query[], MYSQL_RES **res);
 void juegaGato(Data *data);
 void printBoard(char board[3][4], char p1[21], char p2[21]);
 void playTurn(Data *data, char adv[21], char board[3][4], int lp);
@@ -175,38 +173,6 @@ void registerUser(JUEGO *juego)
     return;
 }
 
-void menu(Data *data)
-{
-    int op = 0;
-
-    system("clear");
-
-    do
-    {
-        printf("Opciones:\n");
-        printf("\t1. Buscar Partida.\n");
-        printf("\t2. Salir.\n");
-
-        scanf("%d", &op);
-        getchar();
-        system("clear");
-
-        switch(op)
-        {
-            case 1:
-                buscarPartida(data);
-                break;
-            case 2:
-                break;
-            default:
-                printf("Acción desconocida...\n");
-                break;
-        }
-    } while(op != 2);
-
-    return;
-}
-
 void query(MYSQL *mysql, char query[], MYSQL_RES **res)
 {
     if(mysql_query(mysql, query))
@@ -226,7 +192,7 @@ void query(MYSQL *mysql, char query[], MYSQL_RES **res)
     return;
 }
 
-void buscarPartida(Data *data)
+void _buscarPartida(Data *data)
 {
     char buffer[1000];
     char buffer2[1000];
