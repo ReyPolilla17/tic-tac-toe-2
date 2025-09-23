@@ -60,22 +60,27 @@ typedef struct def_AboutDialog // Ventana de créditos
 
 typedef struct def_NewGameModal // Ventana de juego nuevo
 {
+    GtkWidget *warning; // Advertencia
     GtkWidget *dialog; // Puntero al widget
     GtkWidget *radio; // Input adversario seleccionado
     GtkWidget *check; // Input modo difícil
     GtkWidget *entry_names[2]; // Inputs nombres de los jugadores
-    GtkWidget *warning; // Advertencia
 
     gchar names[2][21]; // Nombres de los jugadores
     gint vs_ia; // Contra la computadora
     gint hard_mode; // Modo difícil
 } NewGameModal;
 
+typedef struct def_GenericModal
+{
+  GtkWidget *warning;
+} Generic_Modal;
+
 typedef struct def_OnlineRegisterModal // Ventana de registro para el modo multijugador
 {
+    GtkWidget *warning; // Advertencia
     GtkWidget *dialog; // Puntero al widget
     GtkWidget *entry_name; // Input nombre del jugador
-    GtkWidget *warning; // Advertencia
 
     gchar name[21]; // Nombre del jugador
 } OnlineRegisterModal;

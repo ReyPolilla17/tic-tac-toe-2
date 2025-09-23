@@ -35,7 +35,7 @@ void my_dialogs_on_button_clicked(GtkWidget *widget, gpointer data)
  */
 void on_modal_updated(GtkWidget *widget, gpointer data)
 {
-    NewGameModal *info = (NewGameModal *)data;
+    Generic_Modal *info = (Generic_Modal *)data;
 
     // Oculta el mensaje de advertencia
     gtk_label_set_markup(GTK_LABEL(info->warning), "\0");
