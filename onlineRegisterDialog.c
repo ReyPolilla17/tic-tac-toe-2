@@ -22,7 +22,7 @@ void online_register_modal_new(OnlineRegisterModal *info)
     // Creación de la ventana
     info->dialog = gtk_dialog_new();
         gtk_window_set_title(GTK_WINDOW(info->dialog), "Jugar en Línea");
-        gtk_window_set_default_size(GTK_WINDOW(info->dialog), 300, 200);
+        gtk_window_set_default_size(GTK_WINDOW(info->dialog), 300, 150);
     
     button = gtk_dialog_add_button(GTK_DIALOG(info->dialog), "Aceptar", GTK_RESPONSE_APPLY);
         gtk_button_set_image(GTK_BUTTON(button), gtk_image_new_from_stock(GTK_STOCK_APPLY, GTK_ICON_SIZE_BUTTON));

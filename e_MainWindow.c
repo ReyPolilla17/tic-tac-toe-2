@@ -18,6 +18,12 @@ void stopTheApp(GtkWidget *widget, gpointer data)
 {
 	JUEGO *juego = (JUEGO *)data;
 
+	// Si se conectó a la base de datos
+	if(juego->online.connected)
+	{
+		closeConnectionToDatabase(juego);
+	}
+
 	// en caso de que haya música sonando
 	if(juego->partida.jugadores[0].hard_mode || juego->partida.jugadores[1].hard_mode)
 	{

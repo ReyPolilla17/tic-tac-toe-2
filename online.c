@@ -5,6 +5,7 @@ void connectToDatabase(JUEGO *juego)
     juego->online.g_id = 0;
     juego->online.u_id[0] = -1;
     juego->online.u_id[1] = -1;
+    juego->online.connected = TRUE;
 
     mysql_init(&juego->online.mysql); // Prepara la conexion al servidor de bases de datos
 
@@ -13,14 +14,27 @@ void connectToDatabase(JUEGO *juego)
     {
         printf("Failed to connect to database: Error: %s\n", mysql_error(&juego->online.mysql));
         gtk_widget_hide(juego->graficos.menuOnline);
+        juego->online.connected = FALSE;
     }
     else if(mysql_select_db(&juego->online.mysql, "ict23jzt"))
     {
         printf("Error selecting database: Error: %s\n", mysql_error(&juego->online.mysql));
         gtk_widget_hide(juego->graficos.menuOnline);
+        juego->online.connected = FALSE;
     }
 
     return;
+}
+
+void closeConnectionToDatabase(JUEGO *juego)
+{
+    char buffer[1000];
+
+    sprintf(buffer, "DELETE FROM ttt_Usuarios WHERE id_usuario = %ld", juego->online.u_id[0]);
+    query(&juego->online.mysql, buffer, NULL);
+
+    // cierra la conexion con al servidor
+    mysql_close(&juego->online.mysql);
 }
 
 void seekMatch(JUEGO *juego)

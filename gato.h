@@ -35,6 +35,7 @@ typedef struct def_Online // Parte en línea del juego
     char name[21]; // Nombre del jugador
     long int u_id[2]; // IDs de los jugadores de la partida
     long int g_id; // ID del juego
+    gboolean connected; // Si se pudo conectar a la base de datos
 } ONLINE;
 
 typedef struct def_funcional // Parte funcional del juego
@@ -87,6 +88,7 @@ void stopTheApp(GtkWidget *widget, gpointer data);
 
 // Online
 void connectToDatabase(JUEGO *juego);
+void closeConnectionToDatabase(JUEGO *juego);
 void registerUser(JUEGO *juego);
 void query(MYSQL *mysql, char query[], MYSQL_RES **res);
 void seekMatch(JUEGO *juego);
