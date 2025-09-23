@@ -28,8 +28,14 @@ void closeConnectionToDatabase(JUEGO *juego)
 {
     char buffer[1000];
 
-    sprintf(buffer, "DELETE FROM ttt_Usuarios WHERE id_usuario = %ld", juego->online.u_id[0]);
-    query(&juego->online.mysql, buffer, NULL);
+    // rendirse
+
+    // si se registró un jugador
+    if(juego->online.u_id[0] != -1)
+    {
+        sprintf(buffer, "DELETE FROM ttt_Usuarios WHERE id_usuario = %ld", juego->online.u_id[0]);
+        query(&juego->online.mysql, buffer, NULL);
+    }
 
     // cierra la conexion con al servidor
     mysql_close(&juego->online.mysql);
@@ -37,7 +43,131 @@ void closeConnectionToDatabase(JUEGO *juego)
 
 void seekMatch(JUEGO *juego)
 {
+    char buffer[1000];
+
+    MYSQL_RES *res;
+    MYSQL_RES *res2;
+    MYSQL_ROW row;
+    MYSQL_ROW row2;
+
+    sprintf(buffer, "INSERT INTO ttt_Buscando VALUES (%ld)", juego->online.u_id[0]);
+    query(&juego->online.mysql, buffer, NULL);
+
+    g_timeout_add(400, (GSourceFunc)seekMatchLoop, (gpointer)juego);
+    
+    // juegaGato(data);
+
     return;
+}
+
+gboolean seekMatchLoop(gpointer data)
+{
+    JUEGO *juego = (JUEGO *)data;
+
+    MYSQL_RES *res;
+    MYSQL_RES *res2;
+    MYSQL_ROW row;
+    MYSQL_ROW row2;
+
+    char buffer[1000];
+    char buffer2[1000];
+
+    long int u_ids[2];
+
+    char buffer2[1000];
+    char dots[4];
+
+    int r = rand() % 2;
+    int i = 0;
+    int m = 0;
+    int c = 0;
+
+    // impresion dinámica de espera
+    printf("Buscando Partida\n");
+
+    sprintf(buffer, "SELECT * FROM ttt_Buscando WHERE id_usuario != %ld LIMIT 1", juego->online.u_id[0]);
+    sprintf(buffer2, "SELECT * FROM ttt_Buscando WHERE id_usuario = %ld LIMIT 1", juego->online.u_id[0]);
+
+    // Busca un adversario en la lista de espera
+    query(&juego->online.mysql, buffer, &res);
+
+    // Si no encuentra ningun adversario
+    if(!(row = mysql_fetch_row(res)))
+    {
+        // libera el resultado
+        mysql_free_result(res);
+
+        // revisa que el usuario siga en la lista de espera
+        query(&juego->online.mysql, buffer2, &res2);
+
+        // obtiene una fila del segundo resultado
+        if(!(row2 = mysql_fetch_row(res2)))
+        {
+            m = 1;
+        }
+        
+        mysql_free_result(res2);
+        
+        if(!m)
+        {
+            sleep(1);
+        }
+    }
+
+    if(!row && row2)
+    {
+        if(!m)
+        {
+            sscanf(row[0], "%ld", &juego->online.u_id[1]);
+        
+            u_ids[r] = juego->online.u_id[0];
+            u_ids[(r + 1) % 2] = juego->online.u_id[1];
+        
+            for(i = 0; i < 2; i++)
+            {
+                sprintf(buffer, "DELETE FROM ttt_Buscando WHERE id_usuario = %ld", u_ids[i]);
+                query(&juego->online.mysql, buffer, NULL);
+            }
+        
+            sprintf(buffer, "INSERT INTO ttt_Partida (p_status, last_player, id_usuario_1, id_usuario_2) VALUES (%d, %d, %ld, %ld)", GAME_STARTED, 1, u_ids[0], u_ids[1]);
+            query(&juego->online.mysql, buffer, NULL);
+            
+            mysql_free_result(res);
+        }
+    
+        /**
+         * Elimina registros repetidos
+         */
+        sprintf(buffer, "SELECT COUNT(*) FROM ttt_Partida WHERE id_usuario_1 = %ld OR id_usuario_2 = %ld", juego->online.u_id[0], juego->online.u_id[0]);
+        query(&juego->online.mysql, buffer, &res);
+    
+        row = mysql_fetch_row(res);
+        sscanf(row[0], "%d", &c);
+        mysql_free_result(res);
+    
+        sprintf(buffer, "DELETE FROM ttt_Partida WHERE id_usuario_1 = %ld OR id_usuario_2 = %ld LIMIT %d", juego->online.u_id[0], juego->online.u_id[0], c - 1);
+        query(&juego->online.mysql, buffer, NULL);
+    
+        if(m)
+        {
+            sprintf(buffer, "SELECT id_usuario_1, id_usuario_2 FROM ttt_Partida WHERE id_usuario_1 = %ld OR id_usuario_2 = %ld", juego->online.u_id[0], juego->online.u_id[0]);
+            query(&juego->online.mysql, buffer, &res);
+    
+            row = mysql_fetch_row(res);
+            sscanf(row[0], "%ld", &juego->online.u_id[1]);
+            
+            if(juego->online.u_id[0] == juego->online.u_id[1])
+            {
+                sscanf(row[1], "%ld", &juego->online.u_id[1]);
+            }
+    
+            mysql_free_result(res);
+        }
+
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 void forfeit(JUEGO *juego)
