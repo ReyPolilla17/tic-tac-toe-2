@@ -57,8 +57,11 @@ void online_connection_dialog_run(OnlineConnectionDialog **dialog)
 
 void online_connection_dialog_destroy(OnlineConnectionDialog **dialog)
 {
+    g_print("Fin1");
     gtk_widget_destroy((*dialog)->dialog);
+    g_print("Fin2");
     free(*dialog);
+    g_print("Fin3");
 
     *dialog = NULL;
 
