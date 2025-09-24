@@ -44,11 +44,11 @@ void online_connection_dialog_run(OnlineConnectionDialog **dialog)
 {
         
     // muesta las partes necesarias
-    gtk_widget_show_all((*info)->dialog);
-    gtk_widget_hide(GTK_DIALOG((*info)->dialog)->action_area);
+    gtk_widget_show_all((*dialog)->dialog);
+    gtk_widget_hide(GTK_DIALOG((*dialog)->dialog)->action_area);
     
     // ejecuta el dialog
-    (*info)->res = gtk_dialog_run(GTK_DIALOG((*info)->dialog));
+    (*dialog)->res = gtk_dialog_run(GTK_DIALOG((*dialog)->dialog));
 
     online_connection_dialog_destroy(dialog);
 
