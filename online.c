@@ -59,7 +59,7 @@ void seekMatch(JUEGO *juego)
         sprintf(buffer, "DELETE ttt_Buscando WHERE id_usuario = %ld", juego->online.u_id[0]);
         query(&juego->online.mysql, buffer, NULL);
 
-        online_connection_dialog_destroy(juego->online.dialog);
+        online_connection_dialog_destroy(&juego->online.dialog);
     }
     else
     {
