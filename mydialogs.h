@@ -163,8 +163,9 @@ gint online_register_modal_get_info(OnlineRegisterModal *info);
  * Funciones de la ventana de espera de oponente en multijugador
  */
 void online_connection_dialog_new(OnlineConnectionDialog **info);
-void online_connection_dialog_pulse(OnlineConnectionDialog *dialog);
 void online_connection_dialog_run(OnlineConnectionDialog **dialog);
+void online_connection_dialog_destroy(OnlineConnectionDialog **dialog);
+void online_connection_dialog_pulse(OnlineConnectionDialog *dialog);
 
 /**
  * Funciones ventanas comunes

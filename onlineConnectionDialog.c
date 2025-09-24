@@ -50,6 +50,13 @@ void online_connection_dialog_run(OnlineConnectionDialog **dialog)
     // ejecuta el dialog
     (*info)->res = gtk_dialog_run(GTK_DIALOG((*info)->dialog));
 
+    online_connection_dialog_destroy(dialog);
+
+    return;
+}
+
+void online_connection_dialog_destroy(OnlineConnectionDialog **dialog)
+{
     gtk_widget_destroy((*dialog)->dialog);
     free(*dialog);
 
