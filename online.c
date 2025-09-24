@@ -211,6 +211,9 @@ void registerUser(JUEGO *juego)
         // habilita Buscar partida
         gtk_widget_set_sensitive(juego->graficos.menuSeek, TRUE);
 
+        sprintf(buffer, "Online (%s)", info.name);
+        gtk_menu_item_set_label(GTK_MENU_ITEM(juego->graficos.menuOnline), buffer);
+
         // Si el usuario no está registrado
         if(juego->online.u_id[0] == -1)
         {
