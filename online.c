@@ -49,8 +49,12 @@ void seekMatch(JUEGO *juego)
     sprintf(buffer, "INSERT INTO ttt_Buscando VALUES (%ld)", juego->online.u_id[0]);
     query(&juego->online.mysql, buffer, NULL);
 
-    g_timeout_add_full(G_PRIORITY_DEFAULT, 400, (GSourceFunc)seekMatchLoop, (gpointer)juego, (GDestroyNotify)playOnline);
     online_connection_dialog_new(&juego->online.dialog);
+    g_timeout_add_full(G_PRIORITY_DEFAULT, 400, (GSourceFunc)seekMatchLoop, (gpointer)juego, (GDestroyNotify)playOnline);
+
+    online_connection_dialog_run(&juego->online.dialog);
+
+    g_print("A");
     
     // juegaGato(data);
 
@@ -109,12 +113,12 @@ gboolean seekMatchLoop(gpointer data)
 
     if(!row && row2)
     {
-        // online_connection_dialog_pulse(juego->online.dialog);
+        online_connection_dialog_pulse(juego->online.dialog);
 
         return TRUE;
     }
 
-    // online_connection_dialog_destroy(&juego->online.dialog);
+    online_connection_dialog_destroy(&juego->online.dialog);
 
     if(!m)
     {

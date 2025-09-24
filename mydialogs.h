@@ -164,7 +164,7 @@ gint online_register_modal_get_info(OnlineRegisterModal *info);
  */
 void online_connection_dialog_new(OnlineConnectionDialog **info);
 void online_connection_dialog_pulse(OnlineConnectionDialog *dialog);
-void online_connection_dialog_destroy(OnlineConnectionDialog **dialog);
+void online_connection_dialog_run(OnlineConnectionDialog **dialog);
 
 /**
  * Funciones ventanas comunes

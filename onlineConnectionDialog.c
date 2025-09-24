@@ -36,18 +36,24 @@ void online_connection_dialog_new(OnlineConnectionDialog **info)
         gtk_button_set_image(GTK_BUTTON(button), gtk_image_new_from_stock(GTK_STOCK_CANCEL, GTK_ICON_SIZE_BUTTON));
         gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(my_dialogs_on_button_clicked), gtk_dialog_add_button(GTK_DIALOG((*info)->dialog), "\0", GTK_RESPONSE_CANCEL));
         gtk_box_pack_end(GTK_BOX(mBox), button, FALSE, FALSE, 5);
-    
-    gtk_widget_show_all((*info)->dialog);
 
+    return;
+}
+
+void online_connection_dialog_run(OnlineConnectionDialog **dialog)
+{
+        
     // muesta las partes necesarias
-    gtk_widget_show_all(GTK_DIALOG((*info)->dialog)->vbox);
+    gtk_widget_show_all((*info)->dialog);
     gtk_widget_hide(GTK_DIALOG((*info)->dialog)->action_area);
     
     // ejecuta el dialog
     (*info)->res = gtk_dialog_run(GTK_DIALOG((*info)->dialog));
 
-    // libera la memoria necesaria
-    gtk_widget_destroy((*info)->dialog);
+    gtk_widget_destroy((*dialog)->dialog);
+    free(*dialog);
+
+    *dialog = NULL;
 
     return;
 }
@@ -55,16 +61,6 @@ void online_connection_dialog_new(OnlineConnectionDialog **info)
 void online_connection_dialog_pulse(OnlineConnectionDialog *dialog)
 {
     gtk_progress_bar_pulse(GTK_PROGRESS_BAR(&dialog->progress));
-
-    return;
-}
-
-void online_connection_dialog_destroy(OnlineConnectionDialog **dialog)
-{
-    gtk_widget_destroy((*dialog)->dialog);
-    free(*dialog);
-
-    *dialog = NULL;
 
     return;
 }
