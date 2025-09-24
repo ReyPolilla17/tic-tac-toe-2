@@ -67,7 +67,7 @@ void online_connection_dialog_destroy(OnlineConnectionDialog **dialog)
 
 void online_connection_dialog_pulse(OnlineConnectionDialog *dialog)
 {
-    gtk_progress_bar_pulse(GTK_PROGRESS_BAR(&dialog->progress));
+    gtk_progress_bar_pulse(GTK_PROGRESS_BAR(dialog->progress));
 
     return;
 }

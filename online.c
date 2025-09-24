@@ -50,11 +50,11 @@ void seekMatch(JUEGO *juego)
     query(&juego->online.mysql, buffer, NULL);
 
     online_connection_dialog_new(&juego->online.dialog);
-    g_timeout_add_full(G_PRIORITY_DEFAULT, 400, (GSourceFunc)seekMatchLoop, (gpointer)juego, (GDestroyNotify)playOnline);
+    g_timeout_add_full(G_PRIORITY_DEFAULT, 1000, (GSourceFunc)seekMatchLoop, (gpointer)juego, (GDestroyNotify)playOnline);
 
     online_connection_dialog_run(&juego->online.dialog);
 
-    g_print("A");
+    g_print("B");
     
     // juegaGato(data);
 
