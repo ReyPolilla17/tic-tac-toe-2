@@ -6,6 +6,7 @@ void connectToDatabase(JUEGO *juego)
     juego->online.u_id[0] = -1;
     juego->online.u_id[1] = -1;
     juego->online.connected = TRUE;
+    juego->online.dialog = NULL;
 
     mysql_init(&juego->online.mysql); // Prepara la conexion al servidor de bases de datos
 
@@ -105,8 +106,12 @@ gboolean seekMatchLoop(gpointer data)
 
     if(!row && row2)
     {
+        online_connection_dialog_pulse(juego->online.dialog);
+
         return TRUE;
     }
+
+    online_connection_dialog_destroy(&juego->online.dialog);
 
     if(!m)
     {

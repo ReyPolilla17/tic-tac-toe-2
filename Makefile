@@ -1,5 +1,5 @@
-gato.out: gato.o online.o e_MainWindow.o f_MainWindow.o g_MainWindow.o helpDialog.o aboutDialog.o newGameDialog.o onlineRegisterDialog.o endDialogs.o commonDialogs.o
-	gcc -g -Wall -o gato.out gato.o online.o e_MainWindow.o f_MainWindow.o g_MainWindow.o helpDialog.o aboutDialog.o newGameDialog.o onlineRegisterDialog.o endDialogs.o commonDialogs.o `pkg-config --cflags --libs gtk+-2.0` -lnsl -lm -lz -lmysqlclient
+gato.out: gato.o online.o e_MainWindow.o f_MainWindow.o g_MainWindow.o helpDialog.o aboutDialog.o newGameDialog.o onlineRegisterModal.o onlineConnectionDialog.o endDialogs.o commonDialogs.o
+	gcc -g -Wall -o gato.out gato.o online.o e_MainWindow.o f_MainWindow.o g_MainWindow.o helpDialog.o aboutDialog.o newGameDialog.o onlineRegisterModal.o onlineConnectionDialog.o endDialogs.o commonDialogs.o `pkg-config --cflags --libs gtk+-2.0` -lnsl -lm -lz -lmysqlclient
 
 gato.o: gato.c
 	gcc -g -Wall -c gato.c `pkg-config --cflags --libs gtk+-2.0`
@@ -25,8 +25,11 @@ aboutDialog.o: aboutDialog.c
 newGameDialog.o: newGameDialog.c
 	gcc -g -Wall -c newGameDialog.c `pkg-config --cflags --libs gtk+-2.0`
 
-onlineRegisterDialog.o: onlineRegisterDialog.c
-	gcc -g -Wall -c onlineRegisterDialog.c `pkg-config --cflags --libs gtk+-2.0`
+onlineRegisterModal.o: onlineRegisterModal.c
+	gcc -g -Wall -c onlineRegisterModal.c `pkg-config --cflags --libs gtk+-2.0`
+
+onlineConnectionDialog.o: onlineConnectionDialog.c
+	gcc -g -Wall -c onlineConnectionDialog.c `pkg-config --cflags --libs gtk+-2.0`
 
 endDialogs.o: endDialogs.c
 	gcc -g -Wall -c endDialogs.c `pkg-config --cflags --libs gtk+-2.0`

@@ -58,17 +58,23 @@ typedef struct def_AboutDialog // Ventana de créditos
   AboutDialogPage *pages[3]; // Páginas del programa
 } AboutDialog;
 
+typedef struct def_OnlineConnectionDialog
+{
+  GtkWidget *dialog;
+  GtkWidget *progress;
+} OnlineConnectionDialog;
+
 typedef struct def_NewGameModal // Ventana de juego nuevo
 {
-    GtkWidget *warning; // Advertencia
-    GtkWidget *dialog; // Puntero al widget
-    GtkWidget *radio; // Input adversario seleccionado
-    GtkWidget *check; // Input modo difícil
-    GtkWidget *entry_names[2]; // Inputs nombres de los jugadores
+  GtkWidget *warning; // Advertencia
+  GtkWidget *dialog; // Puntero al widget
+  GtkWidget *radio; // Input adversario seleccionado
+  GtkWidget *check; // Input modo difícil
+  GtkWidget *entry_names[2]; // Inputs nombres de los jugadores
 
-    gchar names[2][21]; // Nombres de los jugadores
-    gint vs_ia; // Contra la computadora
-    gint hard_mode; // Modo difícil
+  gchar names[2][21]; // Nombres de los jugadores
+  gint vs_ia; // Contra la computadora
+  gint hard_mode; // Modo difícil
 } NewGameModal;
 
 typedef struct def_GenericModal
@@ -78,11 +84,11 @@ typedef struct def_GenericModal
 
 typedef struct def_OnlineRegisterModal // Ventana de registro para el modo multijugador
 {
-    GtkWidget *warning; // Advertencia
-    GtkWidget *dialog; // Puntero al widget
-    GtkWidget *entry_name; // Input nombre del jugador
+  GtkWidget *warning; // Advertencia
+  GtkWidget *dialog; // Puntero al widget
+  GtkWidget *entry_name; // Input nombre del jugador
 
-    gchar name[21]; // Nombre del jugador
+  gchar name[21]; // Nombre del jugador
 } OnlineRegisterModal;
 
 /**
@@ -152,6 +158,12 @@ void new_game_modal_radio_changed(GtkWidget *widget, gpointer data);
 void online_register_modal_new(OnlineRegisterModal *info);
 gint online_register_modal_get_info(OnlineRegisterModal *info);
 
+/**
+ * Funciones de la ventana de espera de oponente en multijugador
+ */
+gint online_connection_dialog_new(OnlineConnectionDialog *info);
+void online_connection_dialog_pulse(OnlineConnectionDialog *dialog);
+void online_connection_dialog_destroy(OnlineConnectionDialog **dialog);
 
 /**
  * Funciones ventanas comunes
