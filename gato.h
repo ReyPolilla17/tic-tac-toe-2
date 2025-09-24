@@ -32,7 +32,7 @@ typedef struct def_jugador // Información del jugador
 typedef struct def_Online // Parte en línea del juego
 {
     MYSQL mysql; // Conexión a la base de datos
-    char name[21]; // Nombre del jugador
+    char name[2][21]; // Nombre del jugador
     long int u_id[2]; // IDs de los jugadores de la partida
     long int g_id; // ID del juego
     gboolean connected; // Si se pudo conectar a la base de datos
