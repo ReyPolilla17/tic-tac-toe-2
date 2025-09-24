@@ -50,11 +50,22 @@ void seekMatch(JUEGO *juego)
     query(&juego->online.mysql, buffer, NULL);
 
     online_connection_dialog_new(&juego->online.dialog);
-    g_timeout_add(1000, (GSourceFunc)seekMatchLoop, (gpointer)juego);
+    g_timeout_add(400, (GSourceFunc)seekMatchLoop, (gpointer)juego);
 
     online_connection_dialog_run(&juego->online.dialog);
 
-    playOnline(juego);
+    if(juego->online.dialog != NULL)
+    {
+        sprintf(buffer, "DELETE ttt_Buscando WHERE id_usuario = %ld", juego->online.u_id[0]);
+        query(&juego->online.mysql, buffer, NULL);
+
+        online_connection_dialog_destroy(juego->online.dialog);
+    }
+    else
+    {
+        playOnline(juego);
+    }
+
     
     // juegaGato(data);
 
@@ -79,6 +90,11 @@ gboolean seekMatchLoop(gpointer data)
     int i = 0;
     int m = 0;
     int c = 0;
+
+    if(juego->online.dialog == NULL)
+    {
+        return FALSE;
+    }
 
     sprintf(buffer, "SELECT * FROM ttt_Buscando WHERE id_usuario != %ld LIMIT 1", juego->online.u_id[0]);
     sprintf(buffer2, "SELECT * FROM ttt_Buscando WHERE id_usuario = %ld LIMIT 1", juego->online.u_id[0]);
