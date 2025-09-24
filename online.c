@@ -80,8 +80,6 @@ gboolean seekMatchLoop(gpointer data)
     int m = 0;
     int c = 0;
 
-    g_print("A\n");
-
     sprintf(buffer, "SELECT * FROM ttt_Buscando WHERE id_usuario != %ld LIMIT 1", juego->online.u_id[0]);
     sprintf(buffer2, "SELECT * FROM ttt_Buscando WHERE id_usuario = %ld LIMIT 1", juego->online.u_id[0]);
 
