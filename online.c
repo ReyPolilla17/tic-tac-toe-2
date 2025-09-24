@@ -102,11 +102,6 @@ gboolean seekMatchLoop(gpointer data)
         }
         
         mysql_free_result(res2);
-        
-        if(!m)
-        {
-            sleep(1);
-        }
     }
 
     if(!row && row2)

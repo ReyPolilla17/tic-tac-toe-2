@@ -36,7 +36,6 @@ typedef struct def_Online // Parte en línea del juego
     long int u_id[2]; // IDs de los jugadores de la partida
     long int g_id; // ID del juego
     gboolean connected; // Si se pudo conectar a la base de datos
-    gboolean seeking; // Si está buscando partida
     OnlineConnectionDialog *dialog; // Ventana de espera de conexion
 } ONLINE;
 
