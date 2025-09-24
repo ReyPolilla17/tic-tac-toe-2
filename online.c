@@ -49,7 +49,9 @@ void seekMatch(JUEGO *juego)
     sprintf(buffer, "INSERT INTO ttt_Buscando VALUES (%ld)", juego->online.u_id[0]);
     query(&juego->online.mysql, buffer, NULL);
 
+    
     g_timeout_add_full(G_PRIORITY_DEFAULT, 400, (GSourceFunc)seekMatchLoop, (gpointer)juego, (GDestroyNotify)playOnline);
+    online_connection_dialog_new(juego->online.dialog);
     
     // juegaGato(data);
 
