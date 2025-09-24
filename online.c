@@ -48,7 +48,7 @@ void seekMatch(JUEGO *juego)
     sprintf(buffer, "INSERT INTO ttt_Buscando VALUES (%ld)", juego->online.u_id[0]);
     query(&juego->online.mysql, buffer, NULL);
 
-    g_timeout_add(400, (GSourceFunc)seekMatchLoop, (gpointer)juego);
+    g_timeout_add_full(G_PRIORITY_DEFAULT, 400, (GSourceFunc)seekMatchLoop, (gpointer)juego, (GDestroyNotify)playOnline);
     
     // juegaGato(data);
 
@@ -73,9 +73,6 @@ gboolean seekMatchLoop(gpointer data)
     int i = 0;
     int m = 0;
     int c = 0;
-
-    // impresion dinámica de espera
-    printf("Buscando Partida\n");
 
     sprintf(buffer, "SELECT * FROM ttt_Buscando WHERE id_usuario != %ld LIMIT 1", juego->online.u_id[0]);
     sprintf(buffer2, "SELECT * FROM ttt_Buscando WHERE id_usuario = %ld LIMIT 1", juego->online.u_id[0]);
@@ -162,9 +159,13 @@ gboolean seekMatchLoop(gpointer data)
         mysql_free_result(res);
     }
 
-    printf("Fin\n");
-
     return FALSE;
+}
+
+void playOnline(JUEGO *juego)
+{
+    printf("AAAA\n");
+    return;
 }
 
 void forfeit(JUEGO *juego)
