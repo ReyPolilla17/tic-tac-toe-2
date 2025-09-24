@@ -133,15 +133,18 @@ gboolean seekMatchLoop(gpointer data)
     /**
      * Elimina registros repetidos
      */
-    sprintf(buffer, "SELECT COUNT(*) FROM ttt_Partida WHERE id_usuario_1 = %ld OR id_usuario_2 = %ld", juego->online.u_id[0], juego->online.u_id[0]);
+    sprintf(buffer, "SELECT COUNT(*)-1 FROM ttt_Partida WHERE id_usuario_1 = %ld OR id_usuario_2 = %ld", juego->online.u_id[0], juego->online.u_id[0]);
     query(&juego->online.mysql, buffer, &res);
 
     row = mysql_fetch_row(res);
     sscanf(row[0], "%d", &c);
     mysql_free_result(res);
 
-    sprintf(buffer, "DELETE FROM ttt_Partida WHERE id_usuario_1 = %ld OR id_usuario_2 = %ld LIMIT %d", juego->online.u_id[0], juego->online.u_id[0], c - 1);
-    query(&juego->online.mysql, buffer, NULL);
+    if(c > 0)
+    {
+        sprintf(buffer, "DELETE FROM ttt_Partida WHERE id_usuario_1 = %ld OR id_usuario_2 = %ld LIMIT %d", juego->online.u_id[0], juego->online.u_id[0], c - 1);
+        query(&juego->online.mysql, buffer, NULL);
+    }
 
     if(m)
     {
