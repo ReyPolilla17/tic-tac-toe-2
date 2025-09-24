@@ -44,14 +44,14 @@ void closeConnectionToDatabase(JUEGO *juego)
 
 void seekMatch(JUEGO *juego)
 {
-    char buffer[1000];
+    printf("A");
+    // char buffer[1000];
 
-    sprintf(buffer, "INSERT INTO ttt_Buscando VALUES (%ld)", juego->online.u_id[0]);
-    query(&juego->online.mysql, buffer, NULL);
+    // sprintf(buffer, "INSERT INTO ttt_Buscando VALUES (%ld)", juego->online.u_id[0]);
+    // query(&juego->online.mysql, buffer, NULL);
 
-    
-    g_timeout_add_full(G_PRIORITY_DEFAULT, 400, (GSourceFunc)seekMatchLoop, (gpointer)juego, (GDestroyNotify)playOnline);
-    online_connection_dialog_new(juego->online.dialog);
+    // g_timeout_add_full(G_PRIORITY_DEFAULT, 400, (GSourceFunc)seekMatchLoop, (gpointer)juego, (GDestroyNotify)playOnline);
+    // online_connection_dialog_new(&juego->online.dialog);
     
     // juegaGato(data);
 
