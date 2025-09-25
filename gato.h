@@ -24,7 +24,7 @@ typedef struct def_movimiento // Turno jugado (historial)
 
 typedef struct def_jugador // Información del jugador
 {
-    char nombre[21]; // Nombre del jugador
+    char nombre[26]; // Nombre del jugador
     long int online_id; // ID del jugador para el en línea
     int hard_mode; // Modo dificil activo
     int ia; // si el jugador es una ia
