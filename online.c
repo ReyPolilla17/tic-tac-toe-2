@@ -317,7 +317,23 @@ gboolean onlineGameLoop(gpointer data)
 
     if(!row)
     {
+        juego->online.playing = FALSE;
+        juego->online.g_id = 0;
+        juego->online.u_id[1] = -1;
+        juego->online.name[1][0] = 0;
+        
+        gtk_widget_set_sensitive(juego->graficos.menuName, TRUE);
+        gtk_widget_set_sensitive(juego->graficos.menuSeek, TRUE);
+        gtk_widget_set_sensitive(juego->graficos.menuForfeit, FALSE);
+        
+        gtk_widget_set_sensitive(juego->graficos.menuFile, TRUE);
+        gtk_widget_set_sensitive(juego->graficos.menuGame, TRUE);
+        
+        gtk_widget_set_sensitive(juego->graficos.menuEnd, FALSE);
+        gtk_widget_set_sensitive(juego->graficos.menuSave, FALSE);
+        
         forfeit_dialog(juego);
+        
         return FALSE;
     }
 
@@ -361,6 +377,24 @@ gboolean onlineGameLoop(gpointer data)
             case 1:
                 victory_dialog(juego);
                 break;
+        }
+
+        if(gameStatus)
+        {
+            juego->online.playing = FALSE;
+            juego->online.g_id = 0;
+            juego->online.u_id[1] = -1;
+            juego->online.name[1][0] = 0;
+            
+            gtk_widget_set_sensitive(juego->graficos.menuName, TRUE);
+            gtk_widget_set_sensitive(juego->graficos.menuSeek, TRUE);
+            gtk_widget_set_sensitive(juego->graficos.menuForfeit, FALSE);
+            
+            gtk_widget_set_sensitive(juego->graficos.menuFile, TRUE);
+            gtk_widget_set_sensitive(juego->graficos.menuGame, TRUE);
+            
+            gtk_widget_set_sensitive(juego->graficos.menuEnd, FALSE);
+            gtk_widget_set_sensitive(juego->graficos.menuSave, FALSE);
         }
     }
     else
@@ -436,9 +470,6 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
     // muestra la ventana de victoria o empate dependiendo del resultado de la partida
     switch(gameStatus)
     {
-        case -2:
-            forfeit_dialog(juego);
-            break;
         case -1:
             tie_dialog(juego);
             break;
@@ -467,6 +498,7 @@ void forfeit(JUEGO *juego)
     juego->online.name[1][0] = 0;
 
     cleanScreen(juego);
+    gameStartup(juego);
 
     gtk_widget_set_sensitive(juego->graficos.menuName, TRUE);
     gtk_widget_set_sensitive(juego->graficos.menuSeek, TRUE);
@@ -474,6 +506,9 @@ void forfeit(JUEGO *juego)
 
     gtk_widget_set_sensitive(juego->graficos.menuFile, TRUE);
     gtk_widget_set_sensitive(juego->graficos.menuGame, TRUE);
+
+    gtk_widget_set_sensitive(juego->graficos.menuEnd, FALSE);
+	gtk_widget_set_sensitive(juego->graficos.menuSave, FALSE);
 
     return;
 }
