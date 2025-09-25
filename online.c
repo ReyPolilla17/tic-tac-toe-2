@@ -415,8 +415,6 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
         }
     }
 
-    return;
-    
     sprintf(buffer, "UPDATE ttt_Partida SET fila_%d = '%s', turn = %d, p_status = %d WHERE id_partida = %ld", x + 1, juego->partida.historial[juego->partida.turno].tablero[x], juego->partida.turno, juego->partida.historial[juego->partida.turno].game_status, juego->online.g_id);
     query(&juego->online.mysql, buffer, NULL);
 
