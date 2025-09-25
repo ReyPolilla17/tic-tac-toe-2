@@ -384,17 +384,6 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
         juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[2]);
             gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
             gtk_widget_show(juego->graficos.playingImg);
-
-        // muestra la ventana de victoria o empate dependiendo del resultado de la partida
-        if(gameStatus < 0)
-        {
-            tie_dialog(juego);
-        }
-        else
-        {
-            g_timeout_add(400, (GSourceFunc)winningPulse, juego);
-            victory_dialog(juego);
-        }
     }
 
     for(i = 0; i < 3; i++)
@@ -415,6 +404,17 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
     query(&juego->online.mysql, buffer, NULL);
 
     g_timeout_add(400, (GSourceFunc)onlineGameLoop, juego);
+
+    // muestra la ventana de victoria o empate dependiendo del resultado de la partida
+    if(gameStatus == -1)
+    {
+        tie_dialog(juego);
+    }
+    else if(gameStatus == 1)
+    {
+        g_timeout_add(400, (GSourceFunc)winningPulse, juego);
+        victory_dialog(juego);
+    }
 
     return;
 }
