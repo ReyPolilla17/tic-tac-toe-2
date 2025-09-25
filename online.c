@@ -8,6 +8,7 @@ void connectToDatabase(JUEGO *juego)
     juego->online.connected = TRUE;
     juego->online.dialog = NULL;
 
+    g_print("connection started\n");
     mysql_init(&juego->online.mysql); // Prepara la conexion al servidor de bases de datos
 
     // Se conecta al servidor de base de datos y verifica que no haya error
@@ -21,6 +22,7 @@ void connectToDatabase(JUEGO *juego)
         gtk_widget_hide(juego->graficos.menuOnline);
         juego->online.connected = FALSE;
     }
+    g_print("connection completed\n");
 
     return;
 }
@@ -28,6 +30,8 @@ void connectToDatabase(JUEGO *juego)
 void closeConnectionToDatabase(JUEGO *juego)
 {
     char buffer[1000];
+
+    g_print("closing connection\n");
 
     // rendirse
 
@@ -40,11 +44,17 @@ void closeConnectionToDatabase(JUEGO *juego)
 
     // cierra la conexion con al servidor
     mysql_close(&juego->online.mysql);
+
+    g_print("connection closed\n");
+
+    return;
 }
 
 void seekMatch(JUEGO *juego)
 {
     char buffer[1000];
+
+    g_print("seeking match\n");
 
     sprintf(buffer, "INSERT INTO ttt_Buscando VALUES (%ld)", juego->online.u_id[0]);
     query(&juego->online.mysql, buffer, NULL);
@@ -66,8 +76,7 @@ void seekMatch(JUEGO *juego)
         playOnline(juego);
     }
 
-    
-    // juegaGato(data);
+    g_print("match seeked\n");
 
     return;
 }
@@ -219,7 +228,7 @@ gboolean seekMatchLoop(gpointer data)
 
 void playOnline(JUEGO *juego)
 {
-    g_print("%s", juego->online.name[0]);
+    g_print("%s\n", juego->online.name[0]);
     g_print("%s", juego->online.name[1]);
     // char buffer[1000];
     // char adv[21];
@@ -305,6 +314,8 @@ void registerUser(JUEGO *juego)
 
     char buffer[1000];
 
+    g_print("registering user\n");
+
 	// Si hay una partida en curso
 	if(juego->partida.historial[juego->partida.turno].game_status != GAME_NOT_STARTED)
 	{
@@ -353,6 +364,8 @@ void registerUser(JUEGO *juego)
             query(&juego->online.mysql, buffer, NULL);
         }
     }
+
+    g_print("user registered\n");
     
     return;
 }
