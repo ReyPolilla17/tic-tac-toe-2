@@ -262,7 +262,7 @@ void playOnline(JUEGO *juego)
         sprintf(p2, "%s (tu)", juego->online.name[0]);
         juego->partida.jugadores[1].online_id = juego->online.u_id[0];
 
-        // función de espera
+        g_timeout_add(400, (GSourceFunc)onlineGameLoop, juego);
     }
 
     gtk_widget_set_sensitive(juego->graficos.menuName, FALSE);
@@ -296,51 +296,70 @@ gboolean onlineGameLoop(gpointer data)
     JUEGO *juego = (JUEGO *)data;
 
     char buffer[1000];
-    char board[3][4];
+    char board[4];
 
     MYSQL_RES *res;
     MYSQL_ROW row;
 
-    int p = 0;
-    int lp = 0;
-    int p1 = 0;
+    int turn = 0;
     int i = 0;
+    int j = 0;
 
-    sprintf(buffer, "SELECT fila_1, fila_2, fila_3, p_status, last_player, id_usuario_1 FROM ttt_Partida WHERE id_partida = %ld", juego->online.g_id);
+    sprintf(buffer, "SELECT fila_1, fila_2, fila_3, p_status, last_player FROM ttt_Partida WHERE id_partida = %ld", juego->online.g_id);
+    query(&juego->online.mysql, buffer, &res);
+    
+    row = mysql_fetch_row(res);
+    sscanf(row[4], "%d", &turn);
 
-    // while(p != GAME_TIE && p != GAME_WON)
-    // {
-        query(&juego->online.mysql, buffer, &res);
+    if(turn > juego->partida.turno)
+    {
+        juego->partida.turno = turn;
 
-        row = mysql_fetch_row(res);
+        sscanf(row[3], "%d", &juego->partida.historial[juego->partida.turno].game_status);
+        juego->partida.historial->hist_val = 1;
 
         for(i = 0; i < 3; i++)
         {
-            sscanf(row[i], "%s", board[i]);
-        }
+            sscanf(row[i], "%s", board);
 
-        sscanf(row[3], "%d", &p);
-        sscanf(row[4], "%d", &lp);
-        sscanf(row[5], "%d", &p1);
+            for(j = 0; j < 3; j++)
+            {
+                juego->partida.historial[juego->partida.turno].tablero[i][j] = board[j];
+            }
+        }
 
         mysql_free_result(res);
 
-        if(p > 0)
-        {
-            if((!lp && p1 == juego->online.u_id[0]) || (lp && p1 != juego->online.u_id[0]))
-            {
-                // playTurn(data, adv, board, lp);
-            }
-            else
-            {
-                // printBoard(board, juego->online.name, adv);
-            }
-        }
-        else
-        {
-            // printBoard(board, juego->online.name, adv);
-        }
-    // }
+        coppyIntoGraphic(juego);
+
+        // while(p != GAME_TIE && p != GAME_WON)
+        // {
+
+
+            // if(p)
+            // {
+            //     if((!lp && p1 == juego->online.u_id[0]) || (lp && p1 != juego->online.u_id[0]))
+            //     {
+            //         // playTurn(data, adv, board, lp);
+            //     }
+            //     else
+            //     {
+            //         // printBoard(board, juego->online.name, adv);
+            //     }
+            // }
+            // else
+            // {
+            //     // printBoard(board, juego->online.name, adv);
+            // }
+        // }
+    }
+    else
+    {
+        mysql_free_result(res);
+        g_print("esperando\n");
+
+        return TRUE;
+    }
 
     return FALSE;
 }
@@ -350,9 +369,6 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
     char buffer[1000];
 
     int gameStatus = 0;
-
-    g_print("x:%d y:%d", x, y);
-    return;
 
     // genera una nueva instancia para el historial a la que se puede regresar
     logMove(juego, 1);
@@ -401,14 +417,10 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
 
     return;
     
-    sprintf(
-        buffer, 
-        "UPDATE ttt_Partida SET fila_%d = '%s', last_player = %d, p_status = %d WHERE id_partida = %ld", 
-        x + 1, juego->partida.historial[juego->partida.turno].tablero[x], juego->partida.turno, gameStatus, juego->online.g_id
-    );
+    sprintf(buffer, "UPDATE ttt_Partida SET fila_%d = '%s', last_player = %d, p_status = %d WHERE id_partida = %ld", x + 1, juego->partida.historial[juego->partida.turno].tablero[x], juego->partida.turno, juego->partida.historial[juego->partida.turno].game_status, juego->online.g_id);
     query(&juego->online.mysql, buffer, NULL);
-    
-    // función espera
+
+    g_timeout_add(400, (GSourceFunc)onlineGameLoop, juego);
 
     return;
 }

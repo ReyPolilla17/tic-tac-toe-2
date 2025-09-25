@@ -894,7 +894,7 @@ void coppyIntoGraphic(JUEGO *juego)
         gtk_label_set_label(GTK_LABEL(juego->graficos.playerName[i]), juego->partida.jugadores[i].nombre);
     }
 
-    // si el juego ya terminó, muestra vaío el cuadro de jugador actual
+    // si el juego no ha terminado, muestra el jugador actual
     if(juego->partida.historial[juego->partida.turno].game_status != GAME_ENDED)
     {
         gtk_widget_destroy(juego->graficos.playingImg);
@@ -902,7 +902,7 @@ void coppyIntoGraphic(JUEGO *juego)
             gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
             gtk_widget_show(juego->graficos.playingImg);
     }
-    else // de lo contrario, muestra el jugador actual
+    else // de lo contrario muestra vaío el cuadro de jugador actual
     {
         gtk_widget_destroy(juego->graficos.playingImg);
         juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[2]);
@@ -914,7 +914,7 @@ void coppyIntoGraphic(JUEGO *juego)
     }
 
     // si hay movimientos hacia atrás en el historial, habilita el botón correspondiente
-    if(moreTurnsBackwards(juego))
+    if(moreTurnsBackwards(juego) && !juego->online.playing)
     {
         gtk_widget_set_sensitive(juego->graficos.moveButtons[0], TRUE);
     }
