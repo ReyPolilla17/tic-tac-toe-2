@@ -401,12 +401,13 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
 
     return;
     
-    // sprintf(
-    //     buffer, 
-    //     "UPDATE ttt_Partida SET fila_%d = '%s', last_player = %d, p_status = %d WHERE id_partida = %ld", 
-    //     (c / 3) + 1, board[c/3], juego->partida.turno, gameStatus, juego->online.g_id
-    // );
-    // query(&data->mysql, buffer, NULL);
+    sprintf(
+        buffer, 
+        "UPDATE ttt_Partida SET fila_%d = '%s', last_player = %d, p_status = %d WHERE id_partida = %ld", 
+        x + 1, juego->partida.historial[juego->partida.turno].tablero[x], juego->partida.turno, gameStatus, juego->online.g_id
+    );
+    query(&juego->online.mysql, buffer, NULL);
+    
     // función espera
 
     return;

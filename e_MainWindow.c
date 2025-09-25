@@ -362,7 +362,7 @@ void board_button_pressed(GtkWidget *eventbox, GdkEventButton *event, gpointer d
 	{
 		if(juego->online.playing && juego->partida.jugadores[juego->partida.turno % 2].online_id == juego->online.u_id[0])
 		{
-			warning_dialog("Botón", "Has presionado un botón");
+			onlineTurnPlayed(juego, coords[0], coords[1]);
 		}
 		else if(!juego->online.playing)
 		{
