@@ -95,7 +95,7 @@ void victory_dialog(JUEGO *juego)
             about_dialog_set_comments(dialog, "hercules.raw te respeta un poco más que antes.");
         }
     }
-    else // jugador contra jugador
+    else if (!juego->online.playing)// jugador contra jugador
     {
         // Crea el mensaje de victoria
         winMessage = (gchar *) malloc(sizeof(gchar) * (strlen("¡La victoria es para !") + strlen(winner.nombre) + 1));
@@ -108,8 +108,30 @@ void victory_dialog(JUEGO *juego)
 
         free(winMessage);
     }
+    else // jugador contra jugador en linea
+    {
+        if(winner.online_id == juego->online.u_id[0])
+        {
+            // Establece la ficha del ganador
+            about_dialog_set_title(dialog, "Victoria");
+            about_dialog_set_logo(dialog, juego->graficos.m60[(juego->partida.turno + 1) % 2]);
+            about_dialog_set_comments(dialog, "¡Has Ganado!");
+        }
+        else
+        {
+            // Establece la ficha del perdedor
+            about_dialog_set_title(dialog, "Derrota");
+            about_dialog_set_logo(dialog, juego->graficos.m60[(juego->partida.turno + 1) % 2]);
+            about_dialog_set_comments(dialog, "Mejor suerte la próxima...");
+        }
+    }
 
     about_dialog_run(dialog); // muestra la ventana
 
+    return;
+}
+
+void forfeit_dialog(JUEGO *juego)
+{
     return;
 }

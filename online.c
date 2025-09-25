@@ -332,6 +332,19 @@ gboolean onlineGameLoop(gpointer data)
         mysql_free_result(res);
 
         coppyIntoGraphic(juego);
+
+        switch(juego->partida.historial[juego->partida.turno].game_status)
+        {
+            case -2:
+                forfeit_dialog(juego);
+                break;
+            case -1:
+                tie_dialog(juego);
+                break;
+            case 1:
+                victory_dialog(juego);
+                break;
+        }
     }
     else
     {
@@ -406,14 +419,18 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
     g_timeout_add(400, (GSourceFunc)onlineGameLoop, juego);
 
     // muestra la ventana de victoria o empate dependiendo del resultado de la partida
-    if(gameStatus == -1)
+    switch(gameStatus)
     {
-        tie_dialog(juego);
-    }
-    else if(gameStatus == 1)
-    {
-        g_timeout_add(400, (GSourceFunc)winningPulse, juego);
-        victory_dialog(juego);
+        case -2:
+            forfeit_dialog(juego);
+            break;
+        case -1:
+            tie_dialog(juego);
+            break;
+        case 1:
+            g_timeout_add(400, (GSourceFunc)winningPulse, juego);
+            victory_dialog(juego);
+            break;
     }
 
     return;
@@ -421,6 +438,7 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
 
 void forfeit(JUEGO *juego)
 {
+    g_print("Me rindo!\n");
     return;
 }
 

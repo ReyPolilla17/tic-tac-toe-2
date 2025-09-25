@@ -154,3 +154,4 @@ int correctFileFormat(FUNCIONAL gameData);
 
 void tie_dialog(JUEGO *juego);
 void victory_dialog(JUEGO *juego);
+void forfeit_dialog(JUEGO *juego);
