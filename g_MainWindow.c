@@ -84,7 +84,7 @@ void loadMainWindow(JUEGO *juego)
     gtk_box_pack_start(GTK_BOX(mainBox), menuBar, FALSE, TRUE, 0);
 
   // crea una opcion del menu y la asocia al menu
-  menuItem = gtk_image_menu_item_new();
+  juego->graficos.menuFile = gtk_image_menu_item_new();
     gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuItem), gtk_image_new_from_stock(GTK_STOCK_DIRECTORY, GTK_ICON_SIZE_LARGE_TOOLBAR));
     gtk_menu_item_set_label(GTK_MENU_ITEM(menuItem), "Archivo");
     gtk_menu_shell_append(GTK_MENU_SHELL(menuBar), menuItem);
@@ -109,7 +109,7 @@ void loadMainWindow(JUEGO *juego)
 
 
   // lo mimso para las otras 3 opciones del menu
-  menuItem = gtk_image_menu_item_new();
+  juego->graficos.menuGame = gtk_image_menu_item_new();
     gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuItem), gtk_image_new_from_stock(GTK_STOCK_MEDIA_PLAY, GTK_ICON_SIZE_LARGE_TOOLBAR));
     gtk_menu_item_set_label(GTK_MENU_ITEM(menuItem), "Juego");
     gtk_menu_shell_append(GTK_MENU_SHELL(menuBar), menuItem);

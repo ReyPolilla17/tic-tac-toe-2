@@ -311,7 +311,7 @@ void board_button_hover(GtkWidget *eventbox, GdkEventButton *event, gpointer dat
 	JUEGO *juego = (JUEGO *)data;
 	GdkColor color;
 
-	// Si la partida no se ha terminado, cambia el color del fondo
+	// Si la partida no se ha terminado y es turno del jugador en caso de online, cambia el color del fondo
 	if(juego->partida.historial[juego->partida.turno].game_status != GAME_ENDED && ((juego->online.playing && juego->partida.jugadores[juego->partida.turno % 2].online_id == juego->online.u_id[0]) || !juego->online.playing))
 	{
 		gdk_color_parse("#A3A3A3", &color);
@@ -362,7 +362,7 @@ void board_button_pressed(GtkWidget *eventbox, GdkEventButton *event, gpointer d
 	{
 		if(juego->online.playing && juego->partida.jugadores[juego->partida.turno % 2].online_id == juego->online.u_id[0])
 		{
-			g_print("A\n");
+			warning_dialog("Botón", "Has presionado un botón");
 		}
 		else if(!juego->online.playing)
 		{

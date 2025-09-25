@@ -56,6 +56,8 @@ typedef struct def_funcional // Parte funcional del juego
 typedef struct def_grafico
 {
   GtkWidget *window;
+  GtkWidget *menuFile;
+  GtkWidget *menuGame;
   GtkWidget *menuTruth;
   GtkWidget *menuSave;
   GtkWidget *menuEnd;

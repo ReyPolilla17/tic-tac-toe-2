@@ -261,6 +261,9 @@ void playOnline(JUEGO *juego)
     gtk_widget_set_sensitive(juego->graficos.menuSeek, FALSE);
     gtk_widget_set_sensitive(juego->graficos.menuForfeit, TRUE);
 
+    gtk_widget_set_sensitive(juego->graficos.menuFile, FALSE);
+    gtk_widget_set_sensitive(juego->graficos.menuGame, FALSE);
+
     // Muestra los nombres de los jugadores y sus fichas
     gtk_label_set_label(GTK_LABEL(juego->graficos.playerName[0]), juego->partida.jugadores[0].nombre);
     gtk_widget_show(juego->graficos.playerImg[0]);
