@@ -362,7 +362,7 @@ void board_button_pressed(GtkWidget *eventbox, GdkEventButton *event, gpointer d
 	{
 		if(juego->online.playing && juego->partida.jugadores[juego->partida.turno % 2].online_id == juego->online.u_id[0])
 		{
-			g_print("A");
+			g_print("A\n");
 		}
 		else
 		{
