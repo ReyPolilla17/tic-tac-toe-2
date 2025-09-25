@@ -338,32 +338,10 @@ gboolean onlineGameLoop(gpointer data)
         mysql_free_result(res);
 
         coppyIntoGraphic(juego);
-
-        // while(p != GAME_TIE && p != GAME_WON)
-        // {
-
-
-            // if(p)
-            // {
-            //     if((!lp && p1 == juego->online.u_id[0]) || (lp && p1 != juego->online.u_id[0]))
-            //     {
-            //         // playTurn(data, adv, board, lp);
-            //     }
-            //     else
-            //     {
-            //         // printBoard(board, juego->online.name, adv);
-            //     }
-            // }
-            // else
-            // {
-            //     // printBoard(board, juego->online.name, adv);
-            // }
-        // }
     }
     else
     {
         mysql_free_result(res);
-        g_print("esperando\n");
 
         return TRUE;
     }

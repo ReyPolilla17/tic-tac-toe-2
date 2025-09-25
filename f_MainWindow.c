@@ -920,7 +920,7 @@ void coppyIntoGraphic(JUEGO *juego)
     }
 
     // si hay movimientos hacia adelante en el historial, habilita el botón correspondiente
-    if(moreTurnsForwards(juego))
+    if(moreTurnsForwards(juego) && !juego->online.playing)
     {
         gtk_widget_set_sensitive(juego->graficos.moveButtons[1], TRUE);
     }
