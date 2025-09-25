@@ -233,7 +233,7 @@ void playOnline(JUEGO *juego)
     cleanScreen(juego);
     gameStartup(juego);
 
-    sprintf(buffer, "SELECT id_usuario_1 FROM ttt_Partifa WHERE id_partida = %ld", juego->online.g_id);
+    sprintf(buffer, "SELECT id_usuario_1 FROM ttt_Partida WHERE id_partida = %ld", juego->online.g_id);
     query(&juego->online.mysql, buffer, &res);
 
     row = mysql_fetch_row(res);
