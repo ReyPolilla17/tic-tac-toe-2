@@ -6,6 +6,7 @@ void connectToDatabase(JUEGO *juego)
     juego->online.u_id[0] = -1;
     juego->online.u_id[1] = -1;
     juego->online.connected = TRUE;
+    juego->online.playing = FALSE;
     juego->online.dialog = NULL;
 
     mysql_init(&juego->online.mysql); // Prepara la conexion al servidor de bases de datos
@@ -218,76 +219,121 @@ gboolean seekMatchLoop(gpointer data)
 
 void playOnline(JUEGO *juego)
 {
+    char buffer[1000];
+
+    MYSQL_RES *res;
+    MYSQL_ROW row;
+
+    long int u1_id = 0;
+
+    // indica que hay una partida en línea ocurriendo
+    juego->online.playing = TRUE;
+
+    // limpia la ventana e inicializa internamente
+    cleanScreen(juego);
+    gameStartup(juego);
+
+    sprintf(buffer, "SELECT id_usuario_1 FROM ttt_Partifa WHERE id_partida = %ld", juego->online.g_id);
+    query(&juego->online.mysql, buffer, &res);
+
+    row = mysql_fetch_row(res);
+    sscanf(row[0], "%ld", &u1_id);
+    mysql_free_result(res);
+
+    if(u1_id == juego->online.u_id[0])
+    {
+        strcpy(juego->partida.jugadores[0].nombre, juego->online.name[0]);
+        juego->partida.jugadores[0].online_id = juego->online.u_id[0];
+        
+        strcpy(juego->partida.jugadores[1].nombre, juego->online.name[1]);
+        juego->partida.jugadores[1].online_id = juego->online.u_id[1];
+    }
+    else
+    {
+        strcpy(juego->partida.jugadores[0].nombre, juego->online.name[1]);
+        juego->partida.jugadores[0].online_id = juego->online.u_id[1];
+        
+        strcpy(juego->partida.jugadores[1].nombre, juego->online.name[0]);
+        juego->partida.jugadores[1].online_id = juego->online.u_id[0];
+    }
+
+    // Muestra los nombres de los jugadores y sus fichas
+    gtk_label_set_label(GTK_LABEL(juego->graficos.playerName[0]), juego->partida.jugadores[0].nombre);
+    gtk_widget_show(juego->graficos.playerImg[0]);
+
+    gtk_label_set_label(GTK_LABEL(juego->graficos.playerName[1]), juego->partida.jugadores[1].nombre);
+    gtk_widget_show(juego->graficos.playerImg[1]);
+    
+    // Establece el status como listo para jugar
+    juego->partida.historial[0].game_status = GAME_STARTED;
+
+    // muesta el jugador del turno actual
+    gtk_widget_destroy(juego->graficos.playingImg);
+    juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[0]);
+        gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
+        gtk_widget_show(juego->graficos.playingImg);
+
+
     g_print("%s\n", juego->online.name[0]);
     g_print("%s\n", juego->online.name[1]);
-    // char buffer[1000];
+
+    return;
+}
+
+gboolean onlineGameLoop(gpointer data)
+{
+    JUEGO *juego = (JUEGO *)data;
+
+    char buffer[1000];
     // char adv[21];
-    // char board[3][4];
+    char board[3][4];
 
-    // MYSQL_RES *res;
-    // MYSQL_ROW row;
+    MYSQL_RES *res;
+    MYSQL_ROW row;
 
-    // int p = 0;
-    // int lp = 0;
-    // int p1 = 0;
-    // int i = 0;
+    int p = 0;
+    int lp = 0;
+    int p1 = 0;
+    int i = 0;
     // int j = 0;
 
-    // char dots[4];
-    // dots[0] = 0;
-
-    // sprintf(buffer, "SELECT fila_1, fila_2, fila_3, p_status, last_player, id_usuario_1 FROM ttt_Partida WHERE id_partida = %ld", juego->online.g_id);
+    sprintf(buffer, "SELECT fila_1, fila_2, fila_3, p_status, last_player, id_usuario_1 FROM ttt_Partida WHERE id_partida = %ld", juego->online.g_id);
 
     // while(p != GAME_TIE && p != GAME_WON)
     // {
-    //     system("clear");
+        query(&juego->online.mysql, buffer, &res);
 
-    //     query(&juego->online.mysql, buffer, &res);
+        row = mysql_fetch_row(res);
 
-    //     row = mysql_fetch_row(res);
+        for(i = 0; i < 3; i++)
+        {
+            sscanf(row[i], "%s", board[i]);
+        }
 
-    //     for(i = 0; i < 3; i++)
-    //     {
-    //         sscanf(row[i], "%s", board[i]);
-    //     }
+        sscanf(row[3], "%d", &p);
+        sscanf(row[4], "%d", &lp);
+        sscanf(row[5], "%d", &p1);
 
-    //     sscanf(row[3], "%d", &p);
-    //     sscanf(row[4], "%d", &lp);
-    //     sscanf(row[5], "%d", &p1);
+        mysql_free_result(res);
 
-    //     mysql_free_result(res);
-
-    //     if(p > 0)
-    //     {
-    //         if((!lp && p1 == juego->online.u_id[0]) || lp && p1 != juego->online.u_id[0])
-    //         {
-    //             playTurn(data, adv, board, lp);
-    //         }
-    //         else
-    //         {
-    //             printBoard(board, juego->online.name, adv);
-    //             printf("Esperando a adversario%s\n", dots);
-    
-    //             if(strlen(dots) < 3)
-    //             {
-    //                 strcat(dots, ".");
-    //             }
-    //             else
-    //             {
-    //                 dots[0] = 0;
-    //             }
-    
-    //             sleep(1);
-    //         }
-    //     }
-    //     else
-    //     {
-    //         printBoard(board, juego->online.name, adv);
-    //         printf("El juego ha temrinado!\n");
-    //     }
+        if(p > 0)
+        {
+            if((!lp && p1 == juego->online.u_id[0]) || (lp && p1 != juego->online.u_id[0]))
+            {
+                // playTurn(data, adv, board, lp);
+            }
+            else
+            {
+                // printBoard(board, juego->online.name, adv);
+            }
+        }
+        else
+        {
+            // printBoard(board, juego->online.name, adv);
+        }
     // }
 
-    return;
+    return FALSE;
 }
 
 void forfeit(JUEGO *juego)

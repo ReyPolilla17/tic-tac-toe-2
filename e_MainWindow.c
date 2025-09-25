@@ -312,7 +312,7 @@ void board_button_hover(GtkWidget *eventbox, GdkEventButton *event, gpointer dat
 	GdkColor color;
 
 	// Si la partida no se ha terminado, cambia el color del fondo
-	if(juego->partida.historial[juego->partida.turno].game_status != GAME_ENDED)
+	if(juego->partida.historial[juego->partida.turno].game_status != GAME_ENDED && ((juego->online.playing && juego->partida.jugadores[juego->partida.turno % 2].online_id == juego->online.u_id[0]) || !juego->online.playing))
 	{
 		gdk_color_parse("#A3A3A3", &color);
 		gtk_widget_modify_bg(eventbox, GTK_STATE_NORMAL, &color);
@@ -336,7 +336,7 @@ void board_button_leave(GtkWidget *eventbox, GdkEventButton *event, gpointer dat
 	int coords[2];
 
 	// Si el botón no ha sido clickeado y no se ha terminado la partida, reinicia el color de fondo
-	if(getButton(juego, eventbox, coords) && juego->partida.historial[juego->partida.turno].tablero[coords[0]][coords[1]] == ' ' && juego->partida.historial[juego->partida.turno].game_status != GAME_ENDED)
+	if(getButton(juego, eventbox, coords) && juego->partida.historial[juego->partida.turno].tablero[coords[0]][coords[1]] == ' ' && (juego->partida.historial[juego->partida.turno].game_status != GAME_ENDED && ((juego->online.playing && juego->partida.jugadores[juego->partida.turno % 2].online_id == juego->online.u_id[0]) || !juego->online.playing)))
 	{
 		gdk_color_parse("#DCDAD5", &color);
 		gtk_widget_modify_bg(eventbox, GTK_STATE_NORMAL, &color);
@@ -360,7 +360,14 @@ void board_button_pressed(GtkWidget *eventbox, GdkEventButton *event, gpointer d
 	// si es capaz de recuperar el botón, no ha sido presionado y el juego no ha terminado
 	if(getButton(juego, eventbox, coords) && juego->partida.historial[juego->partida.turno].tablero[coords[0]][coords[1]] == ' ' && juego->partida.historial[juego->partida.turno].game_status == GAME_STARTED)
 	{
-		turnPlayed(juego, coords[0], coords[1]); // juega un turno
+		if(juego->online.playing && juego->partida.jugadores[juego->partida.turno % 2].online_id == juego->online.u_id[0])
+		{
+			g_print("A");
+		}
+		else
+		{
+			turnPlayed(juego, coords[0], coords[1]); // juega un turno
+		}
 	}
 	else if(juego->partida.historial[juego->partida.turno].game_status == GAME_NOT_STARTED) // si no se ha iniciado la partida
 	{

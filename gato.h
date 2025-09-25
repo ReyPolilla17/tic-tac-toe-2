@@ -25,6 +25,7 @@ typedef struct def_movimiento // Turno jugado (historial)
 typedef struct def_jugador // Información del jugador
 {
     char nombre[21]; // Nombre del jugador
+    long int online_id; // ID del jugador para el en línea
     int hard_mode; // Modo dificil activo
     int ia; // si el jugador es una ia
 } JUGADOR;
@@ -36,6 +37,7 @@ typedef struct def_Online // Parte en línea del juego
     long int u_id[2]; // IDs de los jugadores de la partida
     long int g_id; // ID del juego
     gboolean connected; // Si se pudo conectar a la base de datos
+    gboolean playing; // Si está jugando contra otro jugador
     OnlineConnectionDialog *dialog; // Ventana de espera de conexion
 } ONLINE;
 
@@ -44,7 +46,7 @@ typedef struct def_funcional // Parte funcional del juego
     JUGADOR jugadores[2]; // Información de los jugadores
     MOVIMIENTO historial[10]; // Movimientos a lo largo de la partida
     char winboard[3][3]; // Tablero con indicación de espacios de victoria
-    int winshow;
+    int winshow; // Mostrar las fichas que generaron victoria
     int turno; // Número de turno actual
     int turno_max; // Máximo turno del que se tiene historial
     gboolean winpulse; // Si hacer parpadear los espacios que hicieron victoria
