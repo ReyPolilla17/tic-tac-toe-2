@@ -364,7 +364,7 @@ void board_button_pressed(GtkWidget *eventbox, GdkEventButton *event, gpointer d
 		{
 			g_print("A\n");
 		}
-		else
+		else if(!juego->online.playing)
 		{
 			turnPlayed(juego, coords[0], coords[1]); // juega un turno
 		}
