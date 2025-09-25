@@ -85,13 +85,13 @@ void loadMainWindow(JUEGO *juego)
 
   // crea una opcion del menu y la asocia al menu
   juego->graficos.menuFile = gtk_image_menu_item_new();
-    gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuItem), gtk_image_new_from_stock(GTK_STOCK_DIRECTORY, GTK_ICON_SIZE_LARGE_TOOLBAR));
-    gtk_menu_item_set_label(GTK_MENU_ITEM(menuItem), "Archivo");
-    gtk_menu_shell_append(GTK_MENU_SHELL(menuBar), menuItem);
+    gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(juego->graficos.menuFile), gtk_image_new_from_stock(GTK_STOCK_DIRECTORY, GTK_ICON_SIZE_LARGE_TOOLBAR));
+    gtk_menu_item_set_label(GTK_MENU_ITEM(juego->graficos.menuFile), "Archivo");
+    gtk_menu_shell_append(GTK_MENU_SHELL(menuBar), juego->graficos.menuFile);
 
   // crea un submenu para la opcion y le asocia el grupo de combinaciones de teclas
   submenu = gtk_menu_new();
-    gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuItem), submenu);
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(juego->graficos.menuFile), submenu);
     gtk_menu_set_accel_group(GTK_MENU(submenu), group);
 
   // crea una subopción y le agrega una combinación de teclas
@@ -110,12 +110,12 @@ void loadMainWindow(JUEGO *juego)
 
   // lo mimso para las otras 3 opciones del menu
   juego->graficos.menuGame = gtk_image_menu_item_new();
-    gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuItem), gtk_image_new_from_stock(GTK_STOCK_MEDIA_PLAY, GTK_ICON_SIZE_LARGE_TOOLBAR));
-    gtk_menu_item_set_label(GTK_MENU_ITEM(menuItem), "Juego");
-    gtk_menu_shell_append(GTK_MENU_SHELL(menuBar), menuItem);
+    gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(juego->graficos.menuGame), gtk_image_new_from_stock(GTK_STOCK_MEDIA_PLAY, GTK_ICON_SIZE_LARGE_TOOLBAR));
+    gtk_menu_item_set_label(GTK_MENU_ITEM(juego->graficos.menuGame), "Juego");
+    gtk_menu_shell_append(GTK_MENU_SHELL(menuBar), juego->graficos.menuGame);
 
   submenu = gtk_menu_new();
-    gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuItem), submenu);
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(juego->graficos.menuGame), submenu);
     gtk_menu_set_accel_group(GTK_MENU(submenu), group);
 
   subItem = gtk_menu_item_new_with_mnemonic("Nuevo");
