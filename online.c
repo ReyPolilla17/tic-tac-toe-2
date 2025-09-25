@@ -367,8 +367,11 @@ gboolean onlineGameLoop(gpointer data)
 void onlineTurnPlayed(JUEGO *juego, int x, int y)
 {
     char buffer[1000];
+    char row[4];
 
     int gameStatus = 0;
+    
+    int i = 0;
 
     // genera una nueva instancia para el historial a la que se puede regresar
     logMove(juego, 1);
@@ -414,6 +417,13 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
             victory_dialog(juego);
         }
     }
+
+    for(i = 0; i < 3; i++)
+    {
+        row[i] = juego->partida.historial[juego->partida.turno].tablero[x][i];
+    }
+
+    row[3] = 0;
 
     sprintf(buffer, "UPDATE ttt_Partida SET fila_%d = '%s', turn = %d, p_status = %d WHERE id_partida = %ld", x + 1, juego->partida.historial[juego->partida.turno].tablero[x], juego->partida.turno, juego->partida.historial[juego->partida.turno].game_status, juego->online.g_id);
     query(&juego->online.mysql, buffer, NULL);
