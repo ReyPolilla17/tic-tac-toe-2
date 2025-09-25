@@ -99,6 +99,8 @@ void query(MYSQL *mysql, char query[], MYSQL_RES **res);
 void seekMatch(JUEGO *juego);
 gboolean seekMatchLoop(gpointer data);
 void playOnline(JUEGO *juego);
+gboolean onlineGameLoop(gpointer data);
+void onlineTurnPlayed(JUEGO *juego, int x, int y);
 void forfeit(JUEGO *juego);
 
 // funciones del menú de la ventana principal

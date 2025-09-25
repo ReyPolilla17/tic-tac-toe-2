@@ -296,7 +296,6 @@ gboolean onlineGameLoop(gpointer data)
     JUEGO *juego = (JUEGO *)data;
 
     char buffer[1000];
-    // char adv[21];
     char board[3][4];
 
     MYSQL_RES *res;
@@ -306,7 +305,6 @@ gboolean onlineGameLoop(gpointer data)
     int lp = 0;
     int p1 = 0;
     int i = 0;
-    // int j = 0;
 
     sprintf(buffer, "SELECT fila_1, fila_2, fila_3, p_status, last_player, id_usuario_1 FROM ttt_Partida WHERE id_partida = %ld", juego->online.g_id);
 
@@ -345,6 +343,73 @@ gboolean onlineGameLoop(gpointer data)
     // }
 
     return FALSE;
+}
+
+void onlineTurnPlayed(JUEGO *juego, int x, int y)
+{
+    char buffer[1000];
+
+    int gameStatus = 0;
+
+    g_print("x:%d y:%d", x, y);
+    return;
+
+    // genera una nueva instancia para el historial a la que se puede regresar
+    logMove(juego, 1);
+
+    // coloca la ficha correspondiente
+    juego->partida.historial[juego->partida.turno].tablero[x][y] = ICONS[(juego->partida.turno + 1) % 2];
+
+    // Cambia la imagén del botón presionado
+    gtk_widget_destroy(juego->graficos.buttonImg[x][y]);
+    juego->graficos.buttonImg[x][y] = gtk_image_new_from_pixbuf(juego->graficos.m60[(juego->partida.turno + 1) % 2]);
+        gtk_container_add(GTK_CONTAINER(juego->graficos.buttons[x][y]), juego->graficos.buttonImg[x][y]);
+        gtk_widget_show(juego->graficos.buttonImg[x][y]);
+    
+    // muestra al jugador actual
+    gtk_widget_destroy(juego->graficos.playingImg);
+    juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[juego->partida.turno % 2]);
+        gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
+        gtk_widget_show(juego->graficos.playingImg);
+
+    // revisa el estado del tablero
+    gameStatus = checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[(juego->partida.turno + 1) % 2], juego->partida.winboard);
+
+    // en caso de que la partida haya terminado
+    if(gameStatus)
+    {
+        // cambia el estado de la partida
+        juego->partida.historial[juego->partida.turno].game_status = GAME_ENDED;
+
+        // oculta el jugador actual
+        gtk_widget_destroy(juego->graficos.playingImg);
+        juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[2]);
+            gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
+            gtk_widget_show(juego->graficos.playingImg);
+
+        // muestra la ventana de victoria o empate dependiendo del resultado de la partida
+        if(gameStatus < 0)
+        {
+            tie_dialog(juego);
+        }
+        else
+        {
+            g_timeout_add(400, (GSourceFunc)winningPulse, juego);
+            victory_dialog(juego);
+        }
+    }
+
+    return;
+    
+    // sprintf(
+    //     buffer, 
+    //     "UPDATE ttt_Partida SET fila_%d = '%s', last_player = %d, p_status = %d WHERE id_partida = %ld", 
+    //     (c / 3) + 1, board[c/3], juego->partida.turno, gameStatus, juego->online.g_id
+    // );
+    // query(&data->mysql, buffer, NULL);
+    // función espera
+
+    return;
 }
 
 void forfeit(JUEGO *juego)
