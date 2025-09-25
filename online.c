@@ -324,7 +324,14 @@ gboolean onlineGameLoop(gpointer data)
 
             for(j = 0; j < 3; j++)
             {
-                juego->partida.historial[juego->partida.turno].tablero[i][j] = board[j];
+                if(board[j] == 'n')
+                {
+                    juego->partida.historial[juego->partida.turno].tablero[i][j] = ' ';
+                }
+                else
+                {
+                    juego->partida.historial[juego->partida.turno].tablero[i][j] = board[j];
+                }
             }
         }
 
@@ -420,12 +427,19 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
 
     for(i = 0; i < 3; i++)
     {
-        row[i] = juego->partida.historial[juego->partida.turno].tablero[x][i];
+        if(juego->partida.historial[juego->partida.turno].tablero[x][i] == ' ')
+        {
+            row[i] = 'n';
+        }
+        else
+        {
+            row[i] = juego->partida.historial[juego->partida.turno].tablero[x][i];
+        }
     }
 
     row[3] = 0;
 
-    sprintf(buffer, "UPDATE ttt_Partida SET fila_%d = '%s', turn = %d, p_status = %d WHERE id_partida = %ld", x + 1, juego->partida.historial[juego->partida.turno].tablero[x], juego->partida.turno, juego->partida.historial[juego->partida.turno].game_status, juego->online.g_id);
+    sprintf(buffer, "UPDATE ttt_Partida SET fila_%d = '%s', turn = %d, p_status = %d WHERE id_partida = %ld", x + 1, row, juego->partida.turno, juego->partida.historial[juego->partida.turno].game_status, juego->online.g_id);
     query(&juego->online.mysql, buffer, NULL);
 
     g_timeout_add(400, (GSourceFunc)onlineGameLoop, juego);
