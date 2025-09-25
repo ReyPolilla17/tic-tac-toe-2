@@ -133,5 +133,6 @@ void victory_dialog(JUEGO *juego)
 
 void forfeit_dialog(JUEGO *juego)
 {
+    g_print("El oponente se ha rendido...\n");
     return;
 }

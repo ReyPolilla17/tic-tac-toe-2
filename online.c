@@ -30,13 +30,17 @@ void closeConnectionToDatabase(JUEGO *juego)
 {
     char buffer[1000];
 
-    // rendirse
-
     // si se registró un jugador
     if(juego->online.u_id[0] != -1)
     {
         sprintf(buffer, "DELETE FROM ttt_Usuarios WHERE id_usuario = %ld", juego->online.u_id[0]);
         query(&juego->online.mysql, buffer, NULL);
+
+        // rendirse
+        if(juego->online.playing)
+        {
+            forfeit(juego);
+        }
     }
 
     // cierra la conexion con al servidor
@@ -295,14 +299,28 @@ gboolean onlineGameLoop(gpointer data)
     MYSQL_RES *res;
     MYSQL_ROW row;
 
+    int gameStatus = 0;
     int turn = 0;
+
     int i = 0;
     int j = 0;
+
+    if(!juego->online.playing)
+    {
+        return FALSE;
+    }
 
     sprintf(buffer, "SELECT fila_1, fila_2, fila_3, p_status, turn FROM ttt_Partida WHERE id_partida = %ld", juego->online.g_id);
     query(&juego->online.mysql, buffer, &res);
     
     row = mysql_fetch_row(res);
+
+    if(!row)
+    {
+        forfeit_dialog(juego);
+        return FALSE;
+    }
+
     sscanf(row[4], "%d", &turn);
 
     if(turn > juego->partida.turno)
@@ -333,11 +351,10 @@ gboolean onlineGameLoop(gpointer data)
 
         coppyIntoGraphic(juego);
 
-        switch(juego->partida.historial[juego->partida.turno].game_status)
+        gameStatus = checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[(juego->partida.turno + 1) % 2], juego->partida.winboard);
+
+        switch(gameStatus)
         {
-            case -2:
-                forfeit_dialog(juego);
-                break;
             case -1:
                 tie_dialog(juego);
                 break;
@@ -416,8 +433,6 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
     sprintf(buffer, "UPDATE ttt_Partida SET fila_%d = '%s', turn = %d, p_status = %d WHERE id_partida = %ld", x + 1, row, juego->partida.turno, juego->partida.historial[juego->partida.turno].game_status, juego->online.g_id);
     query(&juego->online.mysql, buffer, NULL);
 
-    g_timeout_add(400, (GSourceFunc)onlineGameLoop, juego);
-
     // muestra la ventana de victoria o empate dependiendo del resultado de la partida
     switch(gameStatus)
     {
@@ -431,6 +446,9 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
             g_timeout_add(400, (GSourceFunc)winningPulse, juego);
             victory_dialog(juego);
             break;
+        default:
+            g_timeout_add(400, (GSourceFunc)onlineGameLoop, juego);
+            break;
     }
 
     return;
@@ -438,7 +456,25 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
 
 void forfeit(JUEGO *juego)
 {
-    g_print("Me rindo!\n");
+    char buffer[1000];
+
+    sprintf(buffer, "DELETE FROM ttt_Partida WHERE id_partida = %ld", juego->online.g_id);
+    query(&juego->online.mysql, buffer, NULL);
+
+    juego->online.playing = FALSE;
+    juego->online.g_id = 0;
+    juego->online.u_id[1] = -1;
+    juego->online.name[1][0] = 0;
+
+    cleanScreen(juego);
+
+    gtk_widget_set_sensitive(juego->graficos.menuName, TRUE);
+    gtk_widget_set_sensitive(juego->graficos.menuSeek, TRUE);
+    gtk_widget_set_sensitive(juego->graficos.menuForfeit, FALSE);
+
+    gtk_widget_set_sensitive(juego->graficos.menuFile, TRUE);
+    gtk_widget_set_sensitive(juego->graficos.menuGame, TRUE);
+
     return;
 }
 
