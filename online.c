@@ -305,7 +305,7 @@ gboolean onlineGameLoop(gpointer data)
     int i = 0;
     int j = 0;
 
-    sprintf(buffer, "SELECT fila_1, fila_2, fila_3, p_status, last_player FROM ttt_Partida WHERE id_partida = %ld", juego->online.g_id);
+    sprintf(buffer, "SELECT fila_1, fila_2, fila_3, p_status, turn FROM ttt_Partida WHERE id_partida = %ld", juego->online.g_id);
     query(&juego->online.mysql, buffer, &res);
     
     row = mysql_fetch_row(res);
@@ -417,7 +417,7 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
 
     return;
     
-    sprintf(buffer, "UPDATE ttt_Partida SET fila_%d = '%s', last_player = %d, p_status = %d WHERE id_partida = %ld", x + 1, juego->partida.historial[juego->partida.turno].tablero[x], juego->partida.turno, juego->partida.historial[juego->partida.turno].game_status, juego->online.g_id);
+    sprintf(buffer, "UPDATE ttt_Partida SET fila_%d = '%s', turn = %d, p_status = %d WHERE id_partida = %ld", x + 1, juego->partida.historial[juego->partida.turno].tablero[x], juego->partida.turno, juego->partida.historial[juego->partida.turno].game_status, juego->online.g_id);
     query(&juego->online.mysql, buffer, NULL);
 
     g_timeout_add(400, (GSourceFunc)onlineGameLoop, juego);
