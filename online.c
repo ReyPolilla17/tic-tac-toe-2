@@ -220,6 +220,8 @@ gboolean seekMatchLoop(gpointer data)
 void playOnline(JUEGO *juego)
 {
     char buffer[1000];
+    char p1[26];
+    char p2[26];
 
     MYSQL_RES *res;
     MYSQL_ROW row;
@@ -243,18 +245,24 @@ void playOnline(JUEGO *juego)
     if(u1_id == juego->online.u_id[0])
     {
         strcpy(juego->partida.jugadores[0].nombre, juego->online.name[0]);
+        sprintf(p1, "%s (tu)", juego->online.name[0]);
         juego->partida.jugadores[0].online_id = juego->online.u_id[0];
         
         strcpy(juego->partida.jugadores[1].nombre, juego->online.name[1]);
+        sprintf(p2, "%s", juego->online.name[1]);
         juego->partida.jugadores[1].online_id = juego->online.u_id[1];
     }
     else
     {
         strcpy(juego->partida.jugadores[0].nombre, juego->online.name[1]);
+        sprintf(p1, "%s", juego->online.name[1]);
         juego->partida.jugadores[0].online_id = juego->online.u_id[1];
         
         strcpy(juego->partida.jugadores[1].nombre, juego->online.name[0]);
+        sprintf(p2, "%s (tu)", juego->online.name[0]);
         juego->partida.jugadores[1].online_id = juego->online.u_id[0];
+
+        // función de espera
     }
 
     gtk_widget_set_sensitive(juego->graficos.menuName, FALSE);
@@ -265,10 +273,10 @@ void playOnline(JUEGO *juego)
     gtk_widget_set_sensitive(juego->graficos.menuGame, FALSE);
 
     // Muestra los nombres de los jugadores y sus fichas
-    gtk_label_set_label(GTK_LABEL(juego->graficos.playerName[0]), juego->partida.jugadores[0].nombre);
+    gtk_label_set_label(GTK_LABEL(juego->graficos.playerName[0]), p1);
     gtk_widget_show(juego->graficos.playerImg[0]);
 
-    gtk_label_set_label(GTK_LABEL(juego->graficos.playerName[1]), juego->partida.jugadores[1].nombre);
+    gtk_label_set_label(GTK_LABEL(juego->graficos.playerName[1]), p2);
     gtk_widget_show(juego->graficos.playerImg[1]);
     
     // Establece el status como listo para jugar
@@ -279,10 +287,6 @@ void playOnline(JUEGO *juego)
     juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[0]);
         gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
         gtk_widget_show(juego->graficos.playingImg);
-
-
-    g_print("%s\n", juego->online.name[0]);
-    g_print("%s\n", juego->online.name[1]);
 
     return;
 }
