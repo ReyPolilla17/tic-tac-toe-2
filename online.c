@@ -439,22 +439,6 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
     // revisa el estado del tablero
     gameStatus = checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[(juego->partida.turno + 1) % 2], juego->partida.winboard);
 
-    
-    // muestra la ventana de victoria o empate dependiendo del resultado de la partida
-    switch(gameStatus)
-    {
-        case -1:
-            tie_dialog(juego);
-            break;
-        case 1:
-            g_timeout_add(400, (GSourceFunc)winningPulse, juego);
-            victory_dialog(juego);
-            break;
-        default:
-            g_timeout_add(400, (GSourceFunc)onlineGameLoop, juego);
-            break;
-    }
-
     // en caso de que la partida haya terminado
     if(gameStatus)
     {
@@ -499,6 +483,21 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
 
     sprintf(buffer, "UPDATE ttt_Partida SET fila_%d = '%s', turn = %d, p_status = %d WHERE id_partida = %ld", x + 1, row, juego->partida.turno, juego->partida.historial[juego->partida.turno].game_status, juego->online.g_id);
     query(&juego->online.mysql, buffer, NULL);
+
+    // muestra la ventana de victoria o empate dependiendo del resultado de la partida
+    switch(gameStatus)
+    {
+        case -1:
+            tie_dialog(juego);
+            break;
+        case 1:
+            g_timeout_add(400, (GSourceFunc)winningPulse, juego);
+            victory_dialog(juego);
+            break;
+        default:
+            g_timeout_add(400, (GSourceFunc)onlineGameLoop, juego);
+            break;
+    }
 
     return;
 }
