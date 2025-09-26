@@ -137,9 +137,6 @@ void forfeit_dialog(JUEGO *juego)
 
     // extrae al ganador y al perdedor, para facilitar la escritura
     JUGADOR winner = juego->partida.jugadores[(juego->partida.turno + 1) % 2];
-    JUGADOR loser = juego->partida.jugadores[(juego->partida.turno) % 2];
-
-    gchar *winMessage;
     
     dialog = about_dialog_new("Fin del juego"); // inicia la ventana
 
