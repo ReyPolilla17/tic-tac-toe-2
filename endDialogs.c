@@ -134,26 +134,11 @@ void victory_dialog(JUEGO *juego)
 void forfeit_dialog(JUEGO *juego)
 {
     AboutDialog *dialog;
-
-    // extrae al ganador y al perdedor, para facilitar la escritura
-    JUGADOR winner = juego->partida.jugadores[(juego->partida.turno + 1) % 2];
     
     dialog = about_dialog_new("Fin del juego"); // inicia la ventana
-
-    if(winner.online_id == juego->online.u_id[0])
-    {
-        // Establece la ficha del ganador
-        about_dialog_set_title(dialog, "Victoria");
+        about_dialog_set_title(dialog, "El oponente se ha rendido");
         about_dialog_set_logo(dialog, juego->graficos.m60[(juego->partida.turno + 1) % 2]);
         about_dialog_set_comments(dialog, "¡Has Ganado!");
-    }
-    else
-    {
-        // Establece la ficha del perdedor
-        about_dialog_set_title(dialog, "Derrota");
-        about_dialog_set_logo(dialog, juego->graficos.m60[(juego->partida.turno + 1) % 2]);
-        about_dialog_set_comments(dialog, "Mejor suerte la próxima...");
-    }
 
     about_dialog_run(dialog); // muestra la ventana
 
