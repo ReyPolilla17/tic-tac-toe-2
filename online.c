@@ -305,6 +305,8 @@ gboolean onlineGameLoop(gpointer data)
     int i = 0;
     int j = 0;
 
+    g_print("loop\n");
+
     if(!juego->online.playing)
     {
         return FALSE;
@@ -369,18 +371,9 @@ gboolean onlineGameLoop(gpointer data)
 
         gameStatus = checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[(juego->partida.turno + 1) % 2], juego->partida.winboard);
 
-        switch(gameStatus)
-        {
-            case -1:
-                tie_dialog(juego);
-                break;
-            case 1:
-                victory_dialog(juego);
-                break;
-        }
-
         if(gameStatus)
         {
+            system("clear");
             juego->online.playing = FALSE;
             juego->online.g_id = 0;
             juego->online.u_id[1] = -1;
@@ -395,6 +388,16 @@ gboolean onlineGameLoop(gpointer data)
             
             gtk_widget_set_sensitive(juego->graficos.menuEnd, FALSE);
             gtk_widget_set_sensitive(juego->graficos.menuSave, FALSE);
+        }
+
+        switch(gameStatus)
+        {
+            case -1:
+                tie_dialog(juego);
+                break;
+            case 1:
+                victory_dialog(juego);
+                break;
         }
     }
     else
