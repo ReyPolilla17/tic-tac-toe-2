@@ -317,6 +317,8 @@ gboolean onlineGameLoop(gpointer data)
 
     if(!row)
     {
+        gameStartup(juego);
+        
         juego->online.playing = FALSE;
         juego->online.g_id = 0;
         juego->online.u_id[1] = -1;
