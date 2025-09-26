@@ -451,11 +451,6 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
             gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
             gtk_widget_show(juego->graficos.playingImg);
         
-        juego->online.playing = FALSE;
-        juego->online.g_id = 0;
-        juego->online.u_id[1] = -1;
-        juego->online.name[1][0] = 0;
-        
         gtk_widget_set_sensitive(juego->graficos.menuName, TRUE);
         gtk_widget_set_sensitive(juego->graficos.menuSeek, TRUE);
         gtk_widget_set_sensitive(juego->graficos.menuForfeit, FALSE);
@@ -497,6 +492,14 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
         default:
             g_timeout_add(400, (GSourceFunc)onlineGameLoop, juego);
             break;
+    }
+
+    if(gameStatus)
+    {
+        juego->online.playing = FALSE;
+        juego->online.g_id = 0;
+        juego->online.u_id[1] = -1;
+        juego->online.name[1][0] = 0;
     }
 
     return;
