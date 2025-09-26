@@ -373,11 +373,6 @@ gboolean onlineGameLoop(gpointer data)
 
         if(gameStatus)
         {
-            juego->online.playing = FALSE;
-            juego->online.g_id = 0;
-            juego->online.u_id[1] = -1;
-            juego->online.name[1][0] = 0;
-            
             gtk_widget_set_sensitive(juego->graficos.menuName, TRUE);
             gtk_widget_set_sensitive(juego->graficos.menuSeek, TRUE);
             gtk_widget_set_sensitive(juego->graficos.menuForfeit, FALSE);
@@ -387,17 +382,23 @@ gboolean onlineGameLoop(gpointer data)
             
             gtk_widget_set_sensitive(juego->graficos.menuEnd, FALSE);
             gtk_widget_set_sensitive(juego->graficos.menuSave, FALSE);
-        }
+            
+            switch(gameStatus)
+            {
+                case -1:
+                    tie_dialog(juego);
+                    break;
+                case 1:
+                    victory_dialog(juego);
+                    break;
+            }
 
-                
-        switch(gameStatus)
-        {
-            case -1:
-                tie_dialog(juego);
-                break;
-            case 1:
-                victory_dialog(juego);
-                break;
+            gameStartup(juego);
+
+            juego->online.playing = FALSE;
+            juego->online.g_id = 0;
+            juego->online.u_id[1] = -1;
+            juego->online.name[1][0] = 0;
         }
     }
     else
@@ -497,6 +498,8 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
 
     if(gameStatus)
     {
+        gameStartup(juego);
+
         juego->online.playing = FALSE;
         juego->online.g_id = 0;
         juego->online.u_id[1] = -1;
