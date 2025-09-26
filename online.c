@@ -370,10 +370,19 @@ gboolean onlineGameLoop(gpointer data)
         coppyIntoGraphic(juego);
 
         gameStatus = checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[(juego->partida.turno + 1) % 2], juego->partida.winboard);
+        
+        switch(gameStatus)
+        {
+            case -1:
+                tie_dialog(juego);
+                break;
+            case 1:
+                victory_dialog(juego);
+                break;
+        }
 
         if(gameStatus)
         {
-            system("clear");
             juego->online.playing = FALSE;
             juego->online.g_id = 0;
             juego->online.u_id[1] = -1;
@@ -388,16 +397,6 @@ gboolean onlineGameLoop(gpointer data)
             
             gtk_widget_set_sensitive(juego->graficos.menuEnd, FALSE);
             gtk_widget_set_sensitive(juego->graficos.menuSave, FALSE);
-        }
-
-        switch(gameStatus)
-        {
-            case -1:
-                tie_dialog(juego);
-                break;
-            case 1:
-                victory_dialog(juego);
-                break;
         }
     }
     else
@@ -451,6 +450,21 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
         juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[2]);
             gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
             gtk_widget_show(juego->graficos.playingImg);
+        
+        juego->online.playing = FALSE;
+        juego->online.g_id = 0;
+        juego->online.u_id[1] = -1;
+        juego->online.name[1][0] = 0;
+        
+        gtk_widget_set_sensitive(juego->graficos.menuName, TRUE);
+        gtk_widget_set_sensitive(juego->graficos.menuSeek, TRUE);
+        gtk_widget_set_sensitive(juego->graficos.menuForfeit, FALSE);
+        
+        gtk_widget_set_sensitive(juego->graficos.menuFile, TRUE);
+        gtk_widget_set_sensitive(juego->graficos.menuGame, TRUE);
+        
+        gtk_widget_set_sensitive(juego->graficos.menuEnd, FALSE);
+        gtk_widget_set_sensitive(juego->graficos.menuSave, FALSE);
     }
 
     for(i = 0; i < 3; i++)
