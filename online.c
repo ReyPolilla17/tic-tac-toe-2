@@ -370,16 +370,6 @@ gboolean onlineGameLoop(gpointer data)
         coppyIntoGraphic(juego);
 
         gameStatus = checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[(juego->partida.turno + 1) % 2], juego->partida.winboard);
-        
-        switch(gameStatus)
-        {
-            case -1:
-                tie_dialog(juego);
-                break;
-            case 1:
-                victory_dialog(juego);
-                break;
-        }
 
         if(gameStatus)
         {
@@ -397,6 +387,17 @@ gboolean onlineGameLoop(gpointer data)
             
             gtk_widget_set_sensitive(juego->graficos.menuEnd, FALSE);
             gtk_widget_set_sensitive(juego->graficos.menuSave, FALSE);
+        }
+
+                
+        switch(gameStatus)
+        {
+            case -1:
+                tie_dialog(juego);
+                break;
+            case 1:
+                victory_dialog(juego);
+                break;
         }
     }
     else
