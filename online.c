@@ -305,8 +305,6 @@ gboolean onlineGameLoop(gpointer data)
     int i = 0;
     int j = 0;
 
-    g_print("loop\n");
-
     if(!juego->online.playing)
     {
         return FALSE;
