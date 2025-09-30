@@ -131,6 +131,11 @@ void victory_dialog(JUEGO *juego)
     return;
 }
 
+/**
+ * Si el oponente se rindió
+ * 
+ * @param *juego Información de la partida
+ */
 void forfeit_dialog(JUEGO *juego)
 {
     AboutDialog *dialog;

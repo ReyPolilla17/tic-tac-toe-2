@@ -4,7 +4,7 @@
  * @brief Contiene todas las funciones que requiere la ventana principal para funcionar correctamente
  * 
  * @author Luis Julián Zamora Treviño
- * @date 16/03/2025
+ * @date 30/09/2025
  */
 #include "gato.h"
 
@@ -693,6 +693,7 @@ void chooseSpace(JUEGO *juego, int *x, int *y)
  * 
  * @param tablero[3][3] El tablero a revisar
  * @param played El último jugador que tiró
+ * @param winBoard[3][3] El tablero en el que se guardan los espacios que generaron victoria
  * 
  * @returns int (-1 si el tablero está lleno y sin victorias, 0 si no hay victorias, 1 si hay victorias)
  */

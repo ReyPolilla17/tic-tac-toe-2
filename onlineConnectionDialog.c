@@ -1,10 +1,25 @@
+/**
+ * @file onlineConnectionDialog.c
+ * 
+ * @brief Contiene todas las funciones de la ventana de espera de conexión y métodos para recuperar información de la misma
+ * 
+ * @author Luis Julián Zamora Treviño
+ * @date 30/09/2025
+ */
 #include "gato.h"
 
+/**
+ * Creación de la ventana de espera de conexión
+ * 
+ * @param **info La información de la ventana
+ * 
+ * @returns void
+ */
 void online_connection_dialog_new(OnlineConnectionDialog **info)
 {
     GtkWidget *mBox, *hBox, *label, *button; // widgets auxiliares
 
-    *info = (OnlineConnectionDialog *) malloc(sizeof(OnlineConnectionDialog));
+    *info = (OnlineConnectionDialog *) malloc(sizeof(OnlineConnectionDialog)); // aloca memoria
 
     // Creación de la ventana
     (*info)->dialog = gtk_dialog_new();
@@ -26,6 +41,7 @@ void online_connection_dialog_new(OnlineConnectionDialog **info)
     hBox = gtk_hbox_new(FALSE, 0);
         gtk_box_pack_start(GTK_BOX(mBox), hBox, FALSE, FALSE, 0);
 
+    // Barra de avance (para tener un indicador visual de la espera)
     (*info)->progress = gtk_progress_bar_new();
         gtk_progress_bar_set_pulse_step(GTK_PROGRESS_BAR((*info)->progress), 0.1);
         gtk_box_pack_start(GTK_BOX(mBox), (*info)->progress, FALSE, FALSE, 0);
@@ -37,35 +53,26 @@ void online_connection_dialog_new(OnlineConnectionDialog **info)
         gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(my_dialogs_on_button_clicked), gtk_dialog_add_button(GTK_DIALOG((*info)->dialog), "\0", GTK_RESPONSE_CANCEL));
         gtk_box_pack_end(GTK_BOX(mBox), button, FALSE, FALSE, 5);
 
-    return;
-}
-
-void online_connection_dialog_run(OnlineConnectionDialog **dialog)
-{
-        
     // muesta las partes necesarias
-    gtk_widget_show_all((*dialog)->dialog);
-    gtk_widget_hide(GTK_DIALOG((*dialog)->dialog)->action_area);
-    
-    // ejecuta el dialog
-    (*dialog)->res = gtk_dialog_run(GTK_DIALOG((*dialog)->dialog));
+    gtk_widget_show_all((*info)->dialog);
+    gtk_widget_hide(GTK_DIALOG((*info)->dialog)->action_area);
 
     return;
 }
 
+/**
+ * Elimina la ventana de espera de conexión y libera la memoria necesaria
+ * 
+ * @param **dialog Apuntador a la información de la ventana
+ * 
+ * @returns void
+ */
 void online_connection_dialog_destroy(OnlineConnectionDialog **dialog)
 {
     gtk_widget_destroy((*dialog)->dialog);
     free(*dialog);
 
-    *dialog = NULL;
-
-    return;
-}
-
-void online_connection_dialog_pulse(OnlineConnectionDialog *dialog)
-{
-    gtk_progress_bar_pulse(GTK_PROGRESS_BAR(dialog->progress));
+    *dialog = NULL; // Anula el apuntador
 
     return;
 }

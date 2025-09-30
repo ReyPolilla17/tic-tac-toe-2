@@ -58,11 +58,11 @@ typedef struct def_AboutDialog // Ventana de créditos
   AboutDialogPage *pages[3]; // Páginas del programa
 } AboutDialog;
 
-typedef struct def_OnlineConnectionDialog
+typedef struct def_OnlineConnectionDialog // Espera de adversario en línea
 {
-  GtkWidget *dialog;
-  GtkWidget *progress;
-  gint res;
+  GtkWidget *dialog; // Puntero al widget
+  GtkWidget *progress; // Barra de progreso
+  gint res; // Resultado de la ventana (Si se cerró o si se encontró adversario)
 } OnlineConnectionDialog;
 
 typedef struct def_NewGameModal // Ventana de juego nuevo
@@ -78,9 +78,9 @@ typedef struct def_NewGameModal // Ventana de juego nuevo
   gint hard_mode; // Modo difícil
 } NewGameModal;
 
-typedef struct def_GenericModal
+typedef struct def_GenericModal // Ventana genérica que deba mostrar una advertencia
 {
-  GtkWidget *warning;
+  GtkWidget *warning; // Label de la advertencia
 } Generic_Modal;
 
 typedef struct def_OnlineRegisterModal // Ventana de registro para el modo multijugador
@@ -151,6 +151,7 @@ gint new_game_modal_get_info(NewGameModal *info);
 // Funciones internas
 void new_game_modal_radio_changed(GtkWidget *widget, gpointer data);
 
+
 /**
  * Funciones de la ventana de registro para multijugador
  */
@@ -159,16 +160,16 @@ void new_game_modal_radio_changed(GtkWidget *widget, gpointer data);
 void online_register_modal_new(OnlineRegisterModal *info);
 gint online_register_modal_get_info(OnlineRegisterModal *info);
 
+
 /**
  * Funciones de la ventana de espera de oponente en multijugador
  */
 void online_connection_dialog_new(OnlineConnectionDialog **info);
-void online_connection_dialog_run(OnlineConnectionDialog **dialog);
 void online_connection_dialog_destroy(OnlineConnectionDialog **dialog);
-void online_connection_dialog_pulse(OnlineConnectionDialog *dialog);
+
 
 /**
- * Funciones ventanas comunes
+ * Ventanas comunes
  */
 
 // Creación

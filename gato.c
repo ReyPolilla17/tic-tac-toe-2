@@ -4,7 +4,7 @@
  * @brief contiene la función principal del programa
  * 
  * @author Luis Julián Zamora Treviño
- * @date 23/09/2024
+ * @date 30/09/2024
  */
 #include "gato.h"
 
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     system("clear");
     gtk_init(&argc, &argv);
 
-    // inicializa la ventana principal
+    // inicializa la ventana principal y se conecta a la base de datos
     gameStartup(&juego);
     loadMainWindow(&juego);
     connectToDatabase(&juego);

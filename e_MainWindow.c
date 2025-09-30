@@ -4,7 +4,7 @@
  * @brief Contiene todas las funciones de eventos que suceden en la ventana principal
  * 
  * @author Luis Julián Zamora Treviño
- * @date 23/09/2025
+ * @date 30/09/2025
  */
 #include "gato.h"
 
@@ -258,7 +258,7 @@ void registrarUsuario(GtkWidget *widget, gpointer data)
 {
 	JUEGO *juego = (JUEGO *)data;
 
-	registerUser(juego);
+	registerUser(juego); // Registra al ususario en el online
 
 	return;
 }
@@ -275,7 +275,7 @@ void buscarPartida(GtkWidget *widget, gpointer data)
 {
 	JUEGO *juego = (JUEGO *)data;
 
-	seekMatch(juego);
+	seekMatch(juego); // Busca una partida online
 
 	return;
 }
@@ -292,7 +292,7 @@ void rendirse(GtkWidget *widget, gpointer data)
 {
 	JUEGO *juego = (JUEGO *)data;
 
-	forfeit(juego);
+	forfeit(juego); // Se rinde de la partida online
 
 	return;
 }
@@ -360,11 +360,12 @@ void board_button_pressed(GtkWidget *eventbox, GdkEventButton *event, gpointer d
 	// si es capaz de recuperar el botón, no ha sido presionado y el juego no ha terminado
 	if(getButton(juego, eventbox, coords) && juego->partida.historial[juego->partida.turno].tablero[coords[0]][coords[1]] == ' ' && juego->partida.historial[juego->partida.turno].game_status == GAME_STARTED)
 	{
+		// Si se está jugando en línea y es turno del usuario
 		if(juego->online.playing && juego->partida.jugadores[juego->partida.turno % 2].online_id == juego->online.u_id[0])
 		{
-			onlineTurnPlayed(juego, coords[0], coords[1]);
+			onlineTurnPlayed(juego, coords[0], coords[1]); // Juega un turno online
 		}
-		else if(!juego->online.playing)
+		else if(!juego->online.playing) // Si no se está jugando en línea
 		{
 			turnPlayed(juego, coords[0], coords[1]); // juega un turno
 		}

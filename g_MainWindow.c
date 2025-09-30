@@ -4,7 +4,7 @@
  * @brief Contiene la carga de la ventana principal
  *
  * @author Luis Julián Zamora Treviño
- * @date 05/Mar/2025
+ * @date 30/09/2025
 */
 
 #include "gato.h"
