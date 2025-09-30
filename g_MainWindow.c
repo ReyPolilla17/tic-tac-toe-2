@@ -65,6 +65,8 @@ void loadMainWindow(JUEGO *juego)
   juego->graficos.window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_default_size(GTK_WINDOW(juego->graficos.window), 910, 540);
     gtk_window_set_title(GTK_WINDOW(juego->graficos.window), "Tic-Tac-Toe 2");
+    gtk_widget_modify_bg(juego->graficos.window, GTK_STATE_NORMAL, &light_grey);
+    gtk_widget_modify_bg(juego->graficos.window, GTK_STATE_INSENSITIVE, &light_grey);
     gtk_signal_connect(GTK_OBJECT(juego->graficos.window), "destroy", GTK_SIGNAL_FUNC(stopTheApp), juego);
 
   // crea la caja que va a contener todos los elementos
@@ -236,6 +238,11 @@ void loadMainWindow(JUEGO *juego)
   // crea una imagen para indicar al jugador actual
   juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[2]);
     gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
+  
+  // Crea una barra de espera del oponente (Online)
+  juego->graficos.waitingOpponentBar = gtk_progress_bar_new();
+    gtk_progress_bar_set_pulse_step(GTK_PROGRESS_BAR(juego->graficos.waitingOpponentBar), 0.1);
+    gtk_box_pack_end(GTK_BOX(juego->graficos.playingBox), juego->graficos.waitingOpponentBar, FALSE, TRUE, 20);
 
   // tablero
 
@@ -354,6 +361,9 @@ void loadMainWindow(JUEGO *juego)
       gtk_widget_set_size_request(juego->graficos.flames[i], 10, 200);
       gtk_box_pack_end(GTK_BOX(flameContainter[i]), juego->graficos.flames[i], FALSE, TRUE, 0);
   }
+
+  // Oculta la barra de espera del enemigo
+  gtk_widget_hide(juego->graficos.waitingOpponentBar);
 
   // oculta la verdad
   gtk_widget_hide(juego->graficos.menuTruth);

@@ -476,6 +476,7 @@ gboolean onlineGameLoop(gpointer data)
     // Si por alguna razón ya no se está jugando, termina el loop
     if(!juego->online.playing)
     {
+        gtk_widget_hide(juego->graficos.waitingOpponentBar);
         return FALSE;
     }
 
@@ -505,6 +506,7 @@ gboolean onlineGameLoop(gpointer data)
         
         gtk_widget_set_sensitive(juego->graficos.menuEnd, FALSE);
         gtk_widget_set_sensitive(juego->graficos.menuSave, FALSE);
+        gtk_widget_hide(juego->graficos.waitingOpponentBar);
         
         forfeit_dialog(juego);
         
@@ -591,11 +593,13 @@ gboolean onlineGameLoop(gpointer data)
     else // Si sigue en el mismo turno, sigue esperando al adversario
     {
         mysql_free_result(res);
+        gtk_progress_bar_pulse(GTK_PROGRESS_BAR(juego->graficos.waitingOpponentBar));
 
         return TRUE;
     }
 
-    // detiene el loop
+    // detiene el loop y oculta la barra de espera
+    gtk_widget_hide(juego->graficos.waitingOpponentBar);
     return FALSE;
 }
 
@@ -635,6 +639,9 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
     juego->graficos.playingImg = gtk_image_new_from_pixbuf(juego->graficos.m60[juego->partida.turno % 2]);
         gtk_box_pack_start(GTK_BOX(juego->graficos.playingBox), juego->graficos.playingImg, FALSE, TRUE, 20);
         gtk_widget_show(juego->graficos.playingImg);
+    
+    // Muestra la barra de espera
+    gtk_widget_show(juego->graficos.waitingOpponentBar);
 
     // revisa el estado del tablero
     gameStatus = checkGame(juego->partida.historial[juego->partida.turno].tablero, ICONS[(juego->partida.turno + 1) % 2], juego->partida.winboard);

@@ -67,6 +67,7 @@ typedef struct def_grafico
   GtkWidget *menuForfeit;
   GtkWidget *playingImg;
   GtkWidget *playingBox;
+  GtkWidget *waitingOpponentBar;
   GtkWidget *moveButtons[2];
   GtkWidget *playerImg[2];
   GtkWidget *playerName[2];
