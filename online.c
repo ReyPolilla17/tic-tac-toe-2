@@ -418,6 +418,7 @@ void playOnline(JUEGO *juego)
         sprintf(juego->partida.jugadores[1].nombre, "%s (tu)", juego->online.name[0]);
         juego->partida.jugadores[1].online_id = juego->online.u_id[0];
 
+        gtk_widget_show(juego->graficos.waitingOpponentBar);
         g_timeout_add(400, (GSourceFunc)onlineGameLoop, juego); // Loop de espera de adversario
     }
 
@@ -668,6 +669,8 @@ void onlineTurnPlayed(JUEGO *juego, int x, int y)
         
         gtk_widget_set_sensitive(juego->graficos.menuEnd, FALSE);
         gtk_widget_set_sensitive(juego->graficos.menuSave, FALSE);
+
+        gtk_widget_hide(juego->graficos.waitingOpponentBar);
     }
 
     // Guarda la fila de una manera que MySql pueda almacenar
@@ -758,6 +761,8 @@ void forfeit(JUEGO *juego)
 
     gtk_widget_set_sensitive(juego->graficos.menuEnd, FALSE);
 	gtk_widget_set_sensitive(juego->graficos.menuSave, FALSE);
+
+    gtk_widget_hide(juego->graficos.waitingOpponentBar);
 
     return;
 }
