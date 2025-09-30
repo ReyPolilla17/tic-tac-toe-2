@@ -568,6 +568,8 @@ gboolean onlineGameLoop(gpointer data)
             
             gtk_widget_set_sensitive(juego->graficos.menuEnd, FALSE);
             gtk_widget_set_sensitive(juego->graficos.menuSave, FALSE);
+
+            gtk_widget_hide(juego->graficos.waitingOpponentBar);
             
             // según el estado en el que terminó la partida
             switch(gameStatus)
